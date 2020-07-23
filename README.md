@@ -1,22 +1,13 @@
 <p align="center">
-    <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
+    <a href="https://github.com/yiit" target="_blank">
+        <img src="https://avatars2.githubusercontent.com/u/27763459" height="100px">
     </a>
-    <h1 align="center">Gii Extension for Yii 2</h1>
+    <h1 align="center">Wpj Code Wii Extension for Yii 2</h1>
     <br>
 </p>
 
-This extension provides a Web-based code generator, called Gii, for [Yii framework 2.0](http://www.yiiframework.com) applications.
-You can use Gii to quickly generate models, forms, modules, CRUD, etc.
-
-For license information check the [LICENSE](LICENSE.md)-file.
-
-Documentation is at [docs/guide/README.md](docs/guide/README.md).
-
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii2-gii/v/stable.png)](https://packagist.org/packages/yiisoft/yii2-gii)
-[![Total Downloads](https://poser.pugx.org/yiisoft/yii2-gii/downloads.png)](https://packagist.org/packages/yiisoft/yii2-gii)
-[![Build Status](https://travis-ci.org/yiisoft/yii2-gii.svg?branch=master)](https://travis-ci.org/yiisoft/yii2-gii)
-
+This extension is copy from [GII] and provides a Web-based code generator, called Wii, for [Yii framework 2.0](http://www.yiiframework.com) applications.
+You can use Gii to quickly generate vue crud for models, vue element ui forms, modules, CRUD, js, css etc.
 
 Installation
 ------------
