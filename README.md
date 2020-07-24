@@ -7,7 +7,7 @@
 </p>
 
 This extension is copy from [GII] and provides a Web-based code generator, called Wii, for [Yii framework 2.0](http://www.yiiframework.com) applications.
-You can use Gii to quickly generate vue crud for models, vue element ui forms, modules, CRUD, js, css etc.
+You can use Wii to quickly generate vue crud for models, vue element ui forms, modules, CRUD, js, css etc.
 
 Installation
 ------------

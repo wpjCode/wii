@@ -8,7 +8,6 @@
         "crud"
     ],
     "type": "victor",
-    "license": "MIT",
     "support": {
         "issues": "https://github.com/wpjCode/wii/issues",
         "source": "https://github.com/wpjCode/wii"
