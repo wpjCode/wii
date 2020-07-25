@@ -1,12 +1,12 @@
 <p align="center">
-    <a href="https://github.com/yiit" target="_blank">
+    <a href="https://github.com/wpjCode" target="_blank">
         <img src="https://avatars2.githubusercontent.com/u/27763459" height="100px">
     </a>
     <h1 align="center">Wpj Code Wii Extension for Yii 2</h1>
     <br>
 </p>
 
-This extension is copy from [GII] and provides a Web-based code generator, called Wii, for [Yii framework 2.0](http://www.yiiframework.com) applications.
+This extension is copy from [WII] and provides a Web-based code generator, called Wii, for [Yii framework 2.0](http://www.yiiframework.com) applications.
 You can use Wii to quickly generate vue crud for models, vue element ui forms, modules, CRUD, js, css etc.
 
 Installation
@@ -17,13 +17,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --dev --prefer-dist yiisoft/yii2-gii
+composer require wpj-code/wii
 ```
 
 or add
 
 ```
-"yiisoft/yii2-gii": "~2.0.0"
+"wpj-code/wii": "~1.1.1"
 ```
 
 to the require-dev section of your `composer.json` file.
@@ -36,10 +36,10 @@ Once the extension is installed, simply modify your application configuration as
 
 ```php
 return [
-    'bootstrap' => ['gii'],
+    'bootstrap' => ['wii'],
     'modules' => [
-        'gii' => [
-            'class' => 'yii\gii\Module',
+        'wii' => [
+            'class' => 'wpjCode\wii\Module',
         ],
         // ...
     ],
@@ -47,31 +47,14 @@ return [
 ];
 ```
 
-You can then access Gii through the following URL:
+You can then access Wii through the following URL:
 
 ```
-http://localhost/path/to/index.php?r=gii
+http://localhost/path/to/index.php?r=wii
 ```
 
 or if you have enabled pretty URLs, you may use the following URL:
 
 ```
-http://localhost/path/to/index.php/gii
-```
-
-Using the same configuration for your console application, you will also be able to access Gii via
-command line as follows,
-
-```
-# change path to your application's base path
-cd path/to/AppBasePath
-
-# show help information about Gii
-yii help gii
-
-# show help information about the model generator in Gii
-yii help gii/model
-
-# generate City model from city table
-yii gii/model --tableName=city --modelClass=City
+http://localhost/path/to/index.php/wii
 ```

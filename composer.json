@@ -22,9 +22,7 @@
     "require": {
         "yiisoft/yii2": "~2.0.14",
         "phpspec/php-diff": "^1.1.0",
-        "ext-json": "^1.2",
-        "ext-pdo": "^7.1.23",
-        "ext-curl": "^7.1.23"
+        "ext-json": "^1.2"
     },
     "autoload": {
         "psr-4": {
