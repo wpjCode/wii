@@ -1,0 +1,43 @@
+{
+    "name": "wpj-code/wii",
+    "description": "Backend render crud",
+    "keywords": [
+        "wpj code backend",
+        "wii",
+        "render",
+        "crud"
+    ],
+    "type": "victor",
+    "support": {
+        "issues": "https://github.com/wpjCode/wii/issues",
+        "source": "https://github.com/wpjCode/wii"
+    },
+    "authors": [
+        {
+            "name": "wpj",
+            "email": "wangpengjie369@126.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "yiisoft/yii2": "~2.0.14",
+        "phpspec/php-diff": "^1.1.0",
+        "ext-json": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "wpjCode\\wii\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "wpjCode\\wii\\": "tests"
+        }
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}
