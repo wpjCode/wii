@@ -646,7 +646,7 @@ EOT;
                           
                         <el-radio-group v-model="form.{$attribute}" size="mini">
 
-                            <el-radio v-for="(item, key) in setting.{$attribute}Txt"
+                            <el-radio v-for="(item, key) in setting.{$attribute}TextList"
                                 :label="parseInt(key)">
                                 {{item}}
                             </el-radio>

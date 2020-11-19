@@ -15,22 +15,6 @@ var app = function () {
         data: {
             loadOver: false,
             setting: {
-<?php if ($model->hasAttribute('status')) { ?>
-                status: {
-                    disabled: -1,
-                    normal: 0,
-                    open: 1,
-                },
-                statusTxt: {
-                    '-1': '禁用',
-                    0: '未审核',
-                    1: '开启',
-                },
-<?php } ?>
-<?php if ($model->hasAttribute('sort')) { ?>
-                sortMin: -999999, // 排序最小
-                sortMax: 999999, // 排序最大
-<?php } ?>
                 showAllSearch: false, // 是否出现[展示全部查询]按钮
                 searchBarWidth: 0  // 查询条长度 - 来判断展示哪些查询
             },
@@ -44,10 +28,10 @@ var app = function () {
             dataTotal: 0
         },
         created: function () {
-            // 初始化下
-            this.initSearchForm(true);
             // 获取下列表
             this.getList();
+            // 初始化下设置
+            this.getSetting();
             var that = this;
             this.$nextTick(function () {
                 that.loadOver = true;
@@ -68,8 +52,10 @@ var app = function () {
                         title: '',
 <?php } else if ($model->hasAttribute('name')) { ?>
                         name: '',
-<?php } if ($model->hasAttribute('status')) { ?>
-                        status: this.setting.status.normal
+<?php } if ($model->hasAttribute('status') && $model->hasMethod('getStatNormal')) { ?>
+                        status: this.setting.statusList.normal
+<?php } else if ($model->hasAttribute('status') && $model->hasMethod('getStatOpen')) { ?>
+                        status: this.setting.statusList.open
 <?php } ?>
                     };
                     return true;
@@ -81,6 +67,79 @@ var app = function () {
 <?php } else if ($model->hasAttribute('name')) { ?>
                 this.searchForm['name'] = '';
 <?php }?>
+            },
+            /**
+             * 获取设置
+             * @returns {boolean}
+             */
+            getSetting: function () {
+                // 正在加载...
+                var loadingInstance = ELEMENT.Loading.service({
+                    fullscreen: false,
+                    text: '加载中...'
+                });
+                var that = this;
+
+                // 获取各模块的值
+                $.ajax({
+                    url: $w.getApiUrl('position.setting'),
+                    type: 'get',
+                    data: {
+                        type: 'index' // 首页
+                    },
+                    dataType: 'json',
+                    success: function (event) {
+
+                        that.$nextTick(function () {
+                            // 隐藏正在加载
+                            loadingInstance.close();
+                        });
+
+                        // 必须先登录
+                        if (parseInt(event.no) === 403) {
+
+                            that.$message({
+                                type: 'warning',
+                                showClose: true,
+                                message: '登陆超时，请重新登陆'
+                            });
+
+                            // 几秒之后移除
+                            return setTimeout(function () {
+                                window.parent.location.href = $w.getPageUrl('login');
+                            }, 810);
+                        }
+
+                        // 操作失败显示错误信息
+                        if (parseInt(event.no) !== 200) {
+
+                            return that.$message({
+                                type: 'error',
+                                showClose: true,
+                                message: event.msg
+                            });
+                        }
+
+                        // 挨个赋值[setting]中
+                        for (var i in event.data) {
+                            if (!event.data.hasOwnProperty(i)) continue;
+                            that.$set(that.setting, i, event.data[i]);
+                        }
+
+                        // 最终清空性初始化查询
+                        return that.initSearchForm(true);
+                    },
+                    error: function () {
+
+                        // 按钮正在加载
+                        loadingInstance.close();
+                        return that.$message({
+                            type: 'error',
+                            showClose: true,
+                            message: '操作频繁，请稍后尝试'
+                        });
+                    }
+                });
             },
             /**
              * 获取下列表
@@ -141,8 +200,8 @@ var app = function () {
                         that.dataList = event.data.list;
                         for (var i in that.dataList) {
                             if (!that.dataList.hasOwnProperty(i)) continue;
-                            that.dataList[i]['newSort'] = 0;
-                            that.dataList[i]['sortEdit'] = false;
+                            that.$set(that.dataList[i], 'newSort', 0);
+                            that.$set(that.dataList[i], 'sortEdit', false);
                         }
                         // 总条目
                         that.dataTotal = parseInt(event.data.total);
@@ -407,7 +466,7 @@ var app = function () {
                 $row['sortEdit'] = true;
                 this.$set($row, 'newSort', $row['sort']);
             },
-<?php if ($model->hasAttribute('sort')) { ?>
+<?php if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) { ?>
             /**
              * 修改排序提交
              * @param $row
@@ -548,7 +607,7 @@ var app = function () {
             'searchTopType': function (val) {
                 // 先初始化[FORM]
                 this.initSearchForm();
-                // 重新赋值下值
+                // 重新赋值下值 - 具体效果就是不清空现在查询框内容
                 this.searchForm[val] = this.searchTopValue;
             },
             /**

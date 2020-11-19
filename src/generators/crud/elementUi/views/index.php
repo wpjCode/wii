@@ -72,16 +72,18 @@ EOT;
     </el-row>
     <el-form :inline="true" :model="searchForm" @submit.native.prevent
              class="search-container">
+<?php if ($model->hasAttribute('status')) { ?>
         <el-form-item label="状态" class="" class="padding-right-30">
             <el-radio-group size="mini" v-model="searchForm.status"
                             @change="getList(false)">
                 <el-radio-button label="">全部</el-radio-button>
                 <el-radio-button :label="key"
-                                 v-for="(item, key) in setting.statusTxt">
+                                 v-for="(item, key) in setting.statusTextList">
                     {{item}}列表
                 </el-radio-button>
             </el-radio-group>
         </el-form-item>
+<?php } ?>
         <el-form-item label="名称过滤" class="padding-right-30">
             <el-input placeholder="请输入内容"
                       v-model="searchTopValue" size="small"
@@ -193,17 +195,17 @@ EOT;
 
         <el-table-column prop="status_text" label="状态" width="80">
             <template slot-scope="scope">
-                <div class="text-more-ellipsis">
-                    <span v-if="scope.row.status == setting.status.disabled"
+                <div class="text-more-ellipsis" v-if="setting.statusList">
+                    <span v-if="scope.row.status == setting.statusList.disabled"
                           v-text="scope.row.status_text"
                           class="pointer text-danger"></span>
-                    <span v-if="scope.row.status == setting.status.open"
+                    <span v-if="scope.row.status == setting.statusList.open"
                           v-text="scope.row.status_text" class="pointer"></span>
                 </div>
             </template>
         </el-table-column>
     <?php } ?>
-    <?php if ($model->hasAttribute('sort')) { ?>
+    <?php if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) { ?>
 
         <el-table-column prop="sort" label="排序" width="85" title="双击修改排序">
             <template slot-scope="scope">
@@ -247,19 +249,21 @@ EOT;
     <?php } ?>
 
         <el-table-column fixed="right" label="操作" width="180">
-            <template slot-scope="scope">
+            <template slot-scope="scope" v-if="setting.statusList">
                 <el-button type="text" size="small"
                            @click.native="goToUpdate(scope.row.id)">编辑
                 </el-button>
+<?php if ($model->hasAttribute('status')) { ?>
                 <el-button type="text text-danger" size="small"
-                           v-if="scope.row.status != setting.status.disabled"
+                           v-if="scope.row.status != setting.statusList.disabled"
                            @click.native="disabledItem(scope.row.id)">
-                    {{setting.statusTxt['-1']}}
+                    {{setting.statusTextList[setting.statusList.disabled]}}
                 </el-button>
-                <el-button type="text text-success" size="small" v-else
-                           @click.native="openItem(scope.row.id)">
-                    {{setting.statusTxt['1']}}
+                <el-button type="text text-success" size="small"
+                           v-else @click.native="openItem(scope.row.id)">
+                    {{setting.statusTextList[setting.statusList.open]}}
                 </el-button>
+<?php } ?>
             </template>
         </el-table-column>
     </el-table>

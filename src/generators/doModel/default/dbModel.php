@@ -46,7 +46,9 @@ use yii\db\Exception;
  */
 class {$modelPath['filename']} extends {$baseModelPath['filename']}
 {
-
+EOT;
+if ($model->hasAttribute('status')) {
+    echo <<<EOT
     /**
      * 状态 列表
      * @var array
@@ -60,14 +62,33 @@ class {$modelPath['filename']} extends {$baseModelPath['filename']}
      * 状态文本 列表
      * @var array
      */
-    private static \$statusListText = [
+    private static \$statusTextList = [
         -1 => '已禁用',
         0 => '未审核',
         1 => '已开启'
     ];
 EOT;
-if ($model->hasAttribute('status')) {
+} if ($model->hasAttribute('type')) {
     echo <<<EOT
+    /**
+     * 类型 列表
+     * @var array
+     */
+    private static \$typeList = [
+        'type1' => 1,
+        'type2' => 2
+    ];
+    /**
+     * 类型文本 列表
+     * @var array
+     */
+    private static \$typeTextList = [
+        1 => '类型一(请自行完善)',
+        2 => '类型二(请自行完善)'
+    ];
+EOT;
+} if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
+        echo <<<EOT
     
     /**
      * 排序最大值
@@ -80,8 +101,8 @@ if ($model->hasAttribute('status')) {
      */
     protected static \$sortMin = -999999;
 EOT;
-}
-echo <<<EOT
+    }
+    echo <<<EOT
     
     
     /**
@@ -112,7 +133,7 @@ echo <<<EOT
         \$parent = parent::rules();
 EOT;
 
-// ******** 有状态渲染状态列表 开始 ********
+// ******** 有[状态]渲染状态列表 开始 ********
 if ($model->hasAttribute('status')) {
     echo <<<EOT
     
@@ -121,7 +142,17 @@ if ($model->hasAttribute('status')) {
 EOT;
 }
 // ******** 有[状态]渲染状态列表 结束 ********
-echo <<<EOT
+
+// ******** 有[类型]渲染状态列表 开始 ********
+if ($model->hasAttribute('type')) {
+    echo <<<EOT
+    
+        // 类型
+        \$typeList = array_values(self::getTypeList());
+EOT;
+}
+// ******** 有[类型]渲染状态列表 结束 ********
+    echo <<<EOT
         
 
         return ArrayHelper::merge(\$parent, [
@@ -135,9 +166,19 @@ if ($model->hasAttribute('status')) {
 EOT;
 }
 // ******** 有[状态]渲染规则 结束 ********
-// ******** 有[排序]渲染规则 开始 ********
-if ($model->hasAttribute('sort')) {
+
+// ******** 有[类型]渲染[rules] 开始 ********
+if ($model->hasAttribute('type')) {
     echo <<<EOT
+    
+            ['type', 'in', 'range' => \$typeList, 'message' => '类型不合法'],
+EOT;
+}
+// ******** 有[类型]渲染规则 结束 ********
+
+// ******** 有[排序]渲染规则 开始 ********
+if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
+        echo <<<EOT
     
             ['sort', 'integer', 'max' => self::getSortMax(), 'min' => self::getSortMin(),
                 'message' => '排序不得超过999999，不得小于-999999'],
@@ -145,7 +186,7 @@ EOT;
 }
 // ******** 有[排序]渲染规则 结束 ********
 
-echo <<<EOT
+    echo <<<EOT
 
         ]);
     }
@@ -160,67 +201,63 @@ echo <<<EOT
         return array_merge(\$parent, [
 EOT;
 // ******** 判断某些字段是否存在预设一些字段的label ********
-if ($model->hasAttribute('id')) {
-    echo <<<EOT
+    if ($model->hasAttribute('id')) {
+        echo <<<EOT
     
             'id' => '编号',
 EOT;
-}
-if ($model->hasAttribute('title')) {
-    echo <<<EOT
+} if ($model->hasAttribute('title')) {
+        echo <<<EOT
     
             'title' => '标题',
 EOT;
-}
-if ($model->hasAttribute('name')) {
-    echo <<<EOT
+} if ($model->hasAttribute('name')) {
+        echo <<<EOT
     
             'name' => '名称',
 EOT;
-}
-if ($model->hasAttribute('role')) {
-    echo <<<EOT
+} if ($model->hasAttribute('role')) {
+        echo <<<EOT
     
             'role' => '角色',
 EOT;
-}
-if ($model->hasAttribute('content')) {
-    echo <<<EOT
+} if ($model->hasAttribute('content')) {
+        echo <<<EOT
     
             'content' => '内容',
 EOT;
-}
-if ($model->hasAttribute('add_time')) {
-    echo <<<EOT
+} if ($model->hasAttribute('add_time')) {
+        echo <<<EOT
     
             'add_time' => '添加时间',
 EOT;
-}
-if ($model->hasAttribute('update_time')) {
-    echo <<<EOT
+} if ($model->hasAttribute('update_time')) {
+        echo <<<EOT
     
             'update_time' => '更新时间',
 EOT;
-}
-if ($model->hasAttribute('action_uid')) {
-    echo <<<EOT
+} if ($model->hasAttribute('action_uid')) {
+        echo <<<EOT
     
             'action_uid' => '操作者编号',
 EOT;
-}
-if ($model->hasAttribute('sort')) {
-    echo <<<EOT
+} if ($model->hasAttribute('sort')) {
+        echo <<<EOT
     
             'sort' => '排序',
 EOT;
-}
-if ($model->hasAttribute('status')) {
+} if ($model->hasAttribute('status')) {
     echo <<<EOT
     
             'status' => '状态',
 EOT;
+} if ($model->hasAttribute('type')) {
+    echo <<<EOT
+    
+            'type' => '类型',
+EOT;
 }
-echo <<<EOT
+    echo <<<EOT
 
         ]);
     }
@@ -295,22 +332,21 @@ echo <<<EOT
             ->limit(\$limit)
 EOT;
 if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
-    echo <<<EOT
+        echo <<<EOT
     
             ->orderBy('sort desc, update_time desc')
 EOT;
 } else if ($model->hasAttribute('sort') && $model->hasAttribute('id')) {
-    echo <<<EOT
+        echo <<<EOT
     
             ->orderBy('sort desc, id desc')
 EOT;
 } else if (!$model->hasAttribute('sort') && !$model->hasAttribute('id')) {
-    echo <<<EOT
+        echo <<<EOT
     
             ->orderBy('id desc')
 EOT;
-}
-echo <<<EOT
+} echo <<<EOT
 
             ->asArray()->all();
 
@@ -318,7 +354,7 @@ echo <<<EOT
         foreach (\$list as \$k => &\$v) {
 EOT;
 if ($model->hasAttribute('update_time')) {
-    echo <<<EOT
+        echo <<<EOT
     
     
             // 更新时间
@@ -327,19 +363,26 @@ if ($model->hasAttribute('update_time')) {
                 \$v['update_time_text_s'] = date('Y-m-d', \$v['update_time']);
             }
 EOT;
-}
-if ($model->hasAttribute('status')) {
+} if ($model->hasAttribute('status')) {
     echo <<<EOT
     
     
-            // 状态文本
+            // 状态 文本
             if (isset(\$v['status'])) {
                 \$v['status_text'] = self::getStatusText(\$v['status']);
             }
 EOT;
-}
-if ($model->hasAttribute('content')) {
+} if ($model->hasAttribute('type')) {
     echo <<<EOT
+    
+    
+            // 类型 文本
+            if (isset(\$v['type'])) {
+                \$v['type_text'] = self::getTypeText(\$v['type']);
+            }
+EOT;
+} if ($model->hasAttribute('content')) {
+        echo <<<EOT
     
     
             // 内容转化下
@@ -348,8 +391,7 @@ if ($model->hasAttribute('content')) {
                 \$v['content'] = CommonModel::addHtmlImgHost(\$v['content']);
             }
 EOT;
-}
-echo <<<EOT
+} echo <<<EOT
 
         }
 
@@ -444,42 +486,42 @@ echo <<<EOT
             // 可以是走[mongoId]
             \$this->id = CommonModel::newMongoId();
 EOT;
-if ($model->hasAttribute('add_time')) {
-    echo <<<EOT
+    if ($model->hasAttribute('add_time')) {
+        echo <<<EOT
     
             // 添加时间
             \$this->add_time = \$nowTime;
 EOT;
-}
-echo <<<EOT
+    }
+    echo <<<EOT
 
         }
 
 EOT;
-if ($model->hasAttribute('update_time')) {
-    echo <<<EOT
+    if ($model->hasAttribute('update_time')) {
+        echo <<<EOT
     
         // 更新时间
         \$this->update_time = \$nowTime;
 EOT;
-}
-if ($model->hasAttribute('action_uid')) {
-    echo <<<EOT
+    }
+    if ($model->hasAttribute('action_uid')) {
+        echo <<<EOT
     
         // 操作者
         \$this->action_uid = \Yii::\$app->getUser()->id;
 EOT;
-}
-if ($model->hasAttribute('content')) {
-    echo <<<EOT
+    }
+    if ($model->hasAttribute('content')) {
+        echo <<<EOT
     
         // 内容取出图片域名
         \$this->content = CommonModel::removeHtmlImgHost(\$this->content);
         // 内容加密下
         \$this->content = htmlspecialchars(\$this->content);
 EOT;
-}
-echo <<<EOT
+    }
+    echo <<<EOT
 
         if (\$this->hasErrors() || !\$this->validate() ||  !\$this->save()) {
 
@@ -555,13 +597,13 @@ echo <<<EOT
             \$addResult = \$db->batchInsert(self::tableName(),
                 [
 EOT;
-                foreach ($model->attributes as $k => $v) {
-echo <<<EOT
+    foreach ($model->attributes as $k => $v) {
+        echo <<<EOT
 
                      '$k',
 EOT;
-                }
-echo <<<EOT
+    }
+    echo <<<EOT
 
                 ], \$createData
             )->execute();
@@ -587,8 +629,8 @@ echo <<<EOT
     }
 EOT;
 
-if ($model->hasAttribute('sort')) {
-    echo <<<EOT
+if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
+        echo <<<EOT
     
     
     /**
@@ -608,8 +650,9 @@ if ($model->hasAttribute('sort')) {
         return self::\$sortMin;
     }
 EOT;
-}
-echo <<<EOT
+    }
+if ($model->hasAttribute('status')) {
+    echo <<<EOT
 
     /**
      * 获取[正常]状态 值
@@ -639,6 +682,23 @@ echo <<<EOT
         return self::\$statusList['disabled'];
     }
     /**
+     * 获取[状态]文本
+     * @param \$value
+     * @return mixed|string
+     */
+    public static function getStatusText(\$value) {
+
+        // 列表
+        \$list = self::\$statusTextList;
+        // 不合法 - 不存在
+        if (empty(\$list[\$value]))
+
+            return '--';
+
+        // 最终正常返回
+        return \$list[\$value];
+    }
+    /**
      * 获取[状态]列表 值
      * @return mixed|string
      */
@@ -648,23 +708,59 @@ echo <<<EOT
         return self::\$statusList;
     }
     /**
-     * 获取[状态]文本
+     * 获取[状态]文本列表 值
+     * @return mixed|string
+     */
+    public static function getStatusTextList() {
+
+        // 最终正常返回
+        return self::\$statusTextList;
+    }
+    
+EOT;
+} if ($model->hasAttribute('type')) {
+    echo <<<EOT
+    
+    /**
+     * 获取[类型]文本
      * @param \$value
      * @return mixed|string
      */
-    public static function getStatusText(\$value) {
-
+    public static function getTypeText(\$value) {
+    
         // 列表
-        \$list = self::\$statusListText;
+        \$list = self::\$typeTextList;
         // 不合法 - 不存在
         if (empty(\$list[\$value]))
-
+    
             return '--';
-
+    
         // 最终正常返回
         return \$list[\$value];
     }
+    /**
+     * 获取[类型]列表 值
+     * @return mixed|string
+     */
+    public static function getTypeList() {
     
+        // 最终正常返回
+        return self::\$typeList;
+    }
+    /**
+     * 获取[类型]文本列表 值
+     * @return mixed|string
+     */
+    public static function getTypeTextList() {
+    
+        // 最终正常返回
+        return self::\$typeTextList;
+    }
+    
+EOT;
+}
+    echo <<<EOT
+
     /**
      * 获取静态错误
      * @return mixed
@@ -674,5 +770,5 @@ echo <<<EOT
         return self::\$error_;
     }
 }
-
 EOT;
+

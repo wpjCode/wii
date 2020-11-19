@@ -14,7 +14,7 @@ if (empty($safeAttributes)) {
  * [<?=$generator->expName?>]表单[JS]
  * @returns {*}
  */
-var app = function (baseParams) {
+var app = function () {
 
     return new Vue({
         el: '#vueContainer',
@@ -63,7 +63,8 @@ EOT;
             customErrMsg: {} // 自定义错误列表
         },
         created: function () {
-
+            // 初始化下设置
+            this.getSetting();
             // 初始化、获取详情
             this.init();
 
@@ -73,6 +74,77 @@ EOT;
             });
         },
         methods: {
+            /**
+             * 获取设置
+             * @returns {boolean}
+             */
+            getSetting: function () {
+                // 正在加载...
+                var loadingInstance = ELEMENT.Loading.service({
+                    fullscreen: false,
+                    text: '加载中...'
+                });
+                var that = this;
+
+                // 获取各模块的值
+                $.ajax({
+                url: $w.getApiUrl('position.setting'),
+                type: 'get',
+                data: {
+                    type: 'index' // 首页
+                },
+                dataType: 'json',
+                success: function (event) {
+
+                    that.$nextTick(function () {
+                        // 隐藏正在加载
+                        loadingInstance.close();
+                    });
+
+                    // 必须先登录
+                    if (parseInt(event.no) === 403) {
+
+                        that.$message({
+                            type: 'warning',
+                            showClose: true,
+                            message: '登陆超时，请重新登陆'
+                        });
+
+                        // 几秒之后移除
+                        return setTimeout(function () {
+                            window.parent.location.href = $w.getPageUrl('login');
+                        }, 810);
+                    }
+
+                    // 操作失败显示错误信息
+                    if (parseInt(event.no) !== 200) {
+
+                        return that.$message({
+                            type: 'error',
+                            showClose: true,
+                            message: event.msg
+                        });
+                    }
+
+                    // 挨个赋值[setting]中
+                    for (var i in event.data) {
+                        if (!event.data.hasOwnProperty(i)) continue;
+                        that.$set(that.setting, i, event.data[i]);
+                    }
+
+                },
+                error: function () {
+
+                    // 按钮正在加载
+                    loadingInstance.close();
+                        return that.$message({
+                        type: 'error',
+                        showClose: true,
+                        message: '操作频繁，请稍后尝试'
+                    });
+                    }
+                });
+            },
             /**
              * 获取下详细信息
              */

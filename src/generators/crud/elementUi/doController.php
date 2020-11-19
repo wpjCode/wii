@@ -13,7 +13,7 @@ use yii\helpers\StringHelper;
 $expName = StringHelper::basename($generator->expName);
 $controllerClass = StringHelper::basename($generator->controllerDoClass);
 $baseModelClass = StringHelper::basename($generator->baseModelClass);
-/* @var $class ActiveRecordInterface */
+/* @var $class \yii\db\ActiveRecord */
 $class = new $generator->baseModelClass();
 $pks = $class::primaryKey();
 $urlParams = $generator->generateUrlParams();
@@ -53,13 +53,17 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
             'verbs' => [ // 请求方式
                 'class' => VerbFilter::className(),
                 'actions' => [
+                    'setting' => ['GET'],
                     'list' => ['GET'],
                     'detail' => ['GET'],
                     'create' => ['POST'],
                     'update' => ['POST'],
+<?php if ($class->hasAttribute('status')) {?>
                     'disabled' => ['POST'],
                     'open' => ['POST'],
+<?php } if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) {?>
                     'sort' => ['POST']
+<?php } ?>
                 ],
             ],
             'access' => [ // 是否游客可以访问
@@ -68,6 +72,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                 'rules' => [
                     [ // 必须登陆才能访问
                         'actions' => [
+                            'setting',
                             'list',
                             'detail',
                             'create',
@@ -95,6 +100,37 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                 }
             ]
         ];
+    }
+
+    /**
+     * 获取设置
+     *  ` PS: 获取某些设置(如：状态列表等)以供前端使用
+     * @return mixed
+     */
+    public function actionSetting()
+    {
+
+        // 类型 - 一般为首页[index]、表单[form]
+        $type = $this->post('type');
+        // 模型
+        $model = PositionModel::loadModel();
+        return $this->jsonSuccess('成功', [
+<?php if ($class->hasAttribute('status') && $class->hasMethod('getStatNormal')) { ?>
+            'defaultStatus' => !empty($type) && $type == 'index' ?
+                $model::getStatNormal() : $model::getStatOpen(), // 默认选中状态
+<?php } else { ?>
+            'defaultStatus' => $model::getStatOpen(), // 默认选中状态
+<?php } if ($class->hasAttribute('status')) { ?>
+            'statusList' => $model::getStatList(), // 状态文本列表值
+            'statusTextList' => $model::getStatusTextList(), // 状态文本列表值
+<?php } if ($class->hasAttribute('type')) { ?>
+            'typeList' => $model::getTypeList(), // 类型列表值
+            'typeTextList' => $model::getTypeTextList(), // 类型文本列表值
+<?php } if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
+            'sortMin' => $model::getSortMin(), // 最小排序值
+            'sortMax' => $model::getSortMax(), // 最大排序值
+<?php } ?>
+        ]);
     }
 
     /**
@@ -343,6 +379,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         return $this->jsonSuccess('成功');
     }
 
+<?php if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
     /**
     * 排序
     * @param array $idList 数据条目|多条数组格式，如：[1,2,3]
@@ -393,4 +430,5 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 
         return $this->jsonSuccess('成功');
     }
+<?php } ?>
 }
