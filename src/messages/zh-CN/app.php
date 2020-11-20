@@ -85,5 +85,6 @@ return [
     'Name Space Label' => '命名空间',
     'Name Space Hint' => '此次生成的操作类命名空间，文件夹必须实际存在。',
     'Render Cache Model DoDbModel is required' => '生成缓存操作类[数据库操作类]必不可少',
-    'file no exits' => '文件不存在'
+    'file no exits' => '文件不存在',
+    'reduce folder title' => '削减一级文件夹'
 ];

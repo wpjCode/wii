@@ -22,17 +22,6 @@ var app = function () {
             loadOver: false,
             setting: {
                 isAdd: false, // 添加状态
-                status: { // 状态列表
-                    disabled: -1,
-                    normal: 1
-                },
-                statusTxt: {
-                    '-1': '禁用',
-                    0: '未审核',
-                    1: '开启',
-                },
-                sortMax: 999999, // 排序允许最大
-                sortMin: -999999, // 排序允许最小
             },
             formRules: {
 <?php foreach ($safeAttributes as $k => $v) {
@@ -63,11 +52,11 @@ EOT;
             customErrMsg: {} // 自定义错误列表
         },
         created: function () {
+
             // 初始化下设置
             this.getSetting();
             // 初始化、获取详情
             this.init();
-
             var that = this;
             this.$nextTick(function () {
                 that.loadOver = true;
@@ -88,7 +77,7 @@ EOT;
 
                 // 获取各模块的值
                 $.ajax({
-                url: $w.getApiUrl('position.setting'),
+                url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.setting'),
                 type: 'get',
                 data: {
                     type: 'index' // 首页
@@ -157,7 +146,7 @@ EOT;
                 });
                 var that = this;
                 // 1. 默认状态是 正常
-                this.form.status = this.setting.status.normal;
+                this.form.status = this.setting.defaultStatus;
 
                 var params = $w.getParams();
 

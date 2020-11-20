@@ -26,6 +26,7 @@ class WiiAsset extends AssetBundle
     public $js = [
         'js/bootstrap.js',
         'js/bs4-native.min.js',
+        'plugin/layer/layer.js',
         'js/gii.js',
         'js/alert.js?v=6',
         'plugin/ztree/js/jquery.ztree.core.min.js',

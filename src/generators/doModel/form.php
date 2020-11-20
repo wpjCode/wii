@@ -17,7 +17,10 @@ echo $form->field($generator, 'nameSpace', [
     'hasFileSvg' => true,
     'fileSvgTitle' => $generator->langString('chose file/folder'),
     'syncFileSvg' => true,
-    'syncFileTitle' => $generator->langString('Sync model class base name')
+    'syncFileTitle' => $generator->langString('Sync model class base name'),
+    'syncExt' => 'Model', // 同步扩展结尾字符
+    'reduceFolder' => true,
+    'reduceFolderTitle' => $generator->langString('reduce folder title')
 ]);
 
 echo $form->field($generator, 'isCacheModel')->checkbox();

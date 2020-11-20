@@ -63,9 +63,9 @@ if ($model->hasAttribute('status')) {
      * @var array
      */
     private static \$statusTextList = [
-        -1 => '已禁用',
-        0 => '未审核',
-        1 => '已开启'
+        -1 => '禁用',
+        0 => '审核',
+        1 => '开启'
     ];
 EOT;
 } if ($model->hasAttribute('type')) {

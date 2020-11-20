@@ -73,7 +73,7 @@ EOT;
     <el-form :inline="true" :model="searchForm" @submit.native.prevent
              class="search-container">
 <?php if ($model->hasAttribute('status')) { ?>
-        <el-form-item label="状态" class="" class="padding-right-30">
+        <el-form-item label="状态" class="" class="padding-right-30" v-if="!setting.isSmallScreen">
             <el-radio-group size="mini" v-model="searchForm.status"
                             @change="getList(false)">
                 <el-radio-button label="">全部</el-radio-button>
@@ -107,16 +107,15 @@ EOT;
             </el-input>
         </el-form-item>
         <el-form-item label="">
-
             <el-button type="primary" icon="el-icon-search"
                        size="small" @click="handleCurrentChange(1)">
                 搜索
             </el-button>
         </el-form-item>
         <el-form-item label="" class="el-form-item-more"
-                      v-if="setting.searchBarWidth < 995">
+                      v-if="setting.isSmallScreen">
             <el-button type="text" @click="moreSearchClick">
-            <span v-if="!setting.showAllSearch">
+            <span v-if="!setting.showMoreSearch">
                 更多&nbsp;<i class="w-icon-dowMore"></i>
             </span>
                 <span v-else>
@@ -125,9 +124,21 @@ EOT;
             </el-button>
         </el-form-item>
         <el-collapse-transition>
-            <div v-show="setting.showAllSearch" id="searchAllAni"
+            <div v-show="setting.showMoreSearch" id="searchAllAni"
                  class="more-search-container">
                 <!-- 此处添加[el-form-item] -->
+                <?php if ($model->hasAttribute('status')) { ?>
+                    <el-form-item label="状态" class="" class="padding-right-30">
+                        <el-radio-group size="mini" v-model="searchForm.status"
+                                        @change="getList(false)">
+                            <el-radio-button label="">全部</el-radio-button>
+                            <el-radio-button :label="key"
+                                             v-for="(item, key) in setting.statusTextList">
+                                {{item}}列表
+                            </el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                <?php } ?>
             </div>
         </el-collapse-transition>
     </el-form>
@@ -197,10 +208,12 @@ EOT;
             <template slot-scope="scope">
                 <div class="text-more-ellipsis" v-if="setting.statusList">
                     <span v-if="scope.row.status == setting.statusList.disabled"
-                          v-text="scope.row.status_text"
+                          v-text="'已' + scope.row.status_text"
                           class="pointer text-danger"></span>
                     <span v-if="scope.row.status == setting.statusList.open"
-                          v-text="scope.row.status_text" class="pointer"></span>
+                          v-text="'已' + scope.row.status_text" class="pointer text-success"></span>
+                    <span v-else v-text="'已' + scope.row.status_text"
+                          class="pointer"></span>
                 </div>
             </template>
         </el-table-column>

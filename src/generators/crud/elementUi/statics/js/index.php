@@ -15,8 +15,9 @@ var app = function () {
         data: {
             loadOver: false,
             setting: {
-                showAllSearch: false, // 是否出现[展示全部查询]按钮
-                searchBarWidth: 0  // 查询条长度 - 来判断展示哪些查询
+                smallScreenWidth: 998, // 小屏幕临界点(px)
+                showMoreSearch: false, // 是否出现[展示全部查询]按钮
+                isSmallScreen: false, // 是否是小屏幕
             },
             searchForm: {}, // 搜索字段
             searchTopType: 'id', // 顶部搜索类型
@@ -28,8 +29,6 @@ var app = function () {
             dataTotal: 0
         },
         created: function () {
-            // 获取下列表
-            this.getList();
             // 初始化下设置
             this.getSetting();
             var that = this;
@@ -52,10 +51,7 @@ var app = function () {
                         title: '',
 <?php } else if ($model->hasAttribute('name')) { ?>
                         name: '',
-<?php } if ($model->hasAttribute('status') && $model->hasMethod('getStatNormal')) { ?>
-                        status: this.setting.statusList.normal
-<?php } else if ($model->hasAttribute('status') && $model->hasMethod('getStatOpen')) { ?>
-                        status: this.setting.statusList.open
+                        status: this.setting.defaultStatus
 <?php } ?>
                     };
                     return true;
@@ -82,7 +78,7 @@ var app = function () {
 
                 // 获取各模块的值
                 $.ajax({
-                    url: $w.getApiUrl('position.setting'),
+                    url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.setting'),
                     type: 'get',
                     data: {
                         type: 'index' // 首页
@@ -91,6 +87,8 @@ var app = function () {
                     success: function (event) {
 
                         that.$nextTick(function () {
+                            // 获取下列表
+                            that.getList();
                             // 隐藏正在加载
                             loadingInstance.close();
                         });
@@ -207,8 +205,8 @@ var app = function () {
                         that.dataTotal = parseInt(event.data.total);
                         // 超过此宽度展示 更多筛选
                         var bodyDom = document.getElementsByTagName('body');
-                        if (bodyDom[0]) {
-                            that.setting.searchBarWidth = bodyDom[0].clientWidth;
+                        if (bodyDom[0] && bodyDom[0].clientWidth <= that.setting.smallScreenWidth) {
+                            that.setting.isSmallScreen = true;
                         }
                     },
                     error: function () {
@@ -227,10 +225,10 @@ var app = function () {
              * [更多查询]按钮点击
             */
             moreSearchClick: function () {
-                if(this.setting.showAllSearch) {
-                    return this.setting.showAllSearch = false;
+                if(this.setting.showMoreSearch) {
+                    return this.setting.showMoreSearch = false;
                 }
-                this.setting.showAllSearch = true;
+                this.setting.showMoreSearch = true;
             },
             /**
              * 列表选择监测处理

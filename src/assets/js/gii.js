@@ -1,11 +1,15 @@
 yii.gii = (function ($) {
-
+    var selInputVal = '',
+        addInput,
+        addSticky,
+        useAlias = 0,
+        cssName = '',
+        jsName = '';
     var $clipboardContainer = $("#clipboard-container"),
         valueToCopy = '',
         ajaxRequest = null,
         doFileName = '',
-
-        onKeydown = function(e) {
+        onKeydown = function (e) {
             var $target;
             $target = $(e.target);
 
@@ -24,8 +28,7 @@ yii.gii = (function ($) {
             $clipboardContainer.empty().show();
             return $("<textarea id='clipboard'></textarea>").val(valueToCopy).appendTo($clipboardContainer).focus().select();
         },
-
-        onKeyup = function(e) {
+        onKeyup = function (e) {
             if ($(e.target).is("#clipboard")) {
                 $("#clipboard-container").empty().hide();
             }
@@ -58,7 +61,7 @@ yii.gii = (function ($) {
         });
     };
 
-    var fillModal = function($link, data) {
+    var fillModal = function ($link, data) {
         var $modal = $('#preview-modal'),
             $modalBody = $modal.find('.modal-body');
         if (!$link.hasClass('modal-refresh')) {
@@ -210,17 +213,227 @@ yii.gii = (function ($) {
                 return $(this).text().toUpperCase().indexOf(that.value.toUpperCase()) > -1;
             }).toggleClass('filter-hidden', false).not('.action-hidden').show();
 
-            $rows.find('input').each(function(){
+            $rows.find('input').each(function () {
                 $(this).prop('disabled', $(this).is(':hidden'));
             });
         });
     };
 
-    $(document).on("keydown", function(e) {
+    /**
+     * 初始化某些东西
+     * @param $dom
+     */
+    var initFunc = function ($dom) {
+        addInput = $($dom['target']).parent().siblings('.form-control');
+        addSticky = $($dom['target']).parent().siblings('.sticky-value');
+        useAlias = $($dom['target']).attr('data-use-alias');
+        useAlias = parseInt(useAlias) === 0 ? false : true;
+    };
+
+    /**
+     * 过滤、格式化异步节点返回数据
+     * @param treeId
+     * @param parentNode
+     * @param $response
+     * @returns {Array}
+     */
+    var nodeFilter = function (treeId, parentNode, $response) {
+        var html = [];
+        var htmlItem = [];
+        for (var i in $response.data) {
+            if (!$response.data.hasOwnProperty(i)) continue;
+            htmlItem = {
+                pid: $response.data[i]['name'],
+                name: $response.data[i]['name'],
+                isParent: true,
+                isLoadedChildren: false,
+                nameSpace: $response.data[i]['nameSpace'],
+                path: $response.data[i]['path'],
+                nameAlias: $response.data[i]['nameAlias']
+            };
+
+            // 非文件夹
+            if (parseInt($response.data[i]['isFolder']) !== 1) {
+                htmlItem.isParent = false;
+            }
+
+            // 子集有数据的话，仿造[response]数据返回打开
+            if ($response.data[i]['children']) {
+                htmlItem['children'] = nodeFilter(false, false, {
+                    data: $response.data[i]['children']
+                });
+                htmlItem['open'] = true;
+            }
+
+            // 不适用别名 命名空间相同 则默认点选
+            if (!useAlias && htmlItem['nameSpace'] === selInputVal) {
+                htmlItem['isHover'] = true;
+            } else if (useAlias && htmlItem['nameAlias'] === selInputVal) {
+                // 适用别名 别相同 则默认点选
+                htmlItem['isHover'] = true;
+            }
+
+            html.push(htmlItem);
+
+        }
+
+        return html;
+    };
+
+    /**
+     * 用于在节点上固定显示用户自定义控件
+     */
+    var addDiyDom = function ($treeId, $treeNode) {
+        if (!$treeNode.isParent) {
+            return false;
+        }
+        var nodeIdStr = $treeNode.tId;
+        var addIdStr = $treeNode.tId + '_a';
+        var reloadIdStr = 'reloadBtn_' + $treeNode.tId;
+        var editStr =
+            "<span class='reload-icon' id='" + reloadIdStr + "' " +
+            "data-node-id='" + nodeIdStr + "' " +
+            "title='刷新文件'>" +
+            "</span>";
+
+        $("#" + addIdStr).after(editStr);
+        $('#' + reloadIdStr).on('click', reloadNode);
+    };
+
+    /**
+     * 重新新加载当前[NODE]下文件列表
+     * @param $dom
+     */
+    var reloadNode = function ($dom) {
+
+        var nodeId = $($dom['target']).attr('data-node-id');
+        var zTree = $.fn.zTree.getZTreeObj("zTree"),
+            type = "refresh",
+            silent = false;
+        /*根据 zTree 的唯一标识 tId 快速获取节点 JSON 数据对象*/
+        var parentNode = zTree.getNodeByTId(nodeId);
+
+        if (!parentNode) {
+            alert('未找到此节点');
+            return false;
+        }
+        /*选中指定节点*/
+        zTree.selectNode(parentNode);
+        zTree.reAsyncChildNodes(parentNode, type, silent);
+    };
+
+    /**
+     * 检测[node]点击
+     * @param event
+     * @param treeId
+     * @param treeNode
+     */
+    var onExpand = function (event, treeId, treeNode) {
+        // var treeObj = $.fn.zTree.getZTreeObj(treeId);
+        // var newNodes = [{name:"newNode1"}, {name:"newNode2"}, {name:"newNode3"}];
+        // treeObj.addNodes(treeNode, newNodes);
+    };
+
+    /**
+     * 检测[node]创建完毕
+     */
+    var nodeCreated = function (event, treeId, treeNode) {
+
+        var treeObj = $.fn.zTree.getZTreeObj(treeId);
+        var selVal = $(addInput).val();
+        // 不适用[别名] 则默认点选根据[命名空间]
+        if (!useAlias && treeNode['nameSpace'] === selVal) {
+            treeObj.selectNode(treeNode);
+            // 最后调用下点击
+            nodeClick(event, treeId, treeNode);
+        } else if (useAlias && treeNode['nameAlias'] === selVal) {
+            // 适用[别名] 则默认点选根据[别名]
+            treeObj.selectNode(treeNode);
+            // 最后调用下点击
+            nodeClick(event, treeId, treeNode);
+        }
+    };
+
+    /**
+     * 检测[node]点击
+     * @param event
+     * @param treeId
+     * @param treeNode
+     */
+    var nodeClick = function (event, treeId, treeNode) {
+        // 需要赋值别名的
+        if (useAlias === true || useAlias === 'true' || parseInt(useAlias) === 1) {
+            selInputVal = treeNode['nameAlias'];
+        } else { // 其他走命名空间
+            selInputVal = treeNode['nameSpace']
+        }
+    };
+
+    /**
+     * 根据基础类获取CSS、JS文件名
+     * @returns {boolean}
+     */
+    var getJsCssPath = function () {
+        var val = $('#generator-basemodelclass').val();
+        if (!val || val.length < 1) {
+            console.error('基础模型的名称无法获取：' + val);
+            return layer.msg('请选择基础类文件');
+        }
+        val = val.split('\\');
+        val = val.slice(-1)[0];
+        val = val.match(/[A-Z][a-z]+|[0-9][0-9]+/g);
+        if (val && val.slice(-1) && (val.slice(-1)[0] === 'Model')) {
+            val.pop();
+        }
+        if (val && val.slice(-1) && (val.slice(-1)[0] === 'Controller')) {
+            val.pop();
+        }
+        if (!val || val.length < 1) {
+            return layer.msg('请选择基础类文件，必须是一个具体文件');
+        }
+        return (val.join('-')).toLowerCase();
+    };
+
+    /**
+     * 确定选择文件夹
+     * @returns {*}
+     */
+    var selectSureFolder = function () {
+
+        if (!selInputVal || selInputVal.length < 1) {
+            return layer.msg('未选择或者选择的文件/夹为空');
+        }
+        // 正在操作的input是[js]
+        if ($(addInput).attr('id').indexOf('js') !== -1) {
+            // input值赋值
+            addInput.val(selInputVal + '/' + jsName);
+            // 展示框值赋值
+            return addSticky.text(selInputVal + '/' + jsName);
+        }
+        // 正在操作的input是[css]
+        if ((addInput).attr('id').indexOf('css') !== -1) {
+            // input值赋值
+            addInput.val(selInputVal + '/' + cssName);
+            // 展示框值赋值
+            return addSticky.text(selInputVal + '/' + cssName);
+        }
+        // input值赋值
+        addInput.val(selInputVal);
+        // 展示框值赋值
+        addSticky.text(selInputVal);
+    };
+
+    $(document).on("keydown", function (e) {
         if (valueToCopy && (e.ctrlKey || e.metaKey) && (e.which === 67)) {
             return onKeydown(e);
         }
     }).on("keyup", onKeyup);
+
+    // 默认打开先走一下获取资源文件路径
+    var copyList = $('.cpy-some');
+    if (copyList && copyList.length > 1) {
+        getJsCssPath();
+    }
 
     return {
         init: function () {
@@ -254,9 +467,9 @@ yii.gii = (function ($) {
                 }
                 if ($('#generator-modelclass').val() === '' && tableName && tableName.indexOf('*') === -1) {
                     var modelClass = '';
-                    $.each(tableName.split(/\.|\_/), function() {
-                        if(this.length>0)
-                            modelClass+=this.substring(0,1).toUpperCase()+this.substring(1);
+                    $.each(tableName.split(/\.|\_/), function () {
+                        if (this.length > 0)
+                            modelClass += this.substring(0, 1).toUpperCase() + this.substring(1);
                     });
                     $('#generator-modelclass').val(modelClass).blur();
                 }
@@ -310,6 +523,130 @@ yii.gii = (function ($) {
                 if (value && value[1] && $idInput.val() === '') {
                     $idInput.val(value[1]);
                 }
+            });
+
+            // 选择文件夹点击
+            $('.can-chose-folder').on('click', function ($dom) {
+
+                initFunc($dom);
+                $.post('/wii/default/see-folder', {
+                    openPath: addInput.val()
+                }, function ($response) {
+
+                    var html = nodeFilter('', '', $response);
+                    var dom = $("#zTree");
+                    $.fn.zTree.init(dom, {
+                        treeId: 'ztree',
+                        treeObj: dom,
+                        async: {
+                            enable: true,
+                            dataType: "JSON",
+                            url: "/wii/default/see-folder",
+                            autoParam: ["path=parentFolder"],
+                            dataFilter: nodeFilter
+                        },
+                        view: {
+                            // addHoverDom: addHoverDom,
+                            // removeHoverDom: removeHoverDom,
+                            addDiyDom: addDiyDom
+                        },
+                        callback: {
+                            /**
+                             * 检测[node]展开
+                             * @param event
+                             * @param treeId
+                             * @param treeNode
+                             */
+                            onExpand: onExpand,
+                            /**
+                             * 检测[node]点击
+                             * @param event
+                             * @param treeId
+                             * @param treeNode
+                             */
+                            onClick: nodeClick,
+                            /**
+                             * 检测[node]创建完毕之后
+                             * @param event
+                             * @param treeId
+                             * @param treeNode
+                             */
+                            onNodeCreated: nodeCreated
+                        }
+                    }, html);
+                }, 'JSON');
+                var doName = $($dom['target']).parent().siblings('label').text();
+                selfTool.alert({
+                    Title: '请选择：【' + doName + '】',
+                    Message: '加载中...',
+                    width: '100%',
+                    okBtnId: 'choseSpace'
+                });
+
+                // 检测确定选择
+                $('#choseSpace').on('click', selectSureFolder);
+            });
+
+            // 点击赋值文件名按钮
+            $('.can-copy-name').on('click', function ($dom) {
+                // 先获取下类JS\CSS基础名
+                getJsCssPath();
+                // 初始化
+                initFunc($dom);
+                // 先获取 基础模块 名称
+                var modelName = $('#generator-basemodelclass').val();
+                // 获取最后名称
+                modelName = modelName.split('\\').pop();
+                modelName = modelName.replace('Model', '');
+                if (!modelName || modelName.length < 1) {
+                    layer.msg('请先填写[基础类路径]', {
+                        offset: document.body.clientHeight - 100 + 'px'
+                    });
+                    return false;
+                }
+
+                // 最终生成的
+                var endName = $(addInput).val();
+                // 最后是否需要增加/或\
+                if (endName.charAt(endName.length - 1) !== '\\' &&
+                    endName.charAt(endName.length - 1) !== '/'
+                )
+                    endName = endName + (useAlias ? '/' : '\\');
+
+                // 获取结尾字符串
+                var endExt = $($($dom['target'])).data('sync-ext');
+                // 结尾字符串存在
+                if (endExt)
+                    endName = endName + modelName + endExt;
+                else
+                    endName = endName + getJsCssPath();
+                var layerId = layer.confirm('自动生成的文件名为<code>' + endName + '</code>是否继续？', {
+                    title: '确认操作',
+                    btn: ['确定', '取消']
+                }, function () {
+                    $(addInput).val(endName).change();
+                    $(addSticky).text(endName);
+                    layer.close(layerId);
+                });
+            });
+
+            // 返回上一级文件夹点击
+            $('.reduce-folder').on('click', function ($target) {
+                // 初始化
+                initFunc($target);
+                // 分割字符串
+                var path = !useAlias ? addInput.val().split('\\') : addInput.val().split('/');
+                // 删除掉最后一个元素
+                path.pop();
+                // '\'合并
+                path = !useAlias ? path.join('\\') : path.join('/');
+                if (!path) {
+                    layer.msg('已经是初始文件夹');
+                    return 'app';
+                }
+                // 赋值
+                addSticky.text(path);
+                addInput.val(path);
             });
         }
     };

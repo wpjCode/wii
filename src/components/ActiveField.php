@@ -46,10 +46,25 @@ class ActiveField extends \yii\widgets\ActiveField
      */
     public $syncFileTitle = 'copy name';
     /**
+     * 同步名称结尾扩展名
+     * @var string
+     */
+    public $syncExt = '';
+    /**
      * 是否可以选择文件 使用别名返回模式
      * @var string
      */
     public $useAlias = false;
+    /**
+     * 是否可以返回上一级目录
+     * @var string
+     */
+    public $reduceFolderTitle = 'reduce next folder';
+    /**
+     * 是否可以返回上一级目录 使用别名返回模式
+     * @var string
+     */
+    public $reduceFolder = false;
 
     /**
      * {@inheritdoc}
@@ -150,11 +165,21 @@ class ActiveField extends \yii\widgets\ActiveField
             ]);
         }
 
+        // 有返回一级文件夹
+        if ($this->reduceFolder) {
+            $html[] = Html::tag('div', '', [
+                'class' => 'reduce-folder can can-reduce-folder',
+                'title' => $this->reduceFolderTitle,
+                'data-use-alias' => $this->useAlias ? 1 : 0
+            ]);
+        }
+
         // 有同步文件名
         if ($this->syncFileSvg) {
             $html[] = Html::tag('div', '', [
                 'class' => 'cpy-some can can-copy-name',
                 'title' => $this->syncFileTitle,
+                'data-sync-ext' => $this->syncExt,
                 'data-use-alias' => $this->useAlias ? 1 : 0
             ]);
         }

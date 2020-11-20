@@ -113,7 +113,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         // 类型 - 一般为首页[index]、表单[form]
         $type = $this->post('type');
         // 模型
-        $model = PositionModel::loadModel();
+        $model = <?= $baseModelClass ?>::loadModel();
         return $this->jsonSuccess('成功', [
 <?php if ($class->hasAttribute('status') && $class->hasMethod('getStatNormal')) { ?>
             'defaultStatus' => !empty($type) && $type == 'index' ?
@@ -209,7 +209,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         ]);
 
 <?php if ($class->hasAttribute('content')) { ?>
-        $detail['content'] = htmlspecialchars_decode($detail['content']);;
+        $detail['content'] = htmlspecialchars_decode($detail['content']);
         $detail['content'] = CommonModel::addHtmlImgHost($detail['content']);
 <?php } ?>
 
