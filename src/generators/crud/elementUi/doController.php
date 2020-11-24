@@ -91,12 +91,17 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     ]
                 ],
                 'denyCallback' => function ($rule, $action) {
-                    // 未登录检测
-                    if (\Yii::$app->user->isGuest) {
-                        return $this->jsonFail('请先登录', 403, [
-                        'errorHint' => '您还未登录'
+                    // 未登录
+                    if (\Yii::$app->admin->isGuest) {
+                        return $this->jsonFail('会话过期，请先登录', 403, [
+                            'errorHint' => '您还未登录'
                         ]);
                     }
+
+                    // 其余页面未找到
+                    return $this->jsonFail('会话过期，请先登录', 403, [
+                        'errorHint' => '您还未登录'
+                    ]);
                 }
             ]
         ];
@@ -111,7 +116,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     {
 
         // 类型 - 一般为首页[index]、表单[form]
-        $type = $this->post('type');
+        $type = $this->get('type');
         // 模型
         $model = <?= $baseModelClass ?>::loadModel();
         return $this->jsonSuccess('成功', [
@@ -173,7 +178,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 
     /**
      * 详情
-     * @param string $id 用户编号
+     * @param string $id 编号
      * @return mixed
      */
     public function actionDetail()

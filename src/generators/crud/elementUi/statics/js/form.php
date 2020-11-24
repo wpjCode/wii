@@ -27,7 +27,7 @@ var app = function () {
 <?php foreach ($safeAttributes as $k => $v) {
     echo <<<EOT
                 {$v}: [
-                    {required: true, message: '请填写{$model->getAttributeLabel($v)}', trigger: 'blur'}
+                    {required: true, message: '请完善{$model->getAttributeLabel($v)}', trigger: 'blur'}
                 ]
 EOT;
     if ($k < (count($safeAttributes) -1)) {
@@ -80,7 +80,7 @@ EOT;
                 url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.setting'),
                 type: 'get',
                 data: {
-                    type: 'index' // 首页
+                    type: 'form' // 表单页
                 },
                 dataType: 'json',
                 success: function (event) {
@@ -121,6 +121,8 @@ EOT;
                         that.$set(that.setting, i, event.data[i]);
                     }
 
+                    // 1. 默认状态是 正常
+                    that.form.status = that.setting.defaultStatus;
                 },
                 error: function () {
 
@@ -145,17 +147,15 @@ EOT;
                     text: '获取中...'
                 });
                 var that = this;
-                // 1. 默认状态是 正常
-                this.form.status = this.setting.defaultStatus;
 
                 var params = $w.getParams();
 
                 // id参数存在
                 if (!params['id'] || params['id'] === undefined) {
 
-                    loadingInstance.close();
+                    this.loadOver = true;
                     this.setting.isAdd = true; // 正在添加
-                    return this.loadOver = true;
+                    return loadingInstance.close();
                 }
 
                 this.setting.isAdd = false; // 正在修改

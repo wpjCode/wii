@@ -308,17 +308,19 @@ class <?=$renderModel['filename']?> extends <?=$baseModel['filename'] . "\n"?>
         $stagingWhere = ['and'];
         foreach ($where as $k => $v) {
 
-            // 首先值是有的，不能是空
-            if (strlen($v) > 0 && is_array($v) && count($v) > 0 && $this->hasAttribute($k)) {
+            // 数组 - 首先值是有的，不能是空
+            if (is_array($v) && count($v) > 0 && $this->hasAttribute($k)) {
 
                 $stagingWhere[] = ['IN', $k, array_values($v)];
                 continue;
             }
 
-            // 首先值是有的，不能是空
-            if (strlen($v) > 0 && $this->hasAttribute($k))
+            // 字符串 - 首先值是有的，不能是空
+            if (is_string($v) && strlen($v) > 0 && $this->hasAttribute($k)) {
 
                 $stagingWhere[] = ['=', $k, $v];
+                continue;
+            }
         }
 
         // 条件最终赋值

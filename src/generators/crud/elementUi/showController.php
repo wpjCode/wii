@@ -76,11 +76,18 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                 ],
                 'denyCallback' => function ($rule, $action) {
                     // 未登录检测
-                    if (\Yii::$app->user->isGuest) {
-                        return $this->jsonFail('请先登录', 403, [
+                    if (\Yii::$app->admin->isGuest) {
+                        echo $this->showError('请先登录', 403, [
                             'errorHint' => '您还未登录'
                         ]);
+                        return true;
                     }
+
+                    // 其余为 [404]
+                    echo $this->showError('页面不存在', 404, [
+                        'title' => '页面不存在'
+                    ]);
+                    return true;
                 }
             ]
         ];

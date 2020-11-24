@@ -46,9 +46,11 @@ use yii\db\Exception;
  */
 class {$modelPath['filename']} extends {$baseModelPath['filename']}
 {
+
 EOT;
 if ($model->hasAttribute('status')) {
-    echo <<<EOT
+echo <<<EOT
+    
     /**
      * 状态 列表
      * @var array
@@ -67,9 +69,12 @@ if ($model->hasAttribute('status')) {
         0 => '审核',
         1 => '开启'
     ];
+    
 EOT;
 } if ($model->hasAttribute('type')) {
     echo <<<EOT
+    
+    
     /**
      * 类型 列表
      * @var array
@@ -86,9 +91,11 @@ EOT;
         1 => '类型一(请自行完善)',
         2 => '类型二(请自行完善)'
     ];
+    
 EOT;
 } if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
         echo <<<EOT
+    
     
     /**
      * 排序最大值
@@ -100,6 +107,7 @@ EOT;
      * @var int
      */
     protected static \$sortMin = -999999;
+    
 EOT;
     }
     echo <<<EOT
@@ -115,7 +123,6 @@ EOT;
      * @var array
      */
     private \$where = [];
-
     /**
      * 静态错误暂存
      * @var
@@ -332,7 +339,7 @@ EOT;
             ->limit(\$limit)
 EOT;
 if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
-        echo <<<EOT
+    echo <<<EOT
     
             ->orderBy('sort desc, update_time desc')
 EOT;
@@ -453,17 +460,19 @@ EOT;
         \$stagingWhere = ['and'];
         foreach (\$where as \$k => \$v) {
 
-            // 首先值是有的，不能是空
-            if (strlen(\$v) > 0 && is_array(\$v) && count(\$v) > 0 && \$this->hasAttribute(\$k)) {
+            // 数组 - 首先值是有的，不能是空
+            if (is_array(\$v) && count(\$v) > 0 && \$this->hasAttribute(\$k)) {
 
                 \$stagingWhere[] = ['IN', \$k, array_values(\$v)];
                 continue;
             }
 
-            // 首先值是有的，不能是空
-            if (strlen(\$v) > 0 && \$this->hasAttribute(\$k))
+            // 字符串 - 首先值是有的，不能是空
+            if (is_string(\$v) && strlen(\$v) > 0 && \$this->hasAttribute(\$k)) {   
 
                 \$stagingWhere[] = ['=', \$k, \$v];
+                continue;
+            }
         }
 
         // 条件最终赋值
@@ -627,6 +636,7 @@ EOT;
             return false;
         }
     }
+    
 EOT;
 
 if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
@@ -649,10 +659,12 @@ if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
     {
         return self::\$sortMin;
     }
+    
 EOT;
     }
 if ($model->hasAttribute('status')) {
     echo <<<EOT
+    
 
     /**
      * 获取[正常]状态 值

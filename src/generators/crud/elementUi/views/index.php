@@ -210,7 +210,7 @@ EOT;
                     <span v-if="scope.row.status == setting.statusList.disabled"
                           v-text="'已' + scope.row.status_text"
                           class="pointer text-danger"></span>
-                    <span v-if="scope.row.status == setting.statusList.open"
+                    <span v-else-if="scope.row.status == setting.statusList.open"
                           v-text="'已' + scope.row.status_text" class="pointer text-success"></span>
                     <span v-else v-text="'已' + scope.row.status_text"
                           class="pointer"></span>

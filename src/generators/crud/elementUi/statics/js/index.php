@@ -49,7 +49,7 @@ var app = function () {
                         id: '',
 <?php if ($model->hasAttribute('title')) { ?>
                         title: '',
-<?php } else if ($model->hasAttribute('name')) { ?>
+<?php } else if ($model->hasAttribute('status')) { ?>
                         name: '',
                         status: this.setting.defaultStatus
 <?php } ?>
