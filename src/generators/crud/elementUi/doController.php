@@ -123,7 +123,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 <?php if ($class->hasAttribute('status') && $class->hasMethod('getStatNormal')) { ?>
             'defaultStatus' => !empty($type) && $type == 'index' ?
                 $model::getStatNormal() : $model::getStatOpen(), // 默认选中状态
-<?php } else { ?>
+<?php } else if ($class->hasAttribute('status')) { ?>
             'defaultStatus' => $model::getStatOpen(), // 默认选中状态
 <?php } if ($class->hasAttribute('status')) { ?>
             'statusList' => $model::getStatList(), // 状态文本列表值
@@ -410,7 +410,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         }
 
         // 排序值获取
-        $sort = intval(trim($this->post('sort')));;
+        $sort = $this->post('sort', 'int', 0);
         // 看获取的[data]是否为空
         if (!isset($sort)) return $this->jsonFail('排序不能为空', 400);
 

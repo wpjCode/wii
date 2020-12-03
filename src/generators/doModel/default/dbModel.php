@@ -74,7 +74,7 @@ EOT;
 } if ($model->hasAttribute('type')) {
     echo <<<EOT
     
-    
+ 
     /**
      * 类型 列表
      * @var array
@@ -128,7 +128,6 @@ EOT;
      * @var
      */
     private static \$error_;
-
 
     /**
      * 规则验证
@@ -360,8 +359,18 @@ EOT;
         // 格式化数据
         foreach (\$list as \$k => &\$v) {
 EOT;
-if ($model->hasAttribute('update_time')) {
-        echo <<<EOT
+if ($model->hasAttribute('add_time')) {
+    echo <<<EOT
+    
+    
+            // 更新时间
+            if (isset(\$v['add_time'])) {
+                \$v['add_time_text'] = date('Y-m-d H:i:s', \$v['add_time']);
+                \$v['add_time_text_s'] = date('Y-m-d', \$v['add_time']);
+            }
+EOT;
+} if ($model->hasAttribute('update_time')) {
+    echo <<<EOT
     
     
             // 更新时间
@@ -419,7 +428,7 @@ EOT;
         // 基础 where加载完毕
         \$count = \$this->sqlBase->count();
 
-        return \$count;
+        return intval(\$count);
     }
     
     /**
@@ -468,7 +477,7 @@ EOT;
             }
 
             // 字符串 - 首先值是有的，不能是空
-            if (is_string(\$v) && strlen(\$v) > 0 && \$this->hasAttribute(\$k)) {   
+            if (strlen(\$v) > 0 && \$this->hasAttribute(\$k)) {   
 
                 \$stagingWhere[] = ['=', \$k, \$v];
                 continue;
@@ -534,6 +543,16 @@ EOT;
 
         if (\$this->hasErrors() || !\$this->validate() ||  !\$this->save()) {
 
+            // 记录下错误日志
+            \Yii::error([
+
+                "`````````````````````````````````````````````````````````",
+                "``                      数据库错误                       ``",
+                "`` 错误详情: [$generator->expName]保存数据失败             ``",
+                "`` 错误信息和参数详情:                                     ``",
+                "`````````````````````````````````````````````````````````",
+                \$this->getErrors()
+            ], 'normal');
             return false;
         }
 
@@ -637,6 +656,53 @@ EOT;
         }
     }
     
+    
+    /**
+     * 更新某些字段自增|自减
+     * @param \$condition
+     * @param array \$fieldVal 增/减加的字段
+     * @return bool
+     */
+    public static function updateCounter(\$condition, \$fieldVal = [])
+    {
+
+        \$model = new self();
+        foreach (\$fieldVal as \$k => \$v) {
+
+            if (!\$model->hasAttribute(\$k)) {
+
+                unset(\$fieldVal[\$k]);
+                continue;
+            }
+        }
+
+        try {
+
+            \$model->updateAllCounters(\$fieldVal, \$condition);
+
+            // 否则成功
+            return true;
+        } catch (\Exception \$error) {
+
+            // 记录下错误日志
+            \Yii::error([
+
+                "`````````````````````````````````````````````````````````",
+                "``                      数据库错误                       ``",
+                "`` 错误详情: [$generator->expName]批量增/减[指定字段]失败   ``",
+                "``         {\$error->getMessage()}                       ``",
+                "`` 错误信息和参数详情:                                     ``",
+                "`````````````````````````````````````````````````````````",
+                \$error->getTraceAsString()
+            ], 'normal');
+
+            self::\$error_ = empty(\$error->errorInfo) ?
+                \$error->getMessage() :
+                implode(' | ', \$error->errorInfo);
+
+            return false;
+        }
+    }
 EOT;
 
 if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {

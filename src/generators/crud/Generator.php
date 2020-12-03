@@ -620,13 +620,13 @@ class Generator extends \wpjCode\wii\Generator
         $label = $this->getColumnLabel($attribute);
 
         return <<<EOT
-                    <el-form-item label="{$label}" prop="{$attribute}" class="has-warning-form"
-                            :error="customErrMsg.{$attribute}">
-                          
-                        <el-input v-model="form.{$attribute}" size="small" class="has-warning-input">
-                        </el-input>
+                <el-form-item label="{$label}" prop="{$attribute}" class="has-warning-form"
+                        :error="customErrMsg.{$attribute}">
+                      
+                    <el-input v-model="form.{$attribute}" size="small" class="has-warning-input">
+                    </el-input>
 
-                    </el-form-item>
+                </el-form-item>
 EOT;
     }
 
@@ -641,19 +641,19 @@ EOT;
         $label = $this->getColumnLabel($attribute);
 
         return <<<EOT
-                    <el-form-item label="{$label}" prop="{$attribute}" class="has-warning-form"
-                            :error="customErrMsg.{$attribute}">
-                          
-                        <el-radio-group v-model="form.{$attribute}" size="mini">
-
-                            <el-radio v-for="(item, key) in setting.{$attribute}TextList"
-                                :label="parseInt(key)">
-                                {{item}}
-                            </el-radio>
-
-                        </el-radio-group>
-
-                    </el-form-item>
+                <el-form-item label="{$label}" prop="{$attribute}" class="has-warning-form"
+                        :error="customErrMsg.{$attribute}">
+                      
+                    <el-radio-group v-model="form.{$attribute}" size="mini">
+                
+                        <el-radio v-for="(item, key) in setting.{$attribute}TextList"
+                            :label="parseInt(key)">
+                            {{item}}
+                        </el-radio>
+                
+                    </el-radio-group>
+                
+                </el-form-item>
 EOT;
     }
 
@@ -666,14 +666,14 @@ EOT;
     public function generateTextArea($attribute, $column = null) {
         $label = $this->getColumnLabel($attribute);
         return <<<EOT
-                    <el-form-item label="{$label}" prop="{$attribute}" :inline-message="true"
-                          class="has-warning-form" :error="customErrMsg.{$attribute}">
-                        
-                        <el-input type="textarea" placeholder="请输入内容" v-model="form.{$attribute}"
-                            maxlength="300" show-word-limit :autosize="{ minRows: 6}">
-                        </el-input>
+                <el-form-item label="{$label}" prop="{$attribute}" :inline-message="true"
+                      class="has-warning-form" :error="customErrMsg.{$attribute}">
+                    
+                    <el-input type="textarea" placeholder="请输入内容" v-model="form.{$attribute}"
+                        maxlength="300" show-word-limit :autosize="{ minRows: 6}">
+                    </el-input>
 
-                    </el-form-item>
+                </el-form-item>
 EOT;
     }
 

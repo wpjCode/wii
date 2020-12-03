@@ -49,8 +49,9 @@ var app = function () {
                         id: '',
 <?php if ($model->hasAttribute('title')) { ?>
                         title: '',
-<?php } else if ($model->hasAttribute('status')) { ?>
+<?php } if ($model->hasAttribute('name')) { ?>
                         name: '',
+<?php } if ($model->hasAttribute('status')) { ?>
                         status: this.setting.defaultStatus
 <?php } ?>
                     };
@@ -60,9 +61,11 @@ var app = function () {
                 this.searchForm['id'] = '';
 <?php if ($model->hasAttribute('title')) { ?>
                 this.searchForm['title'] = '';
-<?php } else if ($model->hasAttribute('name')) { ?>
+<?php } if ($model->hasAttribute('name')) { ?>
                 this.searchForm['name'] = '';
-<?php }?>
+<?php } if ($model->hasAttribute('status')) { ?>
+                this.searchForm['status'] = this.setting.defaultStatus
+<?php } ?>
             },
             /**
              * 获取设置
@@ -513,7 +516,7 @@ var app = function () {
                     url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.sort'),
                     type: 'POST',
                     data: {
-                        id: $row['id'],
+                        idList: $row['id'],
                         sort: parseInt($row['newSort'])
                     },
                     dataType: "json",

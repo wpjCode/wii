@@ -239,6 +239,7 @@ EOT;
                         return false;
                     }
 
+<?php if ($model->hasAttribute('sort')) {?>
                     // 是否越出范围值 大于
                     if (parseInt(that.form.sort) > that.setting.sortMax) {
 
@@ -264,7 +265,7 @@ EOT;
                         return that.$set(that.customErrMsg, 'sort',
                             '排序最小不得小于 ' + that.setting.sortMin);
                     }
-
+<?php } ?>
                     // 正在加载。。
                     var loadingInstance = ELEMENT.Loading.service({
                         fullscreen: false,
@@ -346,6 +347,7 @@ EOT;
                     // 验证不过
                     if (!valid) {return false;}
 
+<?php if ($model->hasAttribute('sort')) {?>
                     // 是否越出范围值 大于
                     if (parseInt(that.form.sort) > that.setting.sortMax) {
 
@@ -371,6 +373,7 @@ EOT;
                         return that.$set(that.customErrMsg, 'sort',
                             '排序最小不得小于 ' + that.setting.sortMin);
                     }
+<?php } ?>
 
                     // 正在加载。。
                     var loadingInstance = ELEMENT.Loading.service({
