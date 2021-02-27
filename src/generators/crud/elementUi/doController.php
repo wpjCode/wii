@@ -99,8 +99,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     }
 
                     // 其余页面未找到
-                    return $this->jsonFail('会话过期，请先登录', 403, [
-                        'errorHint' => '您还未登录'
+                    return $this->jsonFail('页面未找到', 404, [
+                        'errorHint' => '页面未找到'
                     ]);
                 }
             ]
@@ -132,8 +132,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
             'typeList' => $model::getTypeList(), // 类型列表值
             'typeTextList' => $model::getTypeTextList(), // 类型文本列表值
 <?php } if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
-            'sortMin' => $model::getSortMin(), // 最小排序值
-            'sortMax' => $model::getSortMax(), // 最大排序值
+            'minSort' => $model::getMinSort(), // 最小排序值
+            'maxSort' => $model::getMaxSort(), // 最大排序值
 <?php } ?>
         ]);
     }

@@ -9,6 +9,7 @@
 use \yii\helpers\StringHelper;
 
 /* @var $generator wpjCode\wii\generators\doModel\Generator */
+$schema = $generator->getTableSchema();
 
 /* @var $model \yii\db\ActiveRecord */
 $model = new $generator->baseModelClass();
@@ -18,6 +19,11 @@ $modelPath = pathinfo($modelClass);
 
 $baseModelClass = str_replace('\\', '/', $generator->baseModelClass);
 $baseModelPath = pathinfo($baseModelClass);
+
+// 最大排序
+$maxSort = 999999;
+// 最小排序
+$minSort = -999999;
 
 echo '<?php';
 
@@ -48,52 +54,73 @@ class {$modelPath['filename']} extends {$baseModelPath['filename']}
 {
 
 EOT;
-if ($model->hasAttribute('status')) {
+if (property_exists($schema, 'columns')) {
+    foreach ($schema->columns as $k => $v) {
+        // 数据库类型不存在下一循
+        if (!property_exists($v, 'dbType')) continue;
+
+        // 如果是枚举数字类型则进行渲染 枚举列表
+        if (strstr($v->dbType, 'tinyint')) {
+
+        # 保证说明
+        $comment = property_exists($v, 'comment')?$v->comment:'--';
+
+        # [ucwords]将每个单词的首字母大写
+        # [str_replace]字符串替换
+        $capFirstName = ucwords(str_replace('_',' ',$v->name));
+        # [ucfirst]将所有的字符串首字母大写；
+        $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+        # 首字母小写
+        $lowFirstName = lcfirst($capFirstName);
 echo <<<EOT
-    
+
     /**
-     * 状态 列表
+     * $comment 列表
      * @var array
-     */
-    private static \$statusList = [
+    */
+    private static \${$lowFirstName}List = [
+EOT;
+switch ($v->name) {
+    // 状态默认值
+    case 'status':
+echo <<<EOT
+
         'disabled' => -1,
         'normal' => 0,
-        'open' => 1
-    ];
+        'open' => 1\r
+    
+EOT;
+        break;
+}
+echo <<<EOT
+];
     /**
-     * 状态文本 列表
+     * {$comment}文本 列表
      * @var array
-     */
-    private static \$statusTextList = [
+    */
+    private static \${$lowFirstName}TextList = [
+EOT;
+switch ($v->name) {
+    // 状态默认值
+    case 'status':
+echo <<<EOT
+
         -1 => '禁用',
         0 => '审核',
-        1 => '开启'
-    ];
+        1 => '开启'\r
     
 EOT;
-} if ($model->hasAttribute('type')) {
-    echo <<<EOT
-    
- 
-    /**
-     * 类型 列表
-     * @var array
-     */
-    private static \$typeList = [
-        'type1' => 1,
-        'type2' => 2
-    ];
-    /**
-     * 类型文本 列表
-     * @var array
-     */
-    private static \$typeTextList = [
-        1 => '类型一(请自行完善)',
-        2 => '类型二(请自行完善)'
-    ];
+    break;
+}
+echo <<<EOT
+];
     
 EOT;
-} if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
+
+        }
+    }
+}
+if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
         echo <<<EOT
     
     
@@ -101,12 +128,12 @@ EOT;
      * 排序最大值
      * @var int
      */
-    protected static \$sortMax = 999999;
+    protected static \$maxSort = {$maxSort};
     /**
      * 排序最小值
      * @var int
      */
-    protected static \$sortMin = -999999;
+    protected static \$minSort = {$minSort};
     
 EOT;
     }
@@ -124,6 +151,11 @@ EOT;
      */
     private \$where = [];
     /**
+     * 排序
+     * @var array
+     */
+    private \$orderBy = [];
+    /**
      * 静态错误暂存
      * @var
      */
@@ -136,61 +168,80 @@ EOT;
     public function rules()
     {
 
+EOT;
+
+// ******** [枚举数据库类型]渲染列表 开始 ********
+if (property_exists($schema, 'columns')) {
+    foreach ($schema->columns as $k => $v) {
+        // 数据库类型不存在 下一循
+        if (!property_exists($v, 'dbType')) continue;
+
+        // 如果不是枚举数字类型 下一循
+        if (!strstr($v->dbType, 'tinyint')) continue;
+
+        # [ucwords]将每个单词的首字母大写
+        # [str_replace]字符串替换
+        $capFirstName = ucwords(str_replace('_',' ',$v->name));
+        # [ucfirst]将所有的字符串首字母大写；
+        $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+        # 首字母小写
+        $lowFirstName = lcfirst($capFirstName);
+echo <<<EOT
+
+        // [{$v->comment}]列表
+        \${$lowFirstName}List = array_values(self::get{$capFirstName}List());
+EOT;
+
+    }
+}
+// ******** [枚举数据库类型]渲染列表 结束 ********
+
+echo <<<EOT
+        \n
         \$parent = parent::rules();
-EOT;
-
-// ******** 有[状态]渲染状态列表 开始 ********
-if ($model->hasAttribute('status')) {
-    echo <<<EOT
-    
-        // 状态
-        \$statusList = array_values(self::getStatList());
-EOT;
-}
-// ******** 有[状态]渲染状态列表 结束 ********
-
-// ******** 有[类型]渲染状态列表 开始 ********
-if ($model->hasAttribute('type')) {
-    echo <<<EOT
-    
-        // 类型
-        \$typeList = array_values(self::getTypeList());
-EOT;
-}
-// ******** 有[类型]渲染状态列表 结束 ********
-    echo <<<EOT
-        
-
         return ArrayHelper::merge(\$parent, [
 EOT;
 
-// ******** 有[状态]渲染[rules] 开始 ********
-if ($model->hasAttribute('status')) {
-    echo <<<EOT
-    
-            ['status', 'in', 'range' => \$statusList, 'message' => '状态不合法'],
-EOT;
-}
-// ******** 有[状态]渲染规则 结束 ********
+// ******** [枚举数据库类型]渲染[rules] 开始 ********
+if (property_exists($schema, 'columns')) {
+    foreach ($schema->columns as $k => $v) {
+        // 数据库类型不存在 下一循
+        if (!property_exists($v, 'dbType')) continue;
 
-// ******** 有[类型]渲染[rules] 开始 ********
-if ($model->hasAttribute('type')) {
-    echo <<<EOT
-    
-            ['type', 'in', 'range' => \$typeList, 'message' => '类型不合法'],
-EOT;
-}
-// ******** 有[类型]渲染规则 结束 ********
+        // 如果不是枚举数字类型 下一循
+        if (!strstr($v->dbType, 'tinyint')) continue;
 
-// ******** 有[排序]渲染规则 开始 ********
-if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
+        # ucwords将每个单词的首字母大写
+        # str_replace 字符串替换
+        $capFirstName = ucwords(str_replace('_',' ',$v->name));
+        # ucfirst 将所有的字符串首字母大写；
+        $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+        # 保证首字母小写
+        $capFirstName = lcfirst($capFirstName);
         echo <<<EOT
+
+            ['$v->name', 'in', 'range' => \${$capFirstName}List, 'message' => '{$v->comment}不合法'],
+EOT;
+
+    }
+}
+// ******** [枚举数据库类型]渲染规则 结束 ********
+
+// ******** 特殊 - [排序]渲染[rules] 开始 ********
+if ($model->hasAttribute('sort')) {
+    echo <<<EOT
     
             ['sort', 'integer', 'max' => self::getSortMax(), 'min' => self::getSortMin(),
-                'message' => '排序不得超过999999，不得小于-999999'],
+                'message' => '排序不得超过{$maxSort}，不得小于{$minSort}'],
+EOT;
+}else if ($model->hasAttribute('list_order')) {
+    echo <<<EOT
+    
+            ['list_order', 'integer', 'max' => self::getSortMax(), 'min' => self::getSortMin(),
+                'message' => '排序不得超过{$maxSort}，不得小于{$minSort}'],
 EOT;
 }
-// ******** 有[排序]渲染规则 结束 ********
+// ******** 特殊 - [排序]渲染[rules] 结束 ********
 
     echo <<<EOT
 
@@ -206,63 +257,19 @@ EOT;
         \$parent = parent::attributeLabels();
         return array_merge(\$parent, [
 EOT;
-// ******** 判断某些字段是否存在预设一些字段的label ********
-    if ($model->hasAttribute('id')) {
+// ******** 字段[label]添加 开始 ********
+if (property_exists($schema, 'columns')) {
+    foreach ($schema->columns as $k => $v) {
+
+        $capFirstName = ucfirst($v->name);
         echo <<<EOT
-    
-            'id' => '编号',
+        
+            '$v->name' => '$v->comment',
 EOT;
-} if ($model->hasAttribute('title')) {
-        echo <<<EOT
-    
-            'title' => '标题',
-EOT;
-} if ($model->hasAttribute('name')) {
-        echo <<<EOT
-    
-            'name' => '名称',
-EOT;
-} if ($model->hasAttribute('role')) {
-        echo <<<EOT
-    
-            'role' => '角色',
-EOT;
-} if ($model->hasAttribute('content')) {
-        echo <<<EOT
-    
-            'content' => '内容',
-EOT;
-} if ($model->hasAttribute('add_time')) {
-        echo <<<EOT
-    
-            'add_time' => '添加时间',
-EOT;
-} if ($model->hasAttribute('update_time')) {
-        echo <<<EOT
-    
-            'update_time' => '更新时间',
-EOT;
-} if ($model->hasAttribute('action_uid')) {
-        echo <<<EOT
-    
-            'action_uid' => '操作者编号',
-EOT;
-} if ($model->hasAttribute('sort')) {
-        echo <<<EOT
-    
-            'sort' => '排序',
-EOT;
-} if ($model->hasAttribute('status')) {
-    echo <<<EOT
-    
-            'status' => '状态',
-EOT;
-} if ($model->hasAttribute('type')) {
-    echo <<<EOT
-    
-            'type' => '类型',
-EOT;
+
+    }
 }
+// ******** 字段[label]添加 结束 ********
     echo <<<EOT
 
         ]);
@@ -289,6 +296,7 @@ EOT;
      * @param null \$id 编号
      * @param string \$scenario 场景
      * @return {$modelPath['filename']}
+     *  ` PS:[\$id]空为何不返回[\$model::find()]: 因为可能准确想返回条目是否存在查询结果可能null,返回在find报错。
      */
     public static function loadModel(\$id = null, \$scenario = 'default')
     {
@@ -327,33 +335,38 @@ EOT;
         // 查找的 字段空的 就默认给列表
         if (!\$filed) \$filed = '*';
 
-
         // 基础 where加载完毕
         \$this->sqlBase = \$this::find()
             ->select(\$filed)
             ->where(\$where);
-
-        // 数据的获取 分页等
-        \$list = \$this->sqlBase->offset(\$page * \$limit)
-            ->limit(\$limit)
+            
+        // 是否已经有自定义排序
+        if (property_exists(\$this, 'orderBy') && !empty(\$this->orderBy)) {
+            \$this->sqlBase->orderBy(\$this->orderBy);
+        } else { // 无自定义排序
 EOT;
 if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
     echo <<<EOT
     
-            ->orderBy('sort desc, update_time desc')
+            \$this->sqlBase->orderBy('sort desc, update_time desc');
 EOT;
 } else if ($model->hasAttribute('sort') && $model->hasAttribute('id')) {
         echo <<<EOT
     
-            ->orderBy('sort desc, id desc')
+            \$this->sqlBase->orderBy('sort desc, id desc');
 EOT;
-} else if (!$model->hasAttribute('sort') && !$model->hasAttribute('id')) {
+} else if (!$model->hasAttribute('sort') && $model->hasAttribute('id')) {
         echo <<<EOT
     
-            ->orderBy('id desc')
+            \$this->sqlBase->orderBy('id desc');
 EOT;
 } echo <<<EOT
 
+        }
+            
+        // 数据的获取 分页等
+        \$list = \$this->sqlBase->offset(\$page * \$limit)
+            ->limit(\$limit)
             ->asArray()->all();
 
         // 格式化数据
@@ -379,24 +392,6 @@ EOT;
                 \$v['update_time_text_s'] = date('Y-m-d', \$v['update_time']);
             }
 EOT;
-} if ($model->hasAttribute('status')) {
-    echo <<<EOT
-    
-    
-            // 状态 文本
-            if (isset(\$v['status'])) {
-                \$v['status_text'] = self::getStatusText(\$v['status']);
-            }
-EOT;
-} if ($model->hasAttribute('type')) {
-    echo <<<EOT
-    
-    
-            // 类型 文本
-            if (isset(\$v['type'])) {
-                \$v['type_text'] = self::getTypeText(\$v['type']);
-            }
-EOT;
 } if ($model->hasAttribute('content')) {
         echo <<<EOT
     
@@ -407,7 +402,33 @@ EOT;
                 \$v['content'] = CommonModel::addHtmlImgHost(\$v['content']);
             }
 EOT;
-} echo <<<EOT
+}
+// ******** 枚举字段文本 开始 ********
+if (property_exists($schema, 'columns')) {
+    foreach ($schema->columns as $k => $v) {
+        // 数据库类型不存在 下一循
+        if (!property_exists($v, 'dbType')) continue;
+        // 如果不是枚举数字类型 下一循
+        if (!strstr($v->dbType, 'tinyint')) continue;
+
+        # ucwords将每个单词的首字母大写
+        # str_replace 字符串替换
+        $capFirstName = ucwords(str_replace('_',' ',$v->name));
+        # ucfirst 将所有的字符串首字母大写；
+        $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+echo <<<EOT
+
+
+            // {$v->comment} 文本
+            if (isset(\$v['{$v->name}'])) {
+                \$v['{$v->name}_text'] = self::get{$capFirstName}Text(\$v['{$v->name}']);
+            }
+EOT;
+
+    }
+}
+// ******** 枚举字段文本 结束 ********
+echo <<<EOT
 
         }
 
@@ -440,10 +461,7 @@ EOT;
     {
 
         // 条件不存在
-        if (empty(\$where)) {
-
-            return \$this;
-        }
+        if (empty(\$where)) return \$this;
 
         // 如果[where][0]是'and' 直接赋值
         \$canRetList = ['and', 'or', 'AND', 'OR'];
@@ -489,7 +507,51 @@ EOT;
 
         return \$this;
     }
+    
+    /**
+     * 加载排序
+     * @param \$sort
+     * @return \$this
+     */
+    public function loadSort(\$sort)
+    {
 
+        // 条件不存在
+        if (empty(\$sort)) return \$this;
+
+        // 如果排序是 字符
+        if (is_string(\$sort)) \$sort = explode(',', \$sort);
+
+        // 合法额排序列表
+        \$typeList = [SORT_DESC, SORT_ASC, 'DESC', 'ASC'];
+        // 循环  条件是否有效
+        \$stagingSort = [];
+        foreach (\$sort as \$k => \$v) {
+
+            // 数组 - 过滤
+            if (is_array(\$v)) continue;
+
+            // 值已经是 排序列表中的数据
+            if (in_array(strtoupper(\$v), \$typeList) && strtoupper(\$v)) {
+                \$stagingSort[\$k] = strtoupper(\$v) == 'DESC' ? SORT_DESC : SORT_ASC;
+                continue;
+            }
+
+            // 字符串 - 分割空格号
+            \$v = preg_split('/\s+/', strval(\$v));
+            if (!empty(\$v[0]) && strlen(\$v[0]) > 0 && \$this->hasAttribute(\$v[0])) {
+
+                \$stagingSort[\$v[0]] = strtoupper(\$v[1]) == 'DESC' ? SORT_DESC : SORT_ASC;
+                continue;
+            }
+        }
+
+        // 条件最终赋值
+        \$this->orderBy = \$stagingSort;
+
+        return \$this;
+    }
+    
     /**
      * 添加|保存
      * @return bool
@@ -533,6 +595,9 @@ EOT;
     if ($model->hasAttribute('content')) {
         echo <<<EOT
     
+    
+        // 内容解密下 - 防止加密多次
+        \$this->content = htmlspecialchars_decode(\$this->content);
         // 内容取出图片域名
         \$this->content = CommonModel::removeHtmlImgHost(\$this->content);
         // 内容加密下
@@ -552,7 +617,7 @@ EOT;
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
                 \$this->getErrors()
-            ], 'normal');
+            ], 'error');
             return false;
         }
 
@@ -599,7 +664,7 @@ EOT;
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
                 \$error->getTraceAsString()
-            ], 'normal');
+            ], 'error');
 
             self::\$error_ = empty(\$error->errorInfo) ?
                 \$error->getMessage() :
@@ -608,7 +673,6 @@ EOT;
             return false;
         }
     }
-    
     
     /**
      * 批量添加数据|ps.请事先做好字段数据校验
@@ -650,12 +714,11 @@ EOT;
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
                 \$error->getTraceAsString()
-            ], 'normal');
+            ], 'error');
 
             return false;
         }
     }
-    
     
     /**
      * 更新某些字段自增|自减
@@ -694,7 +757,7 @@ EOT;
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
                 \$error->getTraceAsString()
-            ], 'normal');
+            ], 'error');
 
             self::\$error_ = empty(\$error->errorInfo) ?
                 \$error->getMessage() :
@@ -703,6 +766,7 @@ EOT;
             return false;
         }
     }
+    
 EOT;
 
 if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
@@ -713,7 +777,7 @@ if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
      * 返回排序最大值
      * @return int
      */
-    public static function getSortMax()
+    public static function getMaxSort()
     {
         return self::\$sortMax;
     }
@@ -721,123 +785,72 @@ if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
      * 返回排序最小值
      * @return int
      */
-    public static function getSortMin()
+    public static function getMinSort()
     {
         return self::\$sortMin;
     }
     
 EOT;
-    }
-if ($model->hasAttribute('status')) {
-    echo <<<EOT
-    
-
-    /**
-     * 获取[正常]状态 值
-     * @return mixed|string
-     */
-    public static function getStatNormal() {
-
-        // 最终正常返回
-        return self::\$statusList['normal'];
-    }
-    /**
-     * 获取[开启]状态 值
-     * @return mixed|string
-     */
-    public static function getStatOpen() {
-
-        // 最终正常返回
-        return self::\$statusList['open'];
-    }
-    /**
-     * 获取[禁用]状态 值
-     * @return mixed|string
-     */
-    public static function getStatDisabled() {
-
-        // 最终正常返回
-        return self::\$statusList['disabled'];
-    }
-    /**
-     * 获取[状态]文本
-     * @param \$value
-     * @return mixed|string
-     */
-    public static function getStatusText(\$value) {
-
-        // 列表
-        \$list = self::\$statusTextList;
-        // 不合法 - 不存在
-        if (empty(\$list[\$value]))
-
-            return '--';
-
-        // 最终正常返回
-        return \$list[\$value];
-    }
-    /**
-     * 获取[状态]列表 值
-     * @return mixed|string
-     */
-    public static function getStatList() {
-
-        // 最终正常返回
-        return self::\$statusList;
-    }
-    /**
-     * 获取[状态]文本列表 值
-     * @return mixed|string
-     */
-    public static function getStatusTextList() {
-
-        // 最终正常返回
-        return self::\$statusTextList;
-    }
-    
-EOT;
-} if ($model->hasAttribute('type')) {
-    echo <<<EOT
-    
-    /**
-     * 获取[类型]文本
-     * @param \$value
-     * @return mixed|string
-     */
-    public static function getTypeText(\$value) {
-    
-        // 列表
-        \$list = self::\$typeTextList;
-        // 不合法 - 不存在
-        if (empty(\$list[\$value]))
-    
-            return '--';
-    
-        // 最终正常返回
-        return \$list[\$value];
-    }
-    /**
-     * 获取[类型]列表 值
-     * @return mixed|string
-     */
-    public static function getTypeList() {
-    
-        // 最终正常返回
-        return self::\$typeList;
-    }
-    /**
-     * 获取[类型]文本列表 值
-     * @return mixed|string
-     */
-    public static function getTypeTextList() {
-    
-        // 最终正常返回
-        return self::\$typeTextList;
-    }
-    
-EOT;
 }
-    echo <<<EOT
+if (property_exists($schema, 'columns')) {
+    foreach ($schema->columns as $k => $v) {
+        // 数据库类型不存在下一循
+        if (!property_exists($v, 'dbType')) continue;
+
+        // 如果是枚举数字类型则进行渲染 枚举列表
+        if (strstr($v->dbType, 'tinyint')) {
+
+            # 保证说明
+            $comment = property_exists($v, 'comment') ? $v->comment : '--';
+
+            # [ucwords]将每个单词的首字母大写
+            # [str_replace]字符串替换
+            $capFirstName = ucwords(str_replace('_', ' ', $v->name));
+            # [ucfirst]将所有的字符串首字母大写；
+            $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
+            # 首字母小写
+            $lowFirstName = lcfirst($capFirstName);
+echo <<<EOT
+
+    /**
+     * 获取[{$comment}]文本
+     * @param \$value
+     * @return mixed|string
+     */
+    public static function get{$capFirstName}Text(\$value) {
+
+        // 列表
+        \$list = self::\${$lowFirstName}TextList;
+        // 不合法 - 不存在
+        if (empty(\$list[\$value])) return '--';
+
+        // 最终正常返回
+        return \$list[\$value];
+    }
+    /**
+     * 获取[{$comment}]列表 值
+     * @return mixed|string
+     */
+    public static function get{$capFirstName}List() {
+
+        // 最终正常返回
+        return self::\${$lowFirstName}List;
+    }
+    /**
+     * 获取[{$comment}]文本列表 值
+     * @return mixed|string
+     */
+    public static function get{$capFirstName}TextList() {
+
+        // 最终正常返回
+        return self::\${$lowFirstName}TextList;
+    }
+    
+EOT;
+        }
+    }
+}
+echo <<<EOT
 
     /**
      * 获取静态错误

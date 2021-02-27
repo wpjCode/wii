@@ -485,22 +485,22 @@ var app = function () {
                 }
 
                 // 是否越出范围值 大于
-                if ($row['newSort'] > this.setting.sortMax) {
+                if ($row['newSort'] > this.setting.maxSort) {
 
                     return this.$message({
                         showClose: true,
                         type: 'warning',
-                        message: '排序最大不得超过 ' + this.setting.sortMax
+                        message: '排序最大不得超过 ' + this.setting.maxSort
                     });
                 }
 
                 //是否越出范围值 小于
-                if ($row['newSort'] < this.setting.sortMin) {
+                if ($row['newSort'] < this.setting.minSort) {
 
                     return this.$message({
                         showClose: true,
                         type: 'warning',
-                        message: '排序最小不得超过 ' + this.setting.sortMin
+                        message: '排序最小不得超过 ' + this.setting.minSort
                     });
                 }
 

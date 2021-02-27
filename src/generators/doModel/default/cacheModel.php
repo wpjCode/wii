@@ -356,8 +356,8 @@ class <?=$renderModel['filename']?> extends <?=$baseModel['filename'] . "\n"?>
         // 添加的话要赋值一些初始数据
         if (empty($this->id)) {
 
-            // 可以是走[mongoId]
-            $this->id = CommonModel::newMongoId();
+            // 可以是走[mongoId] - 缓存的话暂时编号不存在叫他报错吧
+            // $this->id = CommonModel::newMongoId();
 <?php if ($model->hasAttribute('add_time')):?>
 
             // 添加时间
@@ -390,60 +390,78 @@ class <?=$renderModel['filename']?> extends <?=$baseModel['filename'] . "\n"?>
 
     /**
      * 更新某些字段
-     * @param $id
+     * @param $condition
      * @param array $fieldVal
      * @return bool
-     */
-    public static function updateField($id, $fieldVal = [])
+    */
+    public static function updateField($condition, $fieldVal = [])
     {
+
+        $model = new self();
+        foreach ($fieldVal as $k => $v) {
+
+            if (!$model->hasAttribute($k)) {
+
+                unset($fieldVal[$k]);
+                continue;
+            }
+        }
 
         try {
 
-            // 不是数组塑造下
-            if (!is_array($id)) $id = explode(',', $id);
+            // ********** 1、首先更新下缓存数据 **********
+            $model::updateAll($fieldVal, $condition);
 
-            // 循环每条记录的 编号
-            foreach ($id as $k => $v) {
+            // ********** 2、将缓存中不存在的数据库条目同步 **********
+            // 取出数据库条目
+            $dbList = <?=$doDbAlias?>::find()->where($condition)->asArray()->all();
+            // 数据库为空的直接为更新成功
+            if (!$dbList) return true;
+            // 取出数据库编号
+            $dbIdList = array_column($dbList, 'id');
 
-                $model = self::loadModel($v);
+            // 取出缓存条目
+            $cacheList = self::find()->where($condition)->asArray()->all();
+            // 取出缓存编号
+            $cacheIdList = array_column($cacheList, 'id');
 
-                // 找不到记录直接返回
-                if (!$model) {
-                    self::$error_ = ['id' => ['记录不存在']];
-                    return false;
-                }
+            // 数据库为主取出差集
+            $diffIdList = $dbIdList;
+            if (!empty($cacheIdList)) {
+                $diffIdList = array_diff($dbIdList, $cacheIdList);
+            }
+            // 此时不同编号为空返回下
+            if (empty($diffIdList)) return true;
 
-                // 循环每一个赋值
-                $model->setAttributes($fieldVal);
-
-                if (!$model->save()) {
-                    $error = CommonModel::getModelError($model->errors);
-                    self::$error_ = $error;
-                    return false;
-                }
+            $dbList = array_column($dbList, null, 'id');
+            foreach ($diffIdList as $k => $v) {
+                if (empty($dbList[$v])) continue;
+                $model = new self();
+                $model->setAttributes($dbList[$v]);
+                $model->saveData();
             }
 
             // 否则成功
             return true;
         } catch (\Exception $error) {
 
-            // 记录下错误日志
-            \Yii::error([
+        // 记录下错误日志
+        \Yii::error([
 
-                "``````````````````````````````````````````````````````````",
-                "``                       缓存错误                         ``",
-                "`` 错误详情: [<?=$generator->expName?>]缓存中修改[指定字段]失败``",
-                "`` {$error->getMessage()}                                 ``",
-                "`` 错误信息和参数详情:                                     ``",
-                "`````````````````````````````````````````````````````````",
-                $error->getTraceAsString()
-            ], 'normal');
+            "``````````````````````````````````````````````````````````",
+            "``                       缓存错误                          ``",
+            "`` 错误详情: [<?=$generator->expName?>]缓存中修改[指定字段]失败       ``",
+            "`` {$error->getMessage()}                                ``",
+            "`` 错误信息和参数详情:                                      ``",
+            "`````````````````````````````````````````````````````````",
+            $error->getTraceAsString()
+        ], 'error');
 
-            self::$error_ = empty($error->errorInfo) ?
-                $error->getMessage() :
-                implode(' | ', $error->errorInfo);
+        self::$error_ = empty($error->errorInfo) ?
+            $error->getMessage() :
+            implode(' | ', $error->errorInfo);
 
-            return false;
+        return false;
         }
     }
 

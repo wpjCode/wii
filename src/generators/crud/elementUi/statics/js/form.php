@@ -241,29 +241,29 @@ EOT;
 
 <?php if ($model->hasAttribute('sort')) {?>
                     // 是否越出范围值 大于
-                    if (parseInt(that.form.sort) > that.setting.sortMax) {
+                    if (parseInt(that.form.sort) > that.setting.maxSort) {
 
                         that.$message({
                             showClose: true,
                             type: 'error',
-                            message: '排序最大不得超过 ' + that.setting.sortMax
+                            message: '排序最大不得超过 ' + that.setting.maxSort
                         });
 
                         return that.$set(that.customErrMsg, 'sort',
-                            '排序最大不得超过 ' + that.setting.sortMax);
+                            '排序最大不得超过 ' + that.setting.maxSort);
                     }
 
                     // 是否越出范围值 小于
-                    if (parseInt(that.form.sort) < that.setting.sortMin) {
+                    if (parseInt(that.form.sort) < that.setting.minSort) {
 
                         that.$message({
                             showClose: true,
                             type: 'error',
-                            message: '排序最小不得小于 ' + that.setting.sortMin
+                            message: '排序最小不得小于 ' + that.setting.minSort
                         });
 
                         return that.$set(that.customErrMsg, 'sort',
-                            '排序最小不得小于 ' + that.setting.sortMin);
+                            '排序最小不得小于 ' + that.setting.minSort);
                     }
 <?php } ?>
                     // 正在加载。。
@@ -349,29 +349,29 @@ EOT;
 
 <?php if ($model->hasAttribute('sort')) {?>
                     // 是否越出范围值 大于
-                    if (parseInt(that.form.sort) > that.setting.sortMax) {
+                    if (parseInt(that.form.sort) > that.setting.maxSort) {
 
                         that.$message({
                             showClose: true,
                             type: 'error',
-                            message: '排序最大不得超过 ' + that.setting.sortMax
+                            message: '排序最大不得超过 ' + that.setting.maxSort
                         });
 
                         return that.$set(that.customErrMsg, 'sort',
-                            '排序最大不得超过 ' + that.setting.sortMax);
+                            '排序最大不得超过 ' + that.setting.maxSort);
                     }
 
                     // 是否越出范围值 小于
-                    if (parseInt(that.form.sort) < that.setting.sortMin) {
+                    if (parseInt(that.form.sort) < that.setting.minSort) {
 
                         that.$message({
                             showClose: true,
                             type: 'error',
-                            message: '排序最小不得小于 ' + that.setting.sortMin
+                            message: '排序最小不得小于 ' + that.setting.minSort
                         });
 
                         return that.$set(that.customErrMsg, 'sort',
-                            '排序最小不得小于 ' + that.setting.sortMin);
+                            '排序最小不得小于 ' + that.setting.minSort);
                     }
 <?php } ?>
 

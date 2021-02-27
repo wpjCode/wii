@@ -27,7 +27,12 @@ echo $form->field($generator, 'isCacheModel')->checkbox();
 
 echo $form->field($generator, 'doDbModel', [
     'hasFileSvg' => true,
-    'fileSvgTitle' => $generator->langString('chose file/folder')
+    'fileSvgTitle' => $generator->langString('chose file/folder'),
+    'syncFileSvg' => true,
+    'syncFileTitle' => $generator->langString('Sync model class base name'),
+    'syncExt' => 'Model', // 同步扩展结尾字符
+    'reduceFolder' => true,
+    'reduceFolderTitle' => $generator->langString('reduce folder title')
 ]);
 
 Generator::regAssetsFile($this, 'js/custom-do-model.js');

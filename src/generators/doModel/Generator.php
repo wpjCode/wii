@@ -9,6 +9,7 @@ namespace wpjCode\wii\generators\doModel;
 
 use wpjCode\wii\CodeFile;
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This generator will generate one or multiple ActiveRecord classes for the specified database table.
@@ -235,5 +236,21 @@ class Generator extends \wpjCode\wii\Generator
         $files[] = new CodeFile($path, $this->render($template, []));
 
         return $files;
+    }
+
+    /**
+     * Returns table schema for current model class or false if it is not an active record
+     * @return bool|\yii\db\TableSchema
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getTableSchema()
+    {
+        /* @var $class ActiveRecord */
+        $class = $this->baseModelClass;
+        if (is_subclass_of($class, 'yii\db\ActiveRecord')) {
+            return $class::getTableSchema();
+        }
+
+        return false;
     }
 }

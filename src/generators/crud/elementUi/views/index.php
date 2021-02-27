@@ -9,6 +9,8 @@ echo <<<EOT
     
 use \app\assets\BackendAsset;
 
+/* @var \$this yii\web\View */
+
 BackendAsset::addCss(\$this, '{$generator->getPageCssPath('index')}');
 ?>
 EOT;
