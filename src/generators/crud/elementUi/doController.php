@@ -77,9 +77,12 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                             'detail',
                             'create',
                             'update',
+<?php if ($class->hasAttribute('status')) {?>
                             'disabled',
                             'open',
+<?php } if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) {?>
                             'sort'
+<?php } ?>
                         ],
                         'allow' => true,
                         'roles' => ['@'],
