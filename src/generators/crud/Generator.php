@@ -518,7 +518,6 @@ class Generator extends \wpjCode\wii\Generator
         foreach (Yii::$app->modules as $k => $v) {
             $modulesConList[] = str_replace('{name}', $k, self::$setting['modulesControllerPath']);
         }
-
         if (in_array($showConDir, $modulesConList) && $this->isControlViewPath($showConPath)) {
             return $path;
         }
@@ -540,7 +539,7 @@ class Generator extends \wpjCode\wii\Generator
         // 控制器操作名 - 默认名
         $conDoName = str_replace('Controller', '', $pathInfo['filename']);
         // 字符全部小写
-        $conDoName = strtolower($conDoName);
+        $conDoName = Inflector::camel2id($conDoName, '-', $this->strictInflector);
 
         // ***** 根目录控制器，根目录木板路径 *****
         if ($this->viewPath == self::$setting['baseViewAlias'] . $conDoName) {
