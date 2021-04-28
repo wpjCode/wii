@@ -9,9 +9,6 @@ use yii\helpers\StringHelper;
 /* @var $baseModelClass \yii\db\ActiveRecord */
 $baseModelClass = new $generator->baseModelClass();
 $safeAttributes = $baseModelClass->safeAttributes();
-if (empty($safeAttributes)) {
-    $safeAttributes = $baseModelClass->attributes();
-}
 
 $baseModelNS = ltrim($generator->baseModelClass, '\\');
 echo <<<EOT
@@ -35,9 +32,11 @@ EOT;
 
 <?php
 $space = "";
-foreach ($generator->getColumnNames() as $attribute) {
-    if (in_array($attribute, $safeAttributes)) {
-        echo $space . $generator->generateActiveField($attribute) . "\n\n";
+foreach ($generator->getTableSchema()->columns as $attribute) {
+    // 键略过
+    if ($attribute->isPrimaryKey) continue;
+    if (in_array($attribute->name, $safeAttributes)) {
+        echo $space . $generator->generateActiveField($attribute->name) . "\n\n";
     }
 }
 ?>

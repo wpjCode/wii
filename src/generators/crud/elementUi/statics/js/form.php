@@ -3,10 +3,7 @@
 /* @var $generator wpjCode\wii\generators\crud\Generator */
 /* @var $model \yii\db\ActiveRecord */
 $model = new $generator->baseModelClass();
-$safeAttributes = $model->safeAttributes();
-if (empty($safeAttributes)) {
-    $safeAttributes = $model->attributes();
-}
+$safeAttributes = $generator->getTableSchema()->columns;
 
 ?>
 
@@ -25,9 +22,11 @@ var app = function () {
             },
             formRules: {
 <?php foreach ($safeAttributes as $k => $v) {
+    // 键略过
+    if ($v->isPrimaryKey) continue;
     echo <<<EOT
-                {$v}: [
-                    {required: true, message: '请完善{$model->getAttributeLabel($v)}', trigger: 'blur'}
+                {$v->name}: [
+                    {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'}
                 ]
 EOT;
     if ($k < (count($safeAttributes) -1)) {
@@ -39,8 +38,13 @@ EOT;
             },
             form: {
 <?php foreach ($safeAttributes as $k => $v) {
+    // 键略过
+    if ($v->isPrimaryKey) continue;
+    $defaultVal = 'null';
+    // 默认是数字
+    if ($v->phpType == 'integer') $defaultVal = 0;
     echo <<<EOT
-                {$v}: null
+                {$v->name}: {$defaultVal}
 EOT;
     if ($k < (count($safeAttributes) -1)) {
         echo ",\n";
