@@ -231,13 +231,13 @@ EOT;
 if ($model->hasAttribute('sort')) {
     echo <<<EOT
     
-            ['sort', 'integer', 'max' => self::getSortMax(), 'min' => self::getSortMin(),
+            ['sort', 'integer', 'max' => self::getMaxSort(), 'min' => self::getMinSort(),
                 'message' => '排序不得超过{$maxSort}，不得小于{$minSort}'],
 EOT;
 }else if ($model->hasAttribute('list_order')) {
     echo <<<EOT
     
-            ['list_order', 'integer', 'max' => self::getSortMax(), 'min' => self::getSortMin(),
+            ['list_order', 'integer', 'max' => self::getMaxSort(), 'min' => self::getMinSort(),
                 'message' => '排序不得超过{$maxSort}，不得小于{$minSort}'],
 EOT;
 }
@@ -779,7 +779,7 @@ if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
      */
     public static function getMaxSort()
     {
-        return self::\$sortMax;
+        return self::\$maxSort;
     }
     /**
      * 返回排序最小值
@@ -787,7 +787,7 @@ if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
      */
     public static function getMinSort()
     {
-        return self::\$sortMin;
+        return self::\minSort;
     }
     
 EOT;
@@ -810,6 +810,28 @@ if (property_exists($schema, 'columns')) {
             $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
             # 首字母小写
             $lowFirstName = lcfirst($capFirstName);
+            if ($model->hasAttribute('status')) {
+echo <<<EOT
+
+    /**
+     * 获取[状态]关闭值
+     * @return mixed
+     */
+    public static function getStatusDisabled()
+    {
+        return self::\$statusList['disabled'];
+    }
+    /**
+     * 获取[状态]开启值
+     * @return mixed
+     */
+    public static function getStatusOpen()
+    {
+        return self::\$statusList['open'];
+    }
+EOT;
+
+            }
 echo <<<EOT
 
     /**

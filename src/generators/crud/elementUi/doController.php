@@ -122,11 +122,11 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         return $this->jsonSuccess('成功', [
 <?php if ($class->hasAttribute('status') && $class->hasMethod('getStatNormal')) { ?>
             'defaultStatus' => !empty($type) && $type == 'index' ?
-                $model::getStatNormal() : $model::getStatOpen(), // 默认选中状态
+                $model::getStatNormal() : $model::getStatusOpen(), // 默认选中状态
 <?php } else if ($class->hasAttribute('status')) { ?>
-            'defaultStatus' => $model::getStatOpen(), // 默认选中状态
+            'defaultStatus' => $model::getStatusOpen(), // 默认选中状态
 <?php } if ($class->hasAttribute('status')) { ?>
-            'statusList' => $model::getStatList(), // 状态文本列表值
+            'statusList' => $model::getStatusList(), // 状态文本列表值
             'statusTextList' => $model::getStatusTextList(), // 状态文本列表值
 <?php } if ($class->hasAttribute('type')) { ?>
             'typeList' => $model::getTypeList(), // 类型列表值
@@ -326,7 +326,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         // 条件
         $condition = ['AND', ['IN', 'id', $idList]];
         // 修改的字段
-        $field = ['status' => <?= $baseModelClass ?>::getStatDisabled()];
+        $field = ['status' => <?= $baseModelClass ?>::getStatusDisabled()];
         // 是否操作成功 - 错误一般记录到[log]日志
         if (!<?= $baseModelClass ?>::updateField($condition, $field)) {
 
@@ -370,7 +370,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         // 条件
         $condition = ['AND', ['IN', 'id', $idList]];
         // 修改的字段
-        $field = ['status' => <?= $baseModelClass ?>::getStatOpen()];
+        $field = ['status' => <?= $baseModelClass ?>::getStatusOpen()];
         // 是否操作成功 - 错误一般记录到[log]日志
         if (!<?= $baseModelClass ?>::updateField($condition, $field)) {
 
@@ -415,7 +415,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         if (!isset($sort)) return $this->jsonFail('排序不能为空', 400);
 
         // 排序不得超过 7 位数字 小于-6位数
-        if ($sort > <?= $baseModelClass ?>::getSortMax() || $sort < <?= $baseModelClass ?>::getSortMin()) {
+        if ($sort > <?= $baseModelClass ?>::getMaxSort() || $sort < <?= $baseModelClass ?>::getMinSort()) {
 
             return $this->jsonFail('排序不得超过999999，不得小于-999999', 400);
         }
