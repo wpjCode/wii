@@ -787,7 +787,7 @@ if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
      */
     public static function getMinSort()
     {
-        return self::\minSort;
+        return self::\$minSort;
     }
     
 EOT;
