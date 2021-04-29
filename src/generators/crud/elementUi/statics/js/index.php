@@ -226,7 +226,7 @@ var app = function () {
             },
             /**
              * [更多查询]按钮点击
-            */
+             */
             moreSearchClick: function () {
                 if(this.setting.showMoreSearch) {
                     return this.setting.showMoreSearch = false;
