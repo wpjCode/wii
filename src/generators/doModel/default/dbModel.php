@@ -810,7 +810,7 @@ if (property_exists($schema, 'columns')) {
             $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
             # 首字母小写
             $lowFirstName = lcfirst($capFirstName);
-            if ($model->hasAttribute('status')) {
+            if ($v->name == 'status') {
 echo <<<EOT
 
     /**
