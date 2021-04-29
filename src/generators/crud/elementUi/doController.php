@@ -211,8 +211,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 
         // 仅仅返回指定 字段
         $detail = $model->getAttributes([
-<?php foreach ($class->attributes() as $kL => $vL) { ?>
-            '<?=$vL?>',
+<?php foreach ($generator->getTableSchema()->columns as $kL => $vL) { ?>
+            '<?=$vL->name?>',
 <?php } ?>
         ]);
 
@@ -232,8 +232,9 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     {
         // 赋值所需数据
         $data = [
-<?php foreach ($class->attributes() as $kL => $vL) { ?>
-            '<?=$vL?>' => $this->post('<?=$vL?>'),
+<?php foreach ($generator->getTableSchema()->columns as $kL => $vL) { ?>
+<?php if ($vL->isPrimaryKey) continue; ?>
+            '<?=$vL->name?>' => $this->post('<?=$vL->name?>'),
 <?php } ?>
         ];
 
@@ -278,8 +279,9 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 
         // 赋值所需数据
         $data = [
-<?php foreach ($class->attributes() as $kL => $vL) { ?>
-            '<?=$vL?>' => $this->post('<?=$vL?>'),
+<?php foreach ($generator->getTableSchema()->columns as $kL => $vL) { ?>
+<?php if ($vL->isPrimaryKey) continue; ?>
+            '<?=$vL->name?>' => $this->post('<?=$vL->name?>'),
 <?php } ?>
         ];
 
