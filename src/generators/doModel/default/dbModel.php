@@ -813,8 +813,9 @@ if (property_exists($schema, 'columns')) {
             if ($v->name == 'status') {
 echo <<<EOT
 
+
     /**
-     * 获取[状态]关闭值
+     * 获取[状态][关闭]值
      * @return mixed
      */
     public static function getStatusDisabled()
@@ -822,7 +823,7 @@ echo <<<EOT
         return self::\$statusList['disabled'];
     }
     /**
-     * 获取[状态]开启值
+     * 获取[状态][开启]值
      * @return mixed
      */
     public static function getStatusOpen()
@@ -833,6 +834,7 @@ EOT;
 
             }
 echo <<<EOT
+
 
     /**
      * 获取[{$comment}]文本
