@@ -81,62 +81,62 @@ EOT;
 
                 // 获取各模块的值
                 $.ajax({
-                url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.setting'),
-                type: 'get',
-                data: {
-                    type: 'form' // 表单页
-                },
-                dataType: 'json',
-                success: function (event) {
+                    url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.setting'),
+                    type: 'get',
+                    data: {
+                        type: 'form' // 表单页
+                    },
+                    dataType: 'json',
+                    success: function (event) {
 
-                    that.$nextTick(function () {
-                        // 隐藏正在加载
-                        loadingInstance.close();
-                    });
-
-                    // 必须先登录
-                    if (parseInt(event.no) === 403) {
-
-                        that.$message({
-                            type: 'warning',
-                            showClose: true,
-                            message: '登陆超时，请重新登陆'
+                        that.$nextTick(function () {
+                            // 隐藏正在加载
+                            loadingInstance.close();
                         });
 
-                        // 几秒之后移除
-                        return setTimeout(function () {
-                            window.parent.location.href = $w.getPageUrl('login');
-                        }, 810);
-                    }
+                        // 必须先登录
+                        if (parseInt(event.no) === 403) {
 
-                    // 操作失败显示错误信息
-                    if (parseInt(event.no) !== 200) {
+                            that.$message({
+                                type: 'warning',
+                                showClose: true,
+                                message: '登陆超时，请重新登陆'
+                            });
 
-                        return that.$message({
+                            // 几秒之后移除
+                            return setTimeout(function () {
+                                window.parent.location.href = $w.getPageUrl('login');
+                            }, 810);
+                        }
+
+                        // 操作失败显示错误信息
+                        if (parseInt(event.no) !== 200) {
+
+                            return that.$message({
+                                type: 'error',
+                                showClose: true,
+                                message: event.msg
+                            });
+                        }
+
+                        // 挨个赋值[setting]中
+                        for (var i in event.data) {
+                            if (!event.data.hasOwnProperty(i)) continue;
+                            that.$set(that.setting, i, event.data[i]);
+                        }
+
+                        // 1. 默认状态是 正常
+                        that.form.status = that.setting.defaultStatus;
+                    },
+                    error: function () {
+
+                        // 按钮正在加载
+                        loadingInstance.close();
+                            return that.$message({
                             type: 'error',
                             showClose: true,
-                            message: event.msg
+                            message: '操作频繁，请稍后尝试'
                         });
-                    }
-
-                    // 挨个赋值[setting]中
-                    for (var i in event.data) {
-                        if (!event.data.hasOwnProperty(i)) continue;
-                        that.$set(that.setting, i, event.data[i]);
-                    }
-
-                    // 1. 默认状态是 正常
-                    that.form.status = that.setting.defaultStatus;
-                },
-                error: function () {
-
-                    // 按钮正在加载
-                    loadingInstance.close();
-                        return that.$message({
-                        type: 'error',
-                        showClose: true,
-                        message: '操作频繁，请稍后尝试'
-                    });
                     }
                 });
             },
