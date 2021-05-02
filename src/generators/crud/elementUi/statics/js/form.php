@@ -125,8 +125,12 @@ EOT;
                             that.$set(that.setting, i, event.data[i]);
                         }
 
-                        // 1. 默认状态是 正常
-                        that.form.status = that.setting.defaultStatus;
+                        // 添加 - 初始化默认数据
+                        if (that.setting.isAdd) {
+
+                            // 1. 默认状态是 正常
+                            that.form.status = that.setting.defaultStatus;
+                        }
                     },
                     error: function () {
 
