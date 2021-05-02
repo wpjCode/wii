@@ -596,8 +596,9 @@ var app = function () {
                     fullscreen: false,
                     text: '跳转中...'
                 });
-                window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update') +
-                    '?id=' + $id;
+                window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update' {
+                    id: $id
+                });
             }
         },
         watch: {
