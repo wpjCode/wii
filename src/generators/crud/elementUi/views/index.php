@@ -96,15 +96,12 @@ EOT;
                            style="width: 130px;">
 
                     <el-option label="编号" value="id"></el-option>
-                    <?php if ($model->hasAttribute('title')) { ?>
-
+<?php if ($model->hasAttribute('title')) { ?>
                         <el-option label="标题" value="title"></el-option>
-                    <?php } ?>
-                    <?php if ($model->hasAttribute('name')) { ?>
-
+<?php } ?>
+<?php if ($model->hasAttribute('name')) { ?>
                         <el-option label="名称" value="name"></el-option>
-                    <?php } ?>
-
+<?php } ?>
                 </el-select>
             </el-input>
         </el-form-item>
@@ -129,18 +126,18 @@ EOT;
             <div v-show="setting.showMoreSearch" id="searchAllAni"
                  class="more-search-container">
                 <!-- 此处添加[el-form-item] -->
-                <?php if ($model->hasAttribute('status')) { ?>
-                    <el-form-item label="状态" class="" class="padding-right-30">
-                        <el-radio-group size="mini" v-model="searchForm.status"
-                                        @change="getList(false)">
-                            <el-radio-button label="">全部</el-radio-button>
-                            <el-radio-button :label="key"
-                                             v-for="(item, key) in setting.statusTextList">
-                                {{item}}列表
-                            </el-radio-button>
-                        </el-radio-group>
-                    </el-form-item>
-                <?php } ?>
+<?php if ($model->hasAttribute('status')) {?>
+                <el-form-item label="状态" class="" class="padding-right-30">
+                    <el-radio-group size="mini" v-model="searchForm.status"
+                                    @change="getList(false)">
+                        <el-radio-button label="">全部</el-radio-button>
+                        <el-radio-button :label="key"
+                                         v-for="(item, key) in setting.statusTextList">
+                            {{item}}列表
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+<?php } ?>
             </div>
         </el-collapse-transition>
     </el-form>
