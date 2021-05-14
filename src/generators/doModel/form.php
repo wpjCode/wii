@@ -10,7 +10,9 @@ echo $form->field($generator, 'expName', []);
 
 echo $form->field($generator, 'baseModelClass', [
     'hasFileSvg' => true,
-    'fileSvgTitle' => $generator->langString('chose file/folder')
+    'fileSvgTitle' => $generator->langString('chose file/folder'),
+    'reduceFolder' => true,
+    'reduceFolderTitle' => $generator->langString('reduce folder title')
 ]);
 
 echo $form->field($generator, 'nameSpace', [

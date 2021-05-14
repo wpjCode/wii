@@ -12,6 +12,8 @@ echo $form->field($generator, 'standardizeCapitals')->checkbox();
 echo $form->field($generator, 'ns', [
     'hasFileSvg' => true,
     'fileSvgTitle' => $generator->langString('chose file/folder'),
+    'reduceFolder' => true,
+    'reduceFolderTitle' => $generator->langString('reduce folder title')
 ]);
 echo $form->field($generator, 'baseClass');
 echo $form->field($generator, 'db');
