@@ -206,11 +206,16 @@ var app = function () {
                         }
                         // 总条目
                         that.dataTotal = parseInt(event.data.total);
-                        // 超过此宽度展示 更多筛选
-                        var bodyDom = document.getElementsByTagName('body');
-                        if (bodyDom[0] && bodyDom[0].clientWidth <= that.setting.smallScreenWidth) {
-                            that.setting.isSmallScreen = true;
-                        }
+                        // 监测屏幕大小变化
+                        window.addEventListener('resize', function() {
+                            // 超过此宽度展示 更多筛选
+                            var bodyDom = document.getElementsByTagName('body');
+                            if (bodyDom[0] && bodyDom[0].clientWidth <= that.setting.smallScreenWidth) {
+                                that.setting.isSmallScreen = true;
+                            } else {
+                                that.setting.isSmallScreen = false;
+                            }
+                        });
                     },
                     error: function () {
 
@@ -596,7 +601,7 @@ var app = function () {
                     fullscreen: false,
                     text: '跳转中...'
                 });
-                window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update' {
+                window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update', {
                     id: $id
                 });
             }

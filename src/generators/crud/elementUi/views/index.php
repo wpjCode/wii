@@ -111,15 +111,14 @@ EOT;
                 搜索
             </el-button>
         </el-form-item>
-        <el-form-item label="" class="el-form-item-more"
-                      v-if="setting.isSmallScreen">
+        <el-form-item label="" class="el-form-item-more">
             <el-button type="text" @click="moreSearchClick">
-            <span v-if="!setting.showMoreSearch">
-                更多&nbsp;<i class="w-icon-dowMore"></i>
-            </span>
+                <span v-if="!setting.showMoreSearch">
+                    更多&nbsp;<i class="w-icon-dowMore"></i>
+                </span>
                 <span v-else>
-                隐藏&nbsp;<i class="w-icon-upClose"></i>
-            </span>
+                    隐藏&nbsp;<i class="w-icon-upClose"></i>
+                </span>
             </el-button>
         </el-form-item>
         <el-collapse-transition>
@@ -127,7 +126,8 @@ EOT;
                  class="more-search-container">
                 <!-- 此处添加[el-form-item] -->
 <?php if ($model->hasAttribute('status')) {?>
-                <el-form-item label="状态" class="" class="padding-right-30">
+                <el-form-item label="状态" class="" class="padding-right-30"
+                              v-if="setting.isSmallScreen">
                     <el-radio-group size="mini" v-model="searchForm.status"
                                     @change="getList(false)">
                         <el-radio-button label="">全部</el-radio-button>
