@@ -15,8 +15,8 @@ var app = function () {
         data: {
             loadOver: false,
             setting: {
+                showAllSearch: false, // 是否出现[展示全部查询]按钮
                 smallScreenWidth: 998, // 小屏幕临界点(px)
-                showMoreSearch: false, // 是否出现[展示全部查询]按钮
                 isSmallScreen: false, // 是否是小屏幕
             },
             searchForm: {}, // 搜索字段
@@ -128,7 +128,18 @@ var app = function () {
                         }
 
                         // 最终清空性初始化查询
-                        return that.initSearchForm(true);
+                        that.initSearchForm(true);
+                        // 监测屏幕大小变化
+                        return $(window).resize(function() {
+                            // 超过此宽度展示 更多筛选
+                            var bodyDom = document.getElementsByTagName('body');
+                            if (bodyDom[0] &&
+                            bodyDom[0].clientWidth <= that.setting.smallScreenWidth)
+                            {
+                                return that.setting.isSmallScreen = true;
+                            }
+                            return that.setting.isSmallScreen = false;
+                        }).resize();
                     },
                     error: function () {
 
@@ -206,16 +217,6 @@ var app = function () {
                         }
                         // 总条目
                         that.dataTotal = parseInt(event.data.total);
-                        // 监测屏幕大小变化
-                        window.addEventListener('resize', function() {
-                            // 超过此宽度展示 更多筛选
-                            var bodyDom = document.getElementsByTagName('body');
-                            if (bodyDom[0] && bodyDom[0].clientWidth <= that.setting.smallScreenWidth) {
-                                that.setting.isSmallScreen = true;
-                            } else {
-                                that.setting.isSmallScreen = false;
-                            }
-                        });
                     },
                     error: function () {
 
@@ -230,13 +231,13 @@ var app = function () {
                 });
             },
             /**
-             * [更多查询]按钮点击
-             */
+            * [更多查询]按钮点击
+            */
             moreSearchClick: function () {
-                if(this.setting.showMoreSearch) {
-                    return this.setting.showMoreSearch = false;
+                if(this.setting.showAllSearch) {
+                    return this.setting.showAllSearch = false;
                 }
-                this.setting.showMoreSearch = true;
+                this.setting.showAllSearch = true;
             },
             /**
              * 列表选择监测处理

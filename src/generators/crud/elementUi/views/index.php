@@ -48,88 +48,78 @@ EOT;
                     </el-dropdown-item>
             </el-dropdown>
         </el-col>
-        <el-col class="padding-top-10" style="display: none;">
-            <!-- 提醒 START -->
-            <div class="tip no-margin-top">
-                <el-collapse v-model="setting.activeNotice" accordion>
-                    <el-collapse-item>
-                        <template slot="title">
-                            <i class="el-icon el-icon-info"></i>
-                            &nbsp;&nbsp;
-                            <span class="title">
+    </el-row>
+    <div class="padding-10" style="display: none;">
+        <!-- 提醒 START -->
+        <div class="tip">
+            <el-collapse v-model="setting.activeNotice" accordion>
+                <el-collapse-item>
+                    <template slot="title">
+                        <i class="el-icon el-icon-info"></i>
+                        &nbsp;&nbsp;
+                        <span class="title">
                             温馨提示
                         </span>
-                        </template>
-                        <div class="content">
-                            <p>
-                                1、一些小提示: 我是提示；
-                                一些小代码：<code>我是小代码</code>
-                            </p>
-                        </div>
-                    </el-collapse-item>
-                </el-collapse>
-            </div>
-            <!-- 提醒 END -->
-        </el-col>
-    </el-row>
+                    </template>
+                    <div class="content">
+                        <p>
+                            1、一些小提示: 我是提示；
+                            一些小代码：<code>我是小代码</code>
+                        </p>
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+        <!-- 提醒 END -->
+    </div>
     <el-form :inline="true" :model="searchForm" @submit.native.prevent
              class="search-container">
 <?php if ($model->hasAttribute('status')) { ?>
-        <el-form-item label="状态" class="" class="padding-right-30" v-if="!setting.isSmallScreen">
-            <el-radio-group size="mini" v-model="searchForm.status"
-                            @change="getList(false)">
+        <el-form-item label="" class="" class="padding-right-30" v-if="!setting.isSmallScreen">
+            <el-radio-group size="" v-model="searchForm.status" @change="getList(false)">
                 <el-radio-button label="">全部</el-radio-button>
-                <el-radio-button :label="key"
-                                 v-for="(item, key) in setting.statusTextList">
+                <el-radio-button :label="key" v-for="(item, key) in setting.statusTextList">
                     {{item}}列表
                 </el-radio-button>
             </el-radio-group>
         </el-form-item>
 <?php } ?>
-        <el-form-item label="名称过滤" class="padding-right-30">
-            <el-input placeholder="请输入内容"
-                      v-model="searchTopValue" size="small"
-                      class="input-with-select vert-align-init" type="text"
-                      size="small">
-                <el-select v-model="searchTopType" slot="prepend"
-                           size="small" placeholder="请选择"
-                           style="width: 130px;">
+        <el-form-item label="" :class="!setting.isSmallScreen?'float-right':''">
+            <el-input placeholder="请输入内容" v-model="searchTopValue" size="small" type="text"
+                      class="input-with-select vert-align-init" size="small">
+                <el-select v-model="searchTopType" slot="prepend" size="small"
+                           placeholder="请选择" style="width: 130px;">
 
                     <el-option label="编号" value="id"></el-option>
 <?php if ($model->hasAttribute('title')) { ?>
-                        <el-option label="标题" value="title"></el-option>
-<?php } ?>
-<?php if ($model->hasAttribute('name')) { ?>
-                        <el-option label="名称" value="name"></el-option>
+                    <el-option label="标题" value="title"></el-option>
+<?php } if ($model->hasAttribute('name')) { ?>
+                    <el-option label="名称" value="name"></el-option>
 <?php } ?>
                 </el-select>
+                <el-button slot="append" type="primary" icon="el-icon-search"
+                           size="small" @click="handleCurrentChange(1)">
+                    搜索
+                </el-button>
             </el-input>
         </el-form-item>
-        <el-form-item label="">
-            <el-button type="primary" icon="el-icon-search"
-                       size="small" @click="handleCurrentChange(1)">
-                搜索
-            </el-button>
-        </el-form-item>
-        <el-form-item label="" class="el-form-item-more">
+        <el-form-item label="" class="el-form-item-more" v-show="setting.isSmallScreen">
             <el-button type="text" @click="moreSearchClick">
-                <span v-if="!setting.showMoreSearch">
-                    更多&nbsp;<i class="w-icon-dowMore"></i>
+                <span v-if="!setting.showAllSearch" class="font-fourth">
+                    更多&nbsp;<i class="el-icon-caret-bottom font-fourth"></i>
                 </span>
                 <span v-else>
-                    隐藏&nbsp;<i class="w-icon-upClose"></i>
+                    隐藏&nbsp;<i class="el-icon-caret-top"></i>
                 </span>
             </el-button>
         </el-form-item>
         <el-collapse-transition>
-            <div v-show="setting.showMoreSearch" id="searchAllAni"
+            <div v-show="setting.showAllSearch" id="searchAllAni"
                  class="more-search-container">
                 <!-- 此处添加[el-form-item] -->
 <?php if ($model->hasAttribute('status')) {?>
-                <el-form-item label="状态" class="" class="padding-right-30"
-                              v-if="setting.isSmallScreen">
-                    <el-radio-group size="mini" v-model="searchForm.status"
-                                    @change="getList(false)">
+                <el-form-item class="padding-right-30">
+                    <el-radio-group v-model="searchForm.status" @change="getList(false)">
                         <el-radio-button label="">全部</el-radio-button>
                         <el-radio-button :label="key"
                                          v-for="(item, key) in setting.statusTextList">
