@@ -46,6 +46,7 @@ EOT;
                                       divided>
                         批量禁用
                     </el-dropdown-item>
+                </el-dropdown-menu>
             </el-dropdown>
         </el-col>
     </el-row>
