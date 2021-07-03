@@ -443,7 +443,7 @@ echo <<<EOT
     {
 
         // 没有加载条件加载下
-        if (empty(\$this->sqlBase->where)) {
+        if (empty(\$this->sqlBase->where) && !empty(\$this->where)) {
             \$this->sqlBase->where(\$this->where);
         }
         // 基础 where加载完毕
