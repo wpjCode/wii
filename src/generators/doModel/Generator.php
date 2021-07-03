@@ -26,7 +26,7 @@ class Generator extends \wpjCode\wii\Generator
      */
     public $baseModelClass;
     /**
-     * 数据仓库操作类
+     * 数据库操作类
      * @var
      */
     public $doDbModel;

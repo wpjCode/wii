@@ -46,9 +46,9 @@ use yii\db\Exception;
 
 /**
  * {$generator->expName}
- * User: Administrator
- * Date: $createDate
- * Time: $createTime
+ * 作者: Editor Name
+ * 日期: {$createDate}
+ * 时间: {$createTime}
  */
 class {$modelPath['filename']} extends {$baseModelPath['filename']}
 {
@@ -62,17 +62,17 @@ if (property_exists($schema, 'columns')) {
         // 如果是枚举数字类型则进行渲染 枚举列表
         if (strstr($v->dbType, 'tinyint')) {
 
-        # 保证说明
-        $comment = property_exists($v, 'comment')?$v->comment:'--';
+            # 保证说明
+            $comment = property_exists($v, 'comment')?$v->comment:'--';
 
-        # [ucwords]将每个单词的首字母大写
-        # [str_replace]字符串替换
-        $capFirstName = ucwords(str_replace('_',' ',$v->name));
-        # [ucfirst]将所有的字符串首字母大写；
-        $capFirstName = str_replace(' ','',ucfirst($capFirstName));
-        # 首字母小写
-        $lowFirstName = lcfirst($capFirstName);
-echo <<<EOT
+            # [ucwords]将每个单词的首字母大写
+            # [str_replace]字符串替换
+            $capFirstName = ucwords(str_replace('_',' ',$v->name));
+            # [ucfirst]将所有的字符串首字母大写；
+            $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+            # 首字母小写
+            $lowFirstName = lcfirst($capFirstName);
+            echo <<<EOT
 
     /**
      * $comment 列表
@@ -80,19 +80,19 @@ echo <<<EOT
     */
     private static \${$lowFirstName}List = [
 EOT;
-switch ($v->name) {
-    // 状态默认值
-    case 'status':
-echo <<<EOT
+            switch ($v->name) {
+                // 状态默认值
+                case 'status':
+                    echo <<<EOT
 
         'disabled' => -1,
         'normal' => 0,
         'open' => 1\r
     
 EOT;
-        break;
-}
-echo <<<EOT
+                    break;
+            }
+            echo <<<EOT
 ];
     /**
      * {$comment}文本 列表
@@ -100,19 +100,19 @@ echo <<<EOT
     */
     private static \${$lowFirstName}TextList = [
 EOT;
-switch ($v->name) {
-    // 状态默认值
-    case 'status':
-echo <<<EOT
+            switch ($v->name) {
+                // 状态默认值
+                case 'status':
+                    echo <<<EOT
 
         -1 => '禁用',
         0 => '审核',
         1 => '开启'\r
     
 EOT;
-    break;
-}
-echo <<<EOT
+                    break;
+            }
+            echo <<<EOT
 ];
     
 EOT;
@@ -121,7 +121,7 @@ EOT;
     }
 }
 if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
-        echo <<<EOT
+    echo <<<EOT
     
     
     /**
@@ -136,8 +136,8 @@ if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
     protected static \$minSort = {$minSort};
     
 EOT;
-    }
-    echo <<<EOT
+}
+echo <<<EOT
     
     
     /**
@@ -186,7 +186,7 @@ if (property_exists($schema, 'columns')) {
         $capFirstName = str_replace(' ','',ucfirst($capFirstName));
         # 首字母小写
         $lowFirstName = lcfirst($capFirstName);
-echo <<<EOT
+        echo <<<EOT
 
         // [{$v->comment}]列表
         \${$lowFirstName}List = array_values(self::get{$capFirstName}List());
@@ -243,7 +243,7 @@ EOT;
 }
 // ******** 特殊 - [排序]渲染[rules] 结束 ********
 
-    echo <<<EOT
+echo <<<EOT
 
         ]);
     }
@@ -270,7 +270,7 @@ EOT;
     }
 }
 // ******** 字段[label]添加 结束 ********
-    echo <<<EOT
+echo <<<EOT
 
         ]);
     }
@@ -330,20 +330,20 @@ EOT;
      * 获取全部列表
      * @param \$page
      * @param \$limit
-     * @param null \$filed
+     * @param null \$field
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function getList(\$page, \$limit, \$filed = null)
+    public function getList(\$page, \$limit, \$field = null)
     {
 
         // 当前页面计算
         \$page = ((\$page - 1) < 0 ? 0 : (\$page - 1));
 
         // 查找的 字段空的 就默认给列表
-        if (!\$filed) \$filed = '*';
+        if (!\$field) \$field = '*';
 
         // 基础 where加载完毕
-        \$this->getSqlBase()->select(\$filed);
+        \$this->getSqlBase()->select(\$field);
             
         // 是否已经有自定义排序
         if (property_exists(\$this, 'orderBy') && !empty(\$this->orderBy)) {
@@ -356,12 +356,12 @@ if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
             \$this->getSqlBase()->orderBy('sort desc, update_time desc');
 EOT;
 } else if ($model->hasAttribute('sort') && $model->hasAttribute('id')) {
-        echo <<<EOT
+    echo <<<EOT
     
             \$this->getSqlBase()->orderBy('sort desc, id desc');
 EOT;
 } else if (!$model->hasAttribute('sort') && $model->hasAttribute('id')) {
-        echo <<<EOT
+    echo <<<EOT
     
             \$this->getSqlBase()->orderBy('id desc');
 EOT;
@@ -398,7 +398,7 @@ EOT;
             }
 EOT;
 } if ($model->hasAttribute('content')) {
-        echo <<<EOT
+    echo <<<EOT
     
     
             // 内容转化下
@@ -421,7 +421,7 @@ if (property_exists($schema, 'columns')) {
         $capFirstName = ucwords(str_replace('_',' ',$v->name));
         # ucfirst 将所有的字符串首字母大写；
         $capFirstName = str_replace(' ','',ucfirst($capFirstName));
-echo <<<EOT
+        echo <<<EOT
 
 
             // {$v->comment} 文本
@@ -571,34 +571,34 @@ echo <<<EOT
             // 可以是走[mongoId]
             \$this->id = CommonModel::newMongoId();
 EOT;
-    if ($model->hasAttribute('add_time')) {
-        echo <<<EOT
+if ($model->hasAttribute('add_time')) {
+    echo <<<EOT
     
             // 添加时间
             \$this->add_time = \$nowTime;
 EOT;
-    }
-    echo <<<EOT
+}
+echo <<<EOT
 
         }
 
 EOT;
-    if ($model->hasAttribute('update_time')) {
-        echo <<<EOT
+if ($model->hasAttribute('update_time')) {
+    echo <<<EOT
     
         // 更新时间
         \$this->update_time = \$nowTime;
 EOT;
-    }
-    if ($model->hasAttribute('action_uid')) {
-        echo <<<EOT
+}
+if ($model->hasAttribute('action_uid')) {
+    echo <<<EOT
     
         // 操作者
         \$this->action_uid = \Yii::\$app->getUser()->id;
 EOT;
-    }
-    if ($model->hasAttribute('content')) {
-        echo <<<EOT
+}
+if ($model->hasAttribute('content')) {
+    echo <<<EOT
     
     
         // 内容解密下 - 防止加密多次
@@ -608,8 +608,8 @@ EOT;
         // 内容加密下
         \$this->content = htmlspecialchars(\$this->content);
 EOT;
-    }
-    echo <<<EOT
+}
+echo <<<EOT
 
         if (\$this->hasErrors() || !\$this->validate() || !\$this->save()) {
 
@@ -694,13 +694,13 @@ EOT;
             \$addResult = \$db->batchInsert(self::tableName(),
                 [
 EOT;
-    foreach ($model->attributes as $k => $v) {
-        echo <<<EOT
+foreach ($model->attributes as $k => $v) {
+    echo <<<EOT
 
                      '$k',
 EOT;
-    }
-    echo <<<EOT
+}
+echo <<<EOT
 
                 ], \$createData
             )->execute();
@@ -775,7 +775,7 @@ EOT;
 EOT;
 
 if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
-        echo <<<EOT
+    echo <<<EOT
     
     
     /**
@@ -816,7 +816,7 @@ if (property_exists($schema, 'columns')) {
             # 首字母小写
             $lowFirstName = lcfirst($capFirstName);
             if ($v->name == 'status') {
-echo <<<EOT
+                echo <<<EOT
 
 
     /**
@@ -838,7 +838,7 @@ echo <<<EOT
 EOT;
 
             }
-echo <<<EOT
+            echo <<<EOT
 
 
     /**
@@ -891,4 +891,3 @@ echo <<<EOT
     }
 }
 EOT;
-
