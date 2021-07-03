@@ -207,6 +207,16 @@ class <?=$renderModel['filename']?> extends <?=$baseModel['filename'] . "\n"?>
     }
 
     /**
+     * 初始化并返回当前基础[SQL]
+     * @return \yii\db\ActiveQuery
+    */
+    protected function getSqlBase() {
+        if ($this->sqlBase) return $this->sqlBase;
+        $this->sqlBase = $this::find()->where($this->where);
+        return $this->sqlBase;
+    }
+
+    /**
      * 获取全部列表
      * @param $page
      * @param $limit
@@ -215,15 +225,11 @@ class <?=$renderModel['filename']?> extends <?=$baseModel['filename'] . "\n"?>
     public function getList($page, $limit)
     {
 
-        // 条件
-        $where = $this->where;
-
         // 当前页面计算
         $page = (($page - 1) < 0 ? 0 : ($page - 1));
 
         // 基础 where加载完毕
-        $base = $this::find()
-            ->where($where);
+        $this->getSqlBase()->select($filed);
 
         // 数据的获取 分页等
         $list = $base->offset($page * $limit)

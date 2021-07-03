@@ -317,6 +317,16 @@ EOT;
     }
 
     /**
+     * 初始化并返回当前基础[SQL]
+     * @return \yii\db\ActiveQuery
+     */
+    protected function getSqlBase() {
+        if (\$this->sqlBase) return \$this->sqlBase;
+        \$this->sqlBase = \$this::find()->where(\$this->where);
+        return \$this->sqlBase;
+    }
+    
+    /**
      * 获取全部列表
      * @param \$page
      * @param \$limit
@@ -326,9 +336,6 @@ EOT;
     public function getList(\$page, \$limit, \$filed = null)
     {
 
-        // 条件
-        \$where = \$this->where;
-
         // 当前页面计算
         \$page = ((\$page - 1) < 0 ? 0 : (\$page - 1));
 
@@ -336,36 +343,34 @@ EOT;
         if (!\$filed) \$filed = '*';
 
         // 基础 where加载完毕
-        \$this->sqlBase = \$this::find()
-            ->select(\$filed)
-            ->where(\$where);
+        \$this->getSqlBase()->select(\$filed);
             
         // 是否已经有自定义排序
         if (property_exists(\$this, 'orderBy') && !empty(\$this->orderBy)) {
-            \$this->sqlBase->orderBy(\$this->orderBy);
+            \$this->getSqlBase()->orderBy(\$this->orderBy);
         } else { // 无自定义排序
 EOT;
 if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
     echo <<<EOT
     
-            \$this->sqlBase->orderBy('sort desc, update_time desc');
+            \$this->getSqlBase()->orderBy('sort desc, update_time desc');
 EOT;
 } else if ($model->hasAttribute('sort') && $model->hasAttribute('id')) {
         echo <<<EOT
     
-            \$this->sqlBase->orderBy('sort desc, id desc');
+            \$this->getSqlBase()->orderBy('sort desc, id desc');
 EOT;
 } else if (!$model->hasAttribute('sort') && $model->hasAttribute('id')) {
         echo <<<EOT
     
-            \$this->sqlBase->orderBy('id desc');
+            \$this->getSqlBase()->orderBy('id desc');
 EOT;
 } echo <<<EOT
 
         }
             
         // 数据的获取 分页等
-        \$list = \$this->sqlBase->offset(\$page * \$limit)
+        \$list = \$this->getSqlBase()->offset(\$page * \$limit)
             ->limit(\$limit)
             ->asArray()->all();
 
@@ -443,11 +448,11 @@ echo <<<EOT
     {
 
         // 没有加载条件加载下
-        if (empty(\$this->sqlBase->where) && !empty(\$this->where)) {
-            \$this->sqlBase->where(\$this->where);
+        if (empty(\$this->getSqlBase()->where)) {
+            \$this->getSqlBase()->where(\$this->where);
         }
         // 基础 where加载完毕
-        \$count = \$this->sqlBase->count();
+        \$count = \$this->getSqlBase()->count();
 
         return intval(\$count);
     }
@@ -606,7 +611,7 @@ EOT;
     }
     echo <<<EOT
 
-        if (\$this->hasErrors() || !\$this->validate() ||  !\$this->save()) {
+        if (\$this->hasErrors() || !\$this->validate() || !\$this->save()) {
 
             // 记录下错误日志
             \Yii::error([
