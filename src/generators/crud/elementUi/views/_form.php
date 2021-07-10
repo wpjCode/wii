@@ -44,13 +44,13 @@ foreach ($generator->getTableSchema()->columns as $attribute) {
     </el-main>
 
     <el-footer class="bottom-button" :height="50">
-        <el-button size="mini" type="primary" @click="submitAdd" v-if="setting.isAdd === true">
+        <el-button size="mini" type="success" @click="submitAdd" v-if="setting.isAdd === true">
             创建
         </el-button>
         <el-button size="mini" type="primary" @click="submitUpdate" v-if="setting.isAdd === false">
             保存
         </el-button>
-        <el-button size="mini" @click="cancel">取消</el-button>
+        <el-button size="mini" type="danger" @click="cancel">取消</el-button>
     </el-footer>
 </el-container>
 
