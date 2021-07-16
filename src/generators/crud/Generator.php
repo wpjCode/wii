@@ -404,7 +404,7 @@ class Generator extends \wpjCode\wii\Generator
                     '`` 错误详情:   获取页面上[CSS]路径出错                     ``',
                     '`` 错误信息和参数详情:                                    ``',
                     '````````````````````````````````````````````````````````',
-                    $error->getTraceAsString()
+                    $error->getTrace()
                 ]);
             }
             $this->addError('cssPath', '页面样式名称不能为空, 详情查看日志' . $page);
@@ -459,7 +459,7 @@ class Generator extends \wpjCode\wii\Generator
                     '`` 错误详情:   获取页面上[JS]路径出错                     ``',
                     '`` 错误信息和参数详情:                                    ``',
                     '````````````````````````````````````````````````````````',
-                    $error->getTraceAsString()
+                    $error->getTrace()
                 ]);
             }
             $this->addError('cssPath', '页面JS脚本名称不能为空, 详情查看日志' . $page);

@@ -561,7 +561,7 @@ echo <<<EOT
             "`` {\$error->getMessage()}                                ``",
             "`` 错误信息和参数详情:                                      ``",
             "`````````````````````````````````````````````````````````",
-            \$error->getTraceAsString()
+            \$error->getTrace()
         ], 'error');
 
         self::\$error_ = empty(\$error->errorInfo) ?
