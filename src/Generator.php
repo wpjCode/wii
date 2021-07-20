@@ -319,6 +319,7 @@ abstract class Generator extends Model
                 $lines[] = "   skipped $relativePath";
             }
         }
+
         $lines[] = "done!\n";
         $results = implode("\n", $lines);
 

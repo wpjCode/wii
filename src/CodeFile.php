@@ -11,6 +11,7 @@ use Yii;
 use yii\base\BaseObject;
 use wpjCode\wii\components\DiffRendererHtmlInline;
 use yii\helpers\Html;
+use yii\helpers\Inflector;
 
 /**
  * CodeFile represents a code file to be generated.
@@ -178,6 +179,21 @@ class CodeFile extends BaseObject
         }
 
         return '';
+    }
+
+    /**
+     * Returns route from file path
+     * @return string
+     */
+    public function getRoute() {
+        $route = str_replace([
+            'modules/',
+            'controllers/',
+            'Controller.php'
+        ], '', $this->relativePath);
+        list($module, $controller) = explode('/', $route, 2);
+        $controller = Inflector::camel2id($controller, '-', $controller);
+        return $module . '/' . $controller;
     }
 
     /**

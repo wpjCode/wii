@@ -280,7 +280,11 @@ class Generator extends \wpjCode\wii\Generator
                 $this->render(Yii::getAlias("/statics/js/index.php"))),
             // 列表页[form]
             new CodeFile("{$jsPath}-form.js",
-                $this->render(Yii::getAlias("/statics/js/form.php"))),
+                $this->render(Yii::getAlias("/statics/js/form.php")),
+                [
+
+                ]
+            ),
         ]);
 
         // 模板即将渲染到的目录
@@ -532,7 +536,8 @@ class Generator extends \wpjCode\wii\Generator
      * @param string $controlPath 控制器路径|如：'app/modules/controllers/DoController'
      * @return bool
      */
-    private function isControlViewPath($controlPath = '') {
+    private function isControlViewPath($controlPath = '')
+    {
 
         // 路径信息
         $pathInfo = pathinfo($controlPath);
@@ -601,7 +606,7 @@ class Generator extends \wpjCode\wii\Generator
         $column = $tableSchema->columns[$attribute];
         if ($column->type === 'text') {
             return $this->generateTextArea($attribute, $column);
-        } else if ($column->type === 'tinyint'){
+        } else if ($column->type === 'tinyint') {
             return $this->generateRadio($attribute, $column);
         }
 
@@ -614,7 +619,8 @@ class Generator extends \wpjCode\wii\Generator
      * @param null $column
      * @return string
      */
-    public function generateInput($attribute, $column = null) {
+    public function generateInput($attribute, $column = null)
+    {
 
         $label = $this->getColumnLabel($attribute);
 
@@ -635,7 +641,8 @@ EOT;
      * @param null $column
      * @return string
      */
-    public function generateRadio($attribute, $column = null) {
+    public function generateRadio($attribute, $column = null)
+    {
 
         $label = $this->getColumnLabel($attribute);
 
@@ -662,7 +669,8 @@ EOT;
      * @param null $column
      * @return string
      */
-    public function generateTextArea($attribute, $column = null) {
+    public function generateTextArea($attribute, $column = null)
+    {
         $label = $this->getColumnLabel($attribute);
         return <<<EOT
                 <el-form-item label="{$label}" prop="{$attribute}" :inline-message="true"
@@ -899,6 +907,102 @@ EOT;
         $attrName = $model->getAttributeLabel($attribute);
 
         return $this->langString($attrName);
+    }
+
+
+    public function save($files, $answers, &$results)
+    {
+
+        $result = parent::save($files, $answers, $results);
+
+        // ☆--页面展示连接--☆
+        $baseName = StringHelper::basename($this->baseModelClass);
+        $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
+                ltrim($this->controllerShowClass, '\\')) . '.php');
+        $files = new CodeFile($controlFile, '');
+        $route = $files->getRoute();
+
+        $row = [
+            '下面是【后台】页面展示连接：',
+            "\t\$urlPre . '/" . lcfirst($baseName) . "' . '.html' => \$routePre . '/" .
+            $route . "/index',",
+            "\t\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.html' => \$routePre . '/" .
+            $route . "/create',",
+            "\t\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.html' => \$routePre . '/" .
+            $route . "/update',",
+            '下面是【前台】页面展示连接：',
+            lcfirst($baseName) . ': {',
+            "&nbsp;&nbsp;&nbsp;index: \$urlPre + '" . lcfirst($baseName) . "' + '.html',",
+            "&nbsp;&nbsp;&nbsp;create: \$urlPre + '" . lcfirst($baseName) . "' + 'Create.html',",
+            "&nbsp;&nbsp;&nbsp;update: \$urlPre + '" . lcfirst($baseName) . "' + 'Update.html',",
+            '}'
+        ];
+
+        // ☆--API操作连接--☆
+        $baseName = StringHelper::basename($this->baseModelClass);
+        $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
+                ltrim($this->controllerDoClass, '\\')) . '.php');
+        $files = new CodeFile($controlFile, '');
+        $route = $files->getRoute();
+
+        $row = array_merge($row, [
+            '下面是【后台】API操作连接：',
+            "\t\$urlPre . '/" . lcfirst($baseName) . "' . 'Setting.api' => \$routePre . '/" .
+            $route . "/setting',",
+            "\t\$urlPre . '/" . lcfirst($baseName) . "' . 'List.api' => \$routePre . '/" .
+            $route . "/list',",
+            "\t\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.api' => \$routePre . '/" .
+            $route . "/create',",
+            "\t\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.api' => \$routePre . '/" .
+            $route . "/update',",
+            "\t\$urlPre . '/" . lcfirst($baseName) . "' . 'Detail.api' => \$routePre . '/" .
+            $route . "/detail',"
+        ]);
+        // 有[状态]增加[状态]接口
+        if (in_array('status', $this->getColumnNames())) {
+            $row[] = "\t\$urlPre . '/" . lcfirst($baseName) .
+                "' . 'Disabled.api' => \$routePre . '/" . $route . "/disabled',";
+            $row[] = "\t\$urlPre . '/" . lcfirst($baseName) .
+                "' . 'Open.api' => \$routePre . '/" . $route . "/open',";
+        }
+        // 有排序增加排序接口
+        if (
+            in_array('sort', $this->getColumnNames()) ||
+            in_array('list_order', $this->getColumnNames())
+        ) {
+            $row[] = "\t\$urlPre . '/" . lcfirst($baseName) .
+                "' . 'Sort.api' => \$routePre . '/" . $route . "/sort',";
+        }
+
+        $row = array_merge($row, [
+            '下面是【前台】API操作连接：',
+            lcfirst($baseName) . ': {',
+            "&nbsp;&nbsp;&nbsp;setting: \$urlPre + '" . lcfirst($baseName) . "' + 'Setting.api',",
+            "&nbsp;&nbsp;&nbsp;list: \$urlPre + '" . lcfirst($baseName) . "' + 'List.api',",
+            "&nbsp;&nbsp;&nbsp;create: \$urlPre + '" . lcfirst($baseName) . "' + 'Create.api',",
+            "&nbsp;&nbsp;&nbsp;update: \$urlPre + '" . lcfirst($baseName) . "' + 'Update.api',",
+            "&nbsp;&nbsp;&nbsp;detail: \$urlPre + '" . lcfirst($baseName) . "' + 'Detail.api',",
+        ]);
+        // 有[状态]增加[状态]接口
+        if (in_array('status', $this->getColumnNames())) {
+            $row[] = "&nbsp;&nbsp;&nbsp;disabled: \$urlPre + '" . lcfirst($baseName) .
+                "' + 'Disabled.api',";
+            $row[] = "&nbsp;&nbsp;&nbsp;open: \$urlPre + '" . lcfirst($baseName) .
+                "' + 'Open.api',";
+        }
+        // 有[排序]增加[排序]接口
+        if (
+            in_array('sort', $this->getColumnNames()) ||
+            in_array('list_order', $this->getColumnNames())
+        ) {
+            $row[] = "&nbsp;&nbsp;&nbsp;sort: \$urlPre + '" . lcfirst($baseName) .
+                "' + 'Sort.api',";
+        }
+        $row[] = "}";
+
+        $results .= implode("\n", $row);
+
+        return $result;
     }
 
     /**

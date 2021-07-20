@@ -233,6 +233,7 @@ class DefaultController extends Controller
      */
     protected function loadGenerator($id)
     {
+
         if (isset($this->module->generators[$id])) {
             $this->generator = $this->module->generators[$id];
             $this->generator->loadStickyAttributes();

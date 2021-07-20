@@ -49,11 +49,12 @@ foreach ($generator->templates as $name => $path) {
                     ->dropDownList($templates) ?>
                 <div class="form-group">
                     <?= Html::submitButton(Yii::t(I18nCategory, 'Preview'), [
-                            'name' => 'preview', 'class' => 'btn btn-primary'
+                        'name' => 'preview', 'class' => 'btn btn-primary'
                     ]) ?>
-
                     <?php if (isset($files)): ?>
-                        <?= Html::submitButton(Yii::t(I18nCategory, 'Generate'), ['name' => 'generate', 'class' => 'btn btn-success']) ?>
+                        <?= Html::submitButton(Yii::t(I18nCategory, 'Generate'), [
+                            'name' => 'generate', 'class' => 'btn btn-success'
+                        ]) ?>
                     <?php endif; ?>
                 </div>
             </div>
