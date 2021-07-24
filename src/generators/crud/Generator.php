@@ -1033,7 +1033,7 @@ EOT;
             $row[] = "{space}{space}sort: \$urlPre + '" . lcfirst($baseName) .
                 "' + 'Sort.api',";
         }
-        $row[] = "}";
+        $row[] = "{space}}";
 
         $results .= implode("\n", $row);
         $results = str_replace('{space}', '&nbsp;&nbsp;&nbsp;', $results);
