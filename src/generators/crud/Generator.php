@@ -909,7 +909,13 @@ EOT;
         return $this->langString($attrName);
     }
 
-
+    /**
+     * 保存
+     * @param CodeFile[] $files
+     * @param array $answers
+     * @param string $results
+     * @return bool
+     */
     public function save($files, $answers, &$results)
     {
 
@@ -917,6 +923,8 @@ EOT;
 
         // ☆--页面展示连接--☆
         $baseName = StringHelper::basename($this->baseModelClass);
+        // 基础类名去关键词
+        $baseName = str_replace(['Model'], [''], $baseName);
         $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
                 ltrim($this->controllerShowClass, '\\')) . '.php');
         $files = new CodeFile($controlFile, '');
@@ -946,11 +954,12 @@ EOT;
         ];
 
         // ☆--API操作连接--☆
-        $baseName = StringHelper::basename($this->baseModelClass);
         $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
                 ltrim($this->controllerDoClass, '\\')) . '.php');
         $files = new CodeFile($controlFile, '');
         $route = $files->getRoute();
+        // 基础类名去关键词
+        $baseName = str_replace(['Model'], [''], $baseName);
 
         $row = array_merge($row, [
             '下面是【后台】API操作连接：',
@@ -970,6 +979,7 @@ EOT;
             "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.api' => \$routePre . '/" .
             $route . "/update',"
         ]);
+
         // 有[状态]增加[状态]接口
         if (in_array('status', $this->getColumnNames())) {
             $row[] = '{space}// [' . $this->expName . ']禁用API';
