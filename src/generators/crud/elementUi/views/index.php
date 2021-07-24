@@ -77,7 +77,7 @@ EOT;
              class="search-container">
 <?php if ($model->hasAttribute('status')) { ?>
         <el-form-item label="" class="" class="padding-right-30" v-if="!setting.isSmallScreen">
-            <el-radio-group size="" v-model="searchForm.status" @change="getList(false)">
+            <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
                 <el-radio-button label="">全部</el-radio-button>
                 <el-radio-button :label="key" v-for="(item, key) in setting.statusTextList">
                     {{item}}列表
@@ -87,7 +87,7 @@ EOT;
 <?php } ?>
         <el-form-item label="" :class="!setting.isSmallScreen?'float-right':''">
             <el-input placeholder="请输入内容" v-model="searchTopValue" size="small" type="text"
-                      class="input-with-select vert-align-init" size="small">
+                      class="input-with-select vert-align-init">
                 <el-select v-model="searchTopType" slot="prepend" size="small"
                            placeholder="请选择" style="width: 130px;">
 
@@ -120,7 +120,8 @@ EOT;
                 <!-- 此处添加[el-form-item] -->
 <?php if ($model->hasAttribute('status')) {?>
                 <el-form-item class="padding-right-30">
-                    <el-radio-group v-model="searchForm.status" @change="getList(false)">
+                    <el-radio-group v-model="searchForm.status"
+                                    @change="handleCurrentChange(1)">
                         <el-radio-button label="">全部</el-radio-button>
                         <el-radio-button :label="key"
                                          v-for="(item, key) in setting.statusTextList">
@@ -201,7 +202,8 @@ EOT;
                           v-text="'已' + scope.row.status_text"
                           class="pointer text-danger"></span>
                     <span v-else-if="scope.row.status == setting.statusList.open"
-                          v-text="'已' + scope.row.status_text" class="pointer text-success"></span>
+                          v-text="'已' + scope.row.status_text"
+                          class="pointer text-success"></span>
                     <span v-else v-text="'已' + scope.row.status_text"
                           class="pointer"></span>
                 </div>
