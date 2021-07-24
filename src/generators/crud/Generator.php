@@ -923,23 +923,24 @@ EOT;
 
         // ☆--页面展示连接--☆
         $baseName = StringHelper::basename($this->baseModelClass);
+
         // 基础类名去关键词
         $baseName = str_replace(['Model'], [''], $baseName);
         $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
                 ltrim($this->controllerShowClass, '\\')) . '.php');
         $files = new CodeFile($controlFile, '');
-        $route = $files->getRoute();
+        $route = $files->getRoute(false);
 
         $row = [
             '下面是【后台】页面展示连接：',
             '{space}// [' . $this->expName . ']列表页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . '.html' => \$routePre . '/" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . '.html' => \$routePre . '" .
             $route . "/index',",
             '{space}// [' . $this->expName . ']添加页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.html' => \$routePre . '/" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.html' => \$routePre . '" .
             $route . "/create',",
             '{space}// [' . $this->expName . ']修改页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.html' => \$routePre . '/" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.html' => \$routePre . '" .
             $route . "/update',",
             '下面是【前台】页面展示连接：',
             '{space}// ' . $this->expName,
@@ -957,26 +958,26 @@ EOT;
         $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
                 ltrim($this->controllerDoClass, '\\')) . '.php');
         $files = new CodeFile($controlFile, '');
-        $route = $files->getRoute();
+        $route = $files->getRoute(false);
         // 基础类名去关键词
         $baseName = str_replace(['Model'], [''], $baseName);
 
         $row = array_merge($row, [
             '下面是【后台】API操作连接：',
             '{space}// [' . $this->expName . ']获取设置API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Setting.api' => \$routePre . '/" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Setting.api' => \$routePre . '" .
             $route . "/setting',",
             '{space}// [' . $this->expName . ']获取列表API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'List.api' => \$routePre . '/" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'List.api' => \$routePre . '" .
             $route . "/list',",
             '{space}// [' . $this->expName . ']提交添加API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.api' => \$routePre . '/" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.api' => \$routePre . '" .
             $route . "/create',",
             '{space}// [' . $this->expName . ']获取详情API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Detail.api' => \$routePre . '/" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "' . 'Detail.api' => \$routePre . '" .
             $route . "/detail',",
             '{space}// [' . $this->expName . ']提交更新API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.api' => \$routePre . '/" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "' . 'Update.api' => \$routePre . '" .
             $route . "/update',"
         ]);
 
@@ -984,10 +985,10 @@ EOT;
         if (in_array('status', $this->getColumnNames())) {
             $row[] = '{space}// [' . $this->expName . ']禁用API';
             $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
-                "' . 'Disabled.api' => \$routePre . '/" . $route . "/disabled',";
+                "' . 'Disabled.api' => \$routePre . '" . $route . "/disabled',";
             $row[] = '{space}// [' . $this->expName . ']开启API';
             $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
-                "' . 'Open.api' => \$routePre . '/" . $route . "/open',";
+                "' . 'Open.api' => \$routePre . '" . $route . "/open',";
         }
         // 有排序增加排序接口
         if (
@@ -996,7 +997,7 @@ EOT;
         ) {
             $row[] = '{space}// [' . $this->expName . ']修改排序API';
             $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
-                "' . 'Sort.api' => \$routePre . '/" . $route . "/sort',";
+                "' . 'Sort.api' => \$routePre . '" . $route . "/sort',";
         }
 
         $row = array_merge($row, [

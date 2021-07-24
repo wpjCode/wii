@@ -183,9 +183,11 @@ class CodeFile extends BaseObject
 
     /**
      * Returns route from file path
+     * @param bool $hasModule return value have 'module'
+     * @param bool $hasController return value have 'controller'
      * @return string
      */
-    public function getRoute() {
+    public function getRoute($hasModule = true, $hasController = true) {
         $route = str_replace([
             'modules/',
             'controllers/',
@@ -193,7 +195,7 @@ class CodeFile extends BaseObject
         ], '', $this->relativePath);
         list($module, $controller) = explode('/', $route, 2);
         $controller = Inflector::camel2id($controller, '-', $controller);
-        return $module . '/' . $controller;
+        return ($hasModule? '/' . $module : '') . ($hasController ? '/' . $controller : '');
     }
 
     /**
