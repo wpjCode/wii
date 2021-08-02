@@ -246,7 +246,7 @@ EOT;
                         <span v-text="scope.row.sort" title="双击编辑"
                               class="pointer text-more-ellipsis"
                               slot="reference">
-                </span>
+                        </span>
                     </el-popover>
                 </div>
             </template>
@@ -254,7 +254,7 @@ EOT;
     <?php } ?>
 
         <el-table-column fixed="right" label="操作" width="180">
-            <template slot-scope="scope" v-if="setting.statusList">
+            <template slot-scope="scope">
                 <el-button type="text" size="small"
                            @click.native="goToUpdate(scope.row.id)">编辑
                 </el-button>

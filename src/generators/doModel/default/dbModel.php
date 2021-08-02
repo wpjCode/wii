@@ -41,6 +41,8 @@ $createTime = date('H:i:s', $times);
 echo <<<EOT
 
 use app\models\CommonModel;
+use yii\db\Expression;
+use yii\db\ExpressionInterface;
 use yii\helpers\ArrayHelper;
 use yii\db\Exception;
 
@@ -515,19 +517,30 @@ echo <<<EOT
     
     /**
      * 加载排序
-     * @param \$sort
+     * @param string|array \$sort 无需验证
+     * @param bool \$noCheck 无需验证
      * @return \$this
      */
-    public function loadSort(\$sort)
+    public function loadSort(\$sort, \$noCheck = false)
     {
 
         // 条件不存在
         if (empty(\$sort)) return \$this;
 
+        // 无需验证
+        if (\$noCheck || \$sort instanceof ExpressionInterface) {
+            \$this->orderBy = \$sort;
+            return \$this;
+        }
+
+        // 将[, ]转为[,]
+        if (is_string(\$sort)) \$sort = str_replace(', ', ',', \$sort);
         // 如果排序是 字符
         if (is_string(\$sort)) \$sort = explode(',', \$sort);
 
-        // 合法额排序列表
+        // 允许列表 - 无需验证
+        \$toExpList = ['RAND()'];
+        // 合法排序列表
         \$typeList = [SORT_DESC, SORT_ASC, 'DESC', 'ASC'];
         // 循环  条件是否有效
         \$stagingSort = [];
@@ -536,17 +549,27 @@ echo <<<EOT
             // 数组 - 过滤
             if (is_array(\$v)) continue;
 
+            // 类型是[表达式]
+            if (\$v instanceof ExpressionInterface) {
+                \$stagingSort[\$k] = \$v;
+                continue;
+            }
+            // 无需验证列表
+            if (in_array(strtoupper(\$v), \$toExpList)) {
+                \$stagingSort[\$k] = new Expression(strtoupper(\$v));
+                continue;
+            }
             // 值已经是 排序列表中的数据
-            if (in_array(strtoupper(\$v), \$typeList) && strtoupper(\$v)) {
-                \$stagingSort[\$k] = strtoupper(\$v) == 'DESC' ? SORT_DESC : SORT_ASC;
+            if (in_array(strtoupper(\$v), \$typeList) && \$this->hasAttribute(\$k)) {
+                \$stagingSort[\$k] = strtoupper(\$v);
                 continue;
             }
 
             // 字符串 - 分割空格号
-            \$v = preg_split('/\s+/', strval(\$v));
+            \$v = preg_split('/\s*/', strval(\$v));
             if (!empty(\$v[0]) && strlen(\$v[0]) > 0 && \$this->hasAttribute(\$v[0])) {
 
-                \$stagingSort[\$v[0]] = strtoupper(\$v[1]) == 'DESC' ? SORT_DESC : SORT_ASC;
+                \$stagingSort[\$v[0]] = strtoupper(\$v[1]);
                 continue;
             }
         }
@@ -556,12 +579,13 @@ echo <<<EOT
 
         return \$this;
     }
-    
+
     /**
      * 添加|保存
+     * @param bool \$dontSave 仅仅验证，不要提交保存
      * @return bool
      */
-    public function saveData()
+    public function saveData(\$dontSave = false)
     {
 
         \$nowTime = time();
@@ -611,7 +635,24 @@ EOT;
 }
 echo <<<EOT
 
-        if (\$this->hasErrors() || !\$this->validate() || !\$this->save()) {
+        // 检测
+        if (\$this->hasErrors() || !\$this->validate()) {
+
+            // 记录下错误日志
+            \Yii::error([
+
+                "`````````````````````````````````````````````````````````",
+                "``                      数据库错误                       ``",
+                "`` 错误详情: [$generator->expName]验证数据失败             ``",
+                "`` 错误信息和参数详情:                                     ``",
+                "`````````````````````````````````````````````````````````",
+                \$this->getErrors()
+            ], 'error');
+            return false;
+        }
+        
+        // 需要 && 执行保存
+        if (!\$dontSave && !\$this->save()) {
 
             // 记录下错误日志
             \Yii::error([
@@ -688,24 +729,30 @@ echo <<<EOT
     {
 
         \$db = \Yii::\$app->db->createCommand();
+
+        foreach (\$createData as \$k => \$v) {
+
+            \$model = self::loadModel();
+            \$model->load(\$createData[\$k], '');
+            if (!\$model->saveData(true)) {
+                // 取出错误信息
+                \$error = CommonModel::getModelError(\$model->errors);
+                // 添加到静态方法上
+                self::\$error_[\$error['column']] = \$error['msg'];
+                return false;
+            }
+
+            \$createData[\$k] = \$model->getAttributes(array_keys(\$model->attributeLabels()));
+        }
+
         try {
 
             // 还行写入多条
-            \$addResult = \$db->batchInsert(self::tableName(),
-                [
-EOT;
-foreach ($model->attributes as $k => $v) {
-    echo <<<EOT
-
-                     '$k',
-EOT;
-}
-echo <<<EOT
-
-                ], \$createData
+            \$addResult = \$db->batchInsert(
+                self::tableName(), array_keys(self::loadModel()->attributeLabels()), \$createData
             )->execute();
 
-            return true;
+            return \$addResult;
         } catch (Exception \$error) {
 
             // 记录下错误日志
