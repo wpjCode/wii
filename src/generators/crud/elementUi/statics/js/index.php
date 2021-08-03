@@ -134,7 +134,7 @@ var app = function () {
                             // 超过此宽度展示 更多筛选
                             var bodyDom = document.getElementsByTagName('body');
                             if (bodyDom[0] &&
-                            bodyDom[0].clientWidth <= that.setting.smallScreenWidth
+                                bodyDom[0].clientWidth <= that.setting.smallScreenWidth
                             ) {
                                 return that.setting.isSmallScreen = true;
                             }
