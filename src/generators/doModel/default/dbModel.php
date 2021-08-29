@@ -330,9 +330,9 @@ echo <<<EOT
     
     /**
      * 获取全部列表
-     * @param \$page
-     * @param \$limit
-     * @param null \$field
+     * @param \$page 当前页
+     * @param \$limit 获取几条
+     * @param null \$field 获取字段
      * @return array|\yii\db\ActiveRecord[]
      */
     public function getList(\$page, \$limit, \$field = null)
@@ -591,10 +591,16 @@ echo <<<EOT
         \$nowTime = time();
         // 添加的话要赋值一些初始数据
         if (empty(\$this->id)) {
+        
+EOT;
+if (property_exists($schema, 'columns') && $schema->columns['id']->type == 'string') {
+    echo <<<EOT
 
             // 可以是走[mongoId]
             \$this->id = CommonModel::newMongoId();
 EOT;
+}
+
 if ($model->hasAttribute('add_time')) {
     echo <<<EOT
     
