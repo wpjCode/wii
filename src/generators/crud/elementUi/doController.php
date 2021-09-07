@@ -152,10 +152,10 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         $find = $this->get('search');
 
         // 显示当前第几页
-        $page = !$this->get('page') ? 0 : $this->get('page');
+        $page = !$this->get('page') ? 0 : $this->get('page', 'int');
 
         // 每页显示多少条
-        $pageSize = (!$this->get('pageSize') || $this->get('pageSize') <= 0 || $this->get('pageSize') > 100) ? \Yii::$app->params['dataLimit'] : $this->get('pageSize');
+        $pageSize = (!$this->get('pageSize') || $this->get('pageSize') <= 0 || $this->get('pageSize') > 100) ? \Yii::$app->params['dataLimit'] : $this->get('pageSize', 'int');
 
         // 字段1
         $field = [

@@ -330,8 +330,8 @@ echo <<<EOT
     
     /**
      * 获取全部列表
-     * @param \$page 当前页
-     * @param \$limit 获取几条
+     * @param integer \$page 当前页
+     * @param integer \$limit 获取几条
      * @param null \$field 获取字段
      * @return array|\yii\db\ActiveRecord[]
      */
