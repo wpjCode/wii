@@ -415,7 +415,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         }
 
         // 排序值获取
-        $sort = $this->post('sort', 'int', 0);
+        $sort = $this->post('sort', 0);
         // 看获取的[data]是否为空
         if (!isset($sort)) return $this->jsonFail('排序不能为空', 400);
 
