@@ -495,14 +495,14 @@ echo <<<EOT
         foreach (\$where as \$k => \$v) {
 
             // 数组 - 首先值是有的，不能是空
-            if (is_array(\$v) && count(\$v) > 0 && \$this->hasAttribute(\$k)) {
+            if (\$this->hasAttribute(\$k) && is_array(\$v) && count(\$v) > 0) {
 
                 \$stagingWhere[] = ['IN', \$k, array_values(\$v)];
                 continue;
             }
 
             // 字符串 - 首先值是有的，不能是空
-            if (strlen(\$v) > 0 && \$this->hasAttribute(\$k)) {   
+            if (\$this->hasAttribute(\$k) && strlen(\$v) > 0) {   
 
                 \$stagingWhere[] = ['=', \$k, \$v];
                 continue;
