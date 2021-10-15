@@ -75,19 +75,24 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     ]
                 ],
                 'denyCallback' => function ($rule, $action) {
+
+                    // 默认模板
+                    $temp = null;
                     // 未登录检测
                     if (\Yii::$app->admin->isGuest) {
-                        echo $this->showError('请先登录', 403, [
+                        $temp = $this->showError('请先登录', 403, [
                             'errorHint' => '您还未登录'
                         ]);
                         return true;
                     }
 
                     // 其余为 [404]
-                    echo $this->showError('页面不存在', 404, [
+                    $temp = $this->showError('页面不存在', 404, [
                         'title' => '页面不存在'
                     ]);
-                    return true;
+
+                    // PS: 此处无法使用return, 会触发其他报错[Headers already sent]
+                    exit($temp);
                 }
             ]
         ];
