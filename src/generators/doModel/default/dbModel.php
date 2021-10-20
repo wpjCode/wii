@@ -88,7 +88,7 @@ EOT;
                     echo <<<EOT
 
         'disabled' => -1,
-        'normal' => 0,
+        'default' => 0,
         'open' => 1\r
     
 EOT;
