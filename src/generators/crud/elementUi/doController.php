@@ -194,8 +194,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         if (empty($id)) {
 
             return $this->jsonFail('数据不存在', 404, [
-                'error_hint' => '请传输编号',
-                'error_code' => 400
+                'hint' => '请传输编号'
             ]);
         }
 
@@ -204,8 +203,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         if ($model == null) {
 
             return $this->jsonFail('数据不存在', 404, [
-                'error_hint' => '数据不存在，请核对',
-                'error_code' => 404
+                'hint' => '数据不存在，请核对'
             ]);
         }
 
@@ -272,8 +270,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         if (empty($model)) {
 
             return $this->jsonFail('数据不存在', 400, [
-                'error_hint' => '请传输编号',
-                'error_code' => 400
+                'hint' => '请传输编号'
             ]);
         }
 
@@ -317,8 +314,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         if (empty($idList) || count($idList) <= 0) {
 
             return $this->jsonFail('请选择一个条目', 400, [
-                'error_hint' => '未传输任何编号',
-                'error_code' => 403
+                'hint' => '未传输任何编号'
             ]);
         }
 
@@ -361,8 +357,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         if (empty($idList) || count($idList) <= 0) {
 
             return $this->jsonFail('请选择一个条目', 400, [
-                'error_hint' => '未传输任何编号',
-                'error_code' => 403
+                'hint' => '未传输任何编号'
             ]);
         }
 
