@@ -502,7 +502,7 @@ echo <<<EOT
             }
 
             // 字符串 - 首先值是有的，不能是空
-            if (\$this->hasAttribute(\$k) && strlen(\$v) > 0) {   
+            if (\$this->hasAttribute(\$k) && !is_array(\$v) && strlen(\$v) > 0) {   
 
                 \$stagingWhere[] = ['=', \$k, \$v];
                 continue;
