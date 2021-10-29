@@ -876,6 +876,14 @@ if (property_exists($schema, 'columns')) {
      * 获取[状态][关闭]值
      * @return mixed
      */
+    public static function getStatusDefault()
+    {
+        return self::\$statusList['default'];
+    }
+    /**
+     * 获取[状态][关闭]值
+     * @return mixed
+     */
     public static function getStatusDisabled()
     {
         return self::\$statusList['disabled'];

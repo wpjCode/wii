@@ -124,14 +124,9 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         // 模型
         $model = <?= $baseModelClass ?>::loadModel();
         return $this->jsonSuccess('成功', [
-<?php if ($class->hasAttribute('status') && $class->hasMethod('getStatNormal')) { ?>
+<?php if ($class->hasAttribute('status') && $class->hasMethod('getStatusDefault')) { ?>
             'defaultStatus' => !empty($type) && $type == 'index' ?
-                $model::getStatNormal() : $model::getStatusOpen(), // 默认选中状态
-<?php } else if ($class->hasAttribute('status')) { ?>
-            'defaultStatus' => $model::getStatusOpen(), // 默认选中状态
-<?php } if ($class->hasAttribute('status')) { ?>
-            'statusList' => $model::getStatusList(), // 状态文本列表值
-            'statusTextList' => $model::getStatusTextList(), // 状态文本列表值
+                $model::getStatusDefault() : $model::getStatusOpen(), // 默认选中状态
 <?php }
 
 if (property_exists($schema, 'columns')) {
@@ -153,8 +148,8 @@ if (property_exists($schema, 'columns')) {
         $lowFirstName = lcfirst($capFirstName);
 
 ?>
-            '<?=$lowFirstName?>List' => $model::get<?=$lowFirstName?>List(), // 类型列表值
-            '<?=$lowFirstName?>TextList' => $model::get<?=$lowFirstName?>TextList(), // 类型文本列表值
+            '<?=$lowFirstName?>List' => $model::get<?=$lowFirstName?>List(), // <?=$comment?>列表值
+            '<?=$lowFirstName?>TextList' => $model::get<?=$lowFirstName?>TextList(), // <?=$comment?>文本列表值
 <?php }}} if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
         'minSort' => $model::getMinSort(), // 最小排序值
         'maxSort' => $model::getMaxSort(), // 最大排序值
