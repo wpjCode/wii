@@ -418,10 +418,11 @@ class Generator extends \wpjCode\wii\Generator
         // 将css渲染到路径
         $basePath = Yii::getAlias($this->cssPath);
         // 将css路径中的web前全去除
-        $webPath = Yii::getAlias('@app') . '/web';
+        $webPath = Yii::getAlias('@app');
         $replace = [
             '@web' => '',
-            $webPath => ''
+            $webPath . '/web' => '',
+            $webPath => '',
         ];
 
         foreach ($replace as $k => $v) {
@@ -473,10 +474,11 @@ class Generator extends \wpjCode\wii\Generator
         // 将[js]渲染到路径
         $basePath = Yii::getAlias($this->jsPath);
         // 将[js]路径中的web前全去除
-        $webPath = Yii::getAlias('@app') . '/web';
+        $webPath = Yii::getAlias('@app');
         $replace = [
             '@web' => '',
-            $webPath => ''
+            $webPath . '/web' => '',
+            $webPath => '',
         ];
 
         foreach ($replace as $k => $v) {
