@@ -148,8 +148,8 @@ if (property_exists($schema, 'columns')) {
         $lowFirstName = lcfirst($capFirstName);
 
 ?>
-            '<?=$lowFirstName?>List' => $model::get<?=$lowFirstName?>List(), // <?=$comment?>列表值
-            '<?=$lowFirstName?>TextList' => $model::get<?=$lowFirstName?>TextList(), // <?=$comment?>文本列表值
+            '<?=$lowFirstName?>List' => $model::get<?=$capFirstName?>List(), // <?=$comment?>列表值
+            '<?=$lowFirstName?>TextList' => $model::get<?=$capFirstName?>TextList(), // <?=$comment?>文本列表值
 <?php }}} if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
         'minSort' => $model::getMinSort(), // 最小排序值
         'maxSort' => $model::getMaxSort(), // 最大排序值
