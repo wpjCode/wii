@@ -9,6 +9,7 @@ use yii\helpers\StringHelper;
 
 /* @var $this yii\web\View */
 /* @var $generator wpjCode\wii\generators\crud\Generator */
+$schema = $generator->getTableSchema();
 
 $expName = StringHelper::basename($generator->expName);
 $controllerClass = StringHelper::basename($generator->controllerDoClass);
@@ -131,12 +132,32 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
 <?php } if ($class->hasAttribute('status')) { ?>
             'statusList' => $model::getStatusList(), // 状态文本列表值
             'statusTextList' => $model::getStatusTextList(), // 状态文本列表值
-<?php } if ($class->hasAttribute('type')) { ?>
-            'typeList' => $model::getTypeList(), // 类型列表值
-            'typeTextList' => $model::getTypeTextList(), // 类型文本列表值
-<?php } if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
-            'minSort' => $model::getMinSort(), // 最小排序值
-            'maxSort' => $model::getMaxSort(), // 最大排序值
+<?php }
+
+if (property_exists($schema, 'columns')) {
+    foreach ($schema->columns as $k => $v) {
+    // 数据库类型不存在下一循
+    if (!property_exists($v, 'dbType')) continue;
+
+    // 如果是枚举数字类型则进行渲染 枚举列表
+    if (strstr($v->dbType, 'tinyint')) {
+        # 保证说明
+        $comment = property_exists($v, 'comment') ? $v->comment : '--';
+
+        # [ucwords]将每个单词的首字母大写
+        # [str_replace]字符串替换
+        $capFirstName = ucwords(str_replace('_', ' ', $v->name));
+        # [ucfirst]将所有的字符串首字母大写；
+        $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
+        # 首字母小写
+        $lowFirstName = lcfirst($capFirstName);
+
+?>
+            '<?=$lowFirstName?>List' => $model::get<?=$lowFirstName?>List(), // 类型列表值
+            '<?=$lowFirstName?>TextList' => $model::get<?=$lowFirstName?>TextList(), // 类型文本列表值
+<?php }}} if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
+        'minSort' => $model::getMinSort(), // 最小排序值
+        'maxSort' => $model::getMaxSort(), // 最大排序值
 <?php } ?>
         ]);
     }

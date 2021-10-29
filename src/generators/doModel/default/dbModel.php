@@ -891,7 +891,7 @@ if (property_exists($schema, 'columns')) {
 EOT;
 
             }
-            echo <<<EOT
+echo <<<EOT
 
 
     /**
