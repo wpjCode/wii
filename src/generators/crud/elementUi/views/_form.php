@@ -28,7 +28,7 @@ EOT;
 <el-container class="wp-form-container">
     <el-main class="">
         <el-form :model="form" :rules="formRules" ref="ruleForm" label-width="140px"
-                 class="form-600">
+                 class="form-400">
 
 <?php
 $space = "";

@@ -24,6 +24,8 @@ var app = function () {
 <?php foreach ($safeAttributes as $k => $v) {
     // 键略过
     if ($v->isPrimaryKey) continue;
+    // 允许空略过
+    if ($v->allowNull) continue;
     echo <<<EOT
                 {$v->name}: [
                     {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'}
@@ -42,7 +44,7 @@ EOT;
     if ($v->isPrimaryKey) continue;
     $defaultVal = 'null';
     // 默认是数字
-    if ($v->phpType == 'integer') $defaultVal = 0;
+    if ($v->phpType == 'integer') $defaultVal = 'null';
     echo <<<EOT
                 {$v->name}: {$defaultVal}
 EOT;

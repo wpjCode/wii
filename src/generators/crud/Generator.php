@@ -626,11 +626,17 @@ class Generator extends \wpjCode\wii\Generator
 
         $label = $this->getColumnLabel($attribute);
 
+        $type = 'string';
+        if (property_exists($column, 'phpType') && $column->phpType == 'integer') {
+            $type = 'number';
+        }
+
         return <<<EOT
                 <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
                         :error="customErrMsg.{$attribute}">
                       
-                    <el-input v-model="form.{$attribute}" size="small" class="form-element">
+                    <el-input v-model="form.{$attribute}" size="small" class="form-element"
+                            placeholder="请输入{$label}" type="{$type}">
                     </el-input>
                     
                     <div class="form-element-append" style="display: none;">
@@ -674,18 +680,24 @@ EOT;
     /**
      * 渲染[textArea]
      * @param $attribute
-     * @param null $column
+     * @param null|yii\db\mysql\ColumnSchema $column
      * @return string
      */
     public function generateTextArea($attribute, $column = null)
     {
         $label = $this->getColumnLabel($attribute);
+
+        $type = 'string';
+        if (property_exists($column, 'phpType') && $column->phpType == 'integer') {
+            $type = 'number';
+        }
+
         return <<<EOT
                 <el-form-item label="{$label}" prop="{$attribute}" :inline-message="true"
                       class="form-item" :error="customErrMsg.{$attribute}">
                     
-                    <el-input type="textarea" placeholder="请输入内容" v-model="form.{$attribute}"
-                        class="form-element" maxlength="300" show-word-limit
+                    <el-input type="textarea" placeholder="请输入{$label}" v-model="form.{$attribute}"
+                        class="form-element" maxlength="300" show-word-limit type="{$type}"
                         :autosize="{ minRows: 6}">
                     </el-input>
 
