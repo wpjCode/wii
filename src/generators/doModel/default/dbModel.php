@@ -6,7 +6,7 @@
  * Time: 16:05
  */
 
-use \yii\helpers\StringHelper;
+use yii\helpers\StringHelper;
 
 /* @var $generator wpjCode\wii\generators\doModel\Generator */
 $schema = $generator->getTableSchema();
@@ -65,13 +65,13 @@ if (property_exists($schema, 'columns')) {
         if (strstr($v->dbType, 'tinyint')) {
 
             # 保证说明
-            $comment = property_exists($v, 'comment')?$v->comment:'--';
+            $comment = property_exists($v, 'comment') ? $v->comment : '--';
 
             # [ucwords]将每个单词的首字母大写
             # [str_replace]字符串替换
-            $capFirstName = ucwords(str_replace('_',' ',$v->name));
+            $capFirstName = ucwords(str_replace('_', ' ', $v->name));
             # [ucfirst]将所有的字符串首字母大写；
-            $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+            $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
             # 首字母小写
             $lowFirstName = lcfirst($capFirstName);
             echo <<<EOT
@@ -183,9 +183,9 @@ if (property_exists($schema, 'columns')) {
 
         # [ucwords]将每个单词的首字母大写
         # [str_replace]字符串替换
-        $capFirstName = ucwords(str_replace('_',' ',$v->name));
+        $capFirstName = ucwords(str_replace('_', ' ', $v->name));
         # [ucfirst]将所有的字符串首字母大写；
-        $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+        $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
         # 首字母小写
         $lowFirstName = lcfirst($capFirstName);
         echo <<<EOT
@@ -215,9 +215,9 @@ if (property_exists($schema, 'columns')) {
 
         # ucwords将每个单词的首字母大写
         # str_replace 字符串替换
-        $capFirstName = ucwords(str_replace('_',' ',$v->name));
+        $capFirstName = ucwords(str_replace('_', ' ', $v->name));
         # ucfirst 将所有的字符串首字母大写；
-        $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+        $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
         # 保证首字母小写
         $capFirstName = lcfirst($capFirstName);
         echo <<<EOT
@@ -236,7 +236,7 @@ if ($model->hasAttribute('sort')) {
             ['sort', 'integer', 'max' => self::getMaxSort(), 'min' => self::getMinSort(),
                 'message' => '排序不得超过{$maxSort}，不得小于{$minSort}'],
 EOT;
-}else if ($model->hasAttribute('list_order')) {
+} else if ($model->hasAttribute('list_order')) {
     echo <<<EOT
     
             ['list_order', 'integer', 'max' => self::getMaxSort(), 'min' => self::getMinSort(),
@@ -367,7 +367,8 @@ EOT;
     
             \$this->getSqlBase()->orderBy('id desc');
 EOT;
-} echo <<<EOT
+}
+echo <<<EOT
 
         }
             
@@ -389,7 +390,8 @@ if ($model->hasAttribute('add_time')) {
                 \$v['add_time_text_s'] = date('Y-m-d', \$v['add_time']);
             }
 EOT;
-} if ($model->hasAttribute('update_time')) {
+}
+if ($model->hasAttribute('update_time')) {
     echo <<<EOT
     
     
@@ -399,7 +401,8 @@ EOT;
                 \$v['update_time_text_s'] = date('Y-m-d', \$v['update_time']);
             }
 EOT;
-} if ($model->hasAttribute('content')) {
+}
+if ($model->hasAttribute('content')) {
     echo <<<EOT
     
     
@@ -420,9 +423,9 @@ if (property_exists($schema, 'columns')) {
 
         # ucwords将每个单词的首字母大写
         # str_replace 字符串替换
-        $capFirstName = ucwords(str_replace('_',' ',$v->name));
+        $capFirstName = ucwords(str_replace('_', ' ', $v->name));
         # ucfirst 将所有的字符串首字母大写；
-        $capFirstName = str_replace(' ','',ucfirst($capFirstName));
+        $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
         echo <<<EOT
 
 
@@ -593,7 +596,7 @@ echo <<<EOT
         if (empty(\$this->id)) {
         
 EOT;
-if (property_exists($schema, 'columns') && $schema->columns['id']->type == 'string') {
+if (property_exists($schema, 'columns') && !empty($schema->columns['id']) && $schema->columns['id']->type == 'string') {
     echo <<<EOT
 
             // 可以是走[mongoId]
@@ -899,7 +902,7 @@ if (property_exists($schema, 'columns')) {
 EOT;
 
             }
-echo <<<EOT
+            echo <<<EOT
 
 
     /**
