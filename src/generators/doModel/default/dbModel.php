@@ -391,6 +391,17 @@ if ($model->hasAttribute('add_time')) {
             }
 EOT;
 }
+if ($model->hasAttribute('create_time')) {
+    echo <<<EOT
+    
+    
+            // 更新时间
+            if (isset(\$v['create_time'])) {
+                \$v['create_time_text'] = date('Y-m-d H:i:s', \$v['create_time']);
+                \$v['create_time_text_s'] = date('Y-m-d', \$v['create_time']);
+            }
+EOT;
+}
 if ($model->hasAttribute('update_time')) {
     echo <<<EOT
     
