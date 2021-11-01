@@ -611,6 +611,15 @@ if ($model->hasAttribute('add_time')) {
             \$this->add_time = \$nowTime;
 EOT;
 }
+
+if ($model->hasAttribute('create_time')) {
+    echo <<<EOT
+    
+            // 添加时间
+            \$this->create_time = \$nowTime;
+EOT;
+}
+
 echo <<<EOT
 
         }
