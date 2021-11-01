@@ -618,7 +618,7 @@ class Generator extends \wpjCode\wii\Generator
     /**
      * 渲染[input]
      * @param $attribute
-     * @param null $column
+     * @param null|yii\db\mysql\ColumnSchema $column
      * @return string
      */
     public function generateInput($attribute, $column = null)
@@ -632,27 +632,27 @@ class Generator extends \wpjCode\wii\Generator
         }
 
         return <<<EOT
-                <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
-                        :error="customErrMsg.{$attribute}">
-                      
-                    <el-input v-model="form.{$attribute}" size="small" class="form-element"
-                            placeholder="请输入{$label}" type="{$type}">
-                    </el-input>
-                    
-                    <div class="form-element-append" style="display: none;">
-                        <i class="el-icon-question font-second"></i>
-                        <span class="font-third">
-                            一些字段说明
-                        </span>
-                    </div>
-                </el-form-item>
+            <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
+                    :error="customErrMsg.{$attribute}" :inline-message="true">
+                  
+                <el-input v-model="form.{$attribute}" size="small" class="form-element"
+                        placeholder="请输入{$label}" type="{$type}">
+                </el-input>
+                
+                <div class="form-element-append" style="display: none;">
+                    <i class="el-icon-question font-second"></i>
+                    <span class="font-third">
+                        一些字段说明
+                    </span>
+                </div>
+            </el-form-item>
 EOT;
     }
 
     /**
      * 渲染[input]
      * @param $attribute
-     * @param null $column
+     * @param null|yii\db\mysql\ColumnSchema $column
      * @return string
      */
     public function generateRadio($attribute, $column = null)
@@ -661,19 +661,19 @@ EOT;
         $label = $this->getColumnLabel($attribute);
 
         return <<<EOT
-                <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
-                        :error="customErrMsg.{$attribute}">
-                      
-                    <el-radio-group v-model="form.{$attribute}" size="mini" class="form-element">
-                
-                        <el-radio v-for="(item, key) in setting.{$attribute}TextList"
-                            :label="parseInt(key)">
-                            {{item}}
-                        </el-radio>
-                
-                    </el-radio-group>
-                
-                </el-form-item>
+            <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
+                    :error="customErrMsg.{$attribute}" :inline-message="true">
+                  
+                <el-radio-group v-model="form.{$attribute}" size="mini" class="form-element">
+            
+                    <el-radio v-for="(item, key) in setting.{$attribute}TextList"
+                        :label="parseInt(key)">
+                        {{item}}
+                    </el-radio>
+            
+                </el-radio-group>
+            
+            </el-form-item>
 EOT;
     }
 
@@ -693,15 +693,15 @@ EOT;
         }
 
         return <<<EOT
-                <el-form-item label="{$label}" prop="{$attribute}" :inline-message="true"
-                      class="form-item" :error="customErrMsg.{$attribute}">
-                    
-                    <el-input type="textarea" placeholder="请输入{$label}" v-model="form.{$attribute}"
-                        class="form-element" maxlength="300" show-word-limit type="{$type}"
-                        :autosize="{ minRows: 6}">
-                    </el-input>
-
-                </el-form-item>
+            <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
+                    :error="customErrMsg.{$attribute}" :inline-message="true">
+                
+                <el-input type="textarea" placeholder="请输入{$label}" v-model="form.{$attribute}"
+                    class="form-element" maxlength="300" show-word-limit type="{$type}"
+                    :autosize="{ minRows: 6}">
+                </el-input>
+            
+            </el-form-item>
 EOT;
     }
 
