@@ -108,4 +108,14 @@ class <?= $className ?> extends <?= '\yii\redis\ActiveRecord' . "\n" ?>
         return new <?= $queryClassFullName ?>(get_called_class());
     }
 <?php endif; ?>
+<?php if (!empty($tableSchema->primaryKey[0]) && $tableSchema->primaryKey[0] != 'id') { echo "\n"; ?>
+    /**
+     * 主键 - 如果非ID就需要自行重写此方法
+     * @return array|string[]
+     */
+    public static function primaryKey()
+    {
+        return ['<?php echo $tableSchema->primaryKey[0];?>'];
+    }
+<?php } ?>
 }

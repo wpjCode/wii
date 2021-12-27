@@ -10,7 +10,8 @@ use yii\helpers\StringHelper;
 
 /* @var $generator wpjCode\wii\generators\doModel\Generator */
 $schema = $generator->getTableSchema();
-
+// 主键
+$pk = empty($schema->primaryKey[0]) ? null : $schema->primaryKey[0];
 /* @var $model \yii\db\ActiveRecord */
 $model = new $generator->baseModelClass();
 
@@ -322,9 +323,41 @@ echo <<<EOT
      * 初始化并返回当前基础[SQL]
      * @return \yii\db\ActiveQuery
      */
-    protected function getSqlBase() {
+    protected function getSqlBase()
+    {
+        
+        ### 数据存在直接返回
         if (\$this->sqlBase) return \$this->sqlBase;
+        
+        ### 不存在初始化
         \$this->sqlBase = \$this::find()->where(\$this->where);
+        
+        ### 初始化排序
+        // 是否已经有自定义排序
+        if (property_exists(\$this, 'orderBy') && !empty(\$this->orderBy)) {
+            \$this->sqlBase->orderBy(\$this->orderBy);
+        } else { // 无自定义排序
+EOT;
+if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
+    echo <<<EOT
+    
+            \$this->sqlBase->orderBy('sort desc, update_time desc');
+EOT;
+} else if ($model->hasAttribute('sort') && $primaryKey) {
+    echo <<<EOT
+    
+            \$this->sqlBase->orderBy('sort desc, {$primaryKey} desc');
+EOT;
+} else if (!$model->hasAttribute('sort') && $primaryKey) {
+    echo <<<EOT
+    
+            \$this->sqlBase->orderBy('{$primaryKey} desc');
+EOT;
+}
+echo <<<EOT
+
+        }
+        
         return \$this->sqlBase;
     }
     
@@ -346,31 +379,6 @@ echo <<<EOT
 
         // 基础 where加载完毕
         \$this->getSqlBase()->select(\$field);
-            
-        // 是否已经有自定义排序
-        if (property_exists(\$this, 'orderBy') && !empty(\$this->orderBy)) {
-            \$this->getSqlBase()->orderBy(\$this->orderBy);
-        } else { // 无自定义排序
-EOT;
-if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
-    echo <<<EOT
-    
-            \$this->getSqlBase()->orderBy('sort desc, update_time desc');
-EOT;
-} else if ($model->hasAttribute('sort') && $model->hasAttribute('id')) {
-    echo <<<EOT
-    
-            \$this->getSqlBase()->orderBy('sort desc, id desc');
-EOT;
-} else if (!$model->hasAttribute('sort') && $model->hasAttribute('id')) {
-    echo <<<EOT
-    
-            \$this->getSqlBase()->orderBy('id desc');
-EOT;
-}
-echo <<<EOT
-
-        }
             
         // 数据的获取 分页等
         \$list = \$this->getSqlBase()->offset(\$page * \$limit)
@@ -602,41 +610,36 @@ echo <<<EOT
     public function saveData(\$dontSave = false)
     {
 
-        \$nowTime = time();
-        // 添加的话要赋值一些初始数据
-        if (empty(\$this->id)) {
-        
 EOT;
-if (property_exists($schema, 'columns') && !empty($schema->columns['id']) && $schema->columns['id']->type == 'string') {
+if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->type == 'string') {
     echo <<<EOT
-
+        // 添加的话要赋值一些初始数据
+        if (empty(\$this->{$pk})) {
+        
             // 可以是走[mongoId]
-            \$this->id = CommonModel::newMongoId();
+            \$this->{$pk} = CommonModel::newMongoId();
+        }
+        
+        ### 批量操作[缓存保存前一些格式化]
+        foreach (\$this->getAttributes() as \$k => \$v) {
+            // 字段类型为[JSON]类型需要转为数组 - 保存自动转为[JSON]
+            if (is_string(\$v) && CommonModel::isJson(\$v)) {
+                \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
+            }
+        }
+        
+        ### 单个操作[缓存保存前一些格式化]
+        \$nowTime = time();
 EOT;
 }
-
 if ($model->hasAttribute('add_time')) {
     echo <<<EOT
     
-            // 添加时间
-            \$this->add_time = \$nowTime;
+        // 添加时间
+        if (empty(\$this->add_time)) \$this->add_time = \$nowTime;
 EOT;
 }
-
-if ($model->hasAttribute('create_time')) {
-    echo <<<EOT
-    
-            // 添加时间
-            \$this->create_time = \$nowTime;
-EOT;
-}
-
-echo <<<EOT
-
-        }
-
-EOT;
-if ($model->hasAttribute('update_time')) {
+if ($model->hasAttribute('add_time')) {
     echo <<<EOT
     
         // 更新时间
@@ -652,7 +655,6 @@ EOT;
 }
 if ($model->hasAttribute('content')) {
     echo <<<EOT
-    
     
         // 内容解密下 - 防止加密多次
         \$this->content = htmlspecialchars_decode(\$this->content);
@@ -675,6 +677,7 @@ echo <<<EOT
                 "`` 错误详情: [$generator->expName]验证数据失败             ``",
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
+                \$this->getAttributes(),
                 \$this->getErrors()
             ], 'error');
             return false;
@@ -691,6 +694,7 @@ echo <<<EOT
                 "`` 错误详情: [$generator->expName]保存数据失败             ``",
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
+                \$this->getAttributes(),
                 \$this->getErrors()
             ], 'error');
             return false;

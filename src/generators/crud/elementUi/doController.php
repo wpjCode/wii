@@ -165,7 +165,7 @@ if (property_exists($schema, 'columns')) {
     {
 
         // 查询内容
-        $find = $this->get('search');
+        $search = $this->get('search');
 
         // 显示当前第几页
         $page = !$this->get('page') ? 0 : $this->get('page', 'int');
@@ -184,10 +184,10 @@ if (property_exists($schema, 'columns')) {
         $model = <?= $baseModelClass ?>::loadModel();
 
         // 数据列表
-        $list = $model->loadWhere($find)->getList($page, $pageSize, $field);
+        $list = $model->loadWhere($search)->getList($page, $pageSize, $field);
 
         // 总数
-        $count = $model->loadWhere($find)->getCount();
+        $count = $model->loadWhere($search)->getCount();
 
         return $this->jsonSuccess('成功', [
             'total' => $count,
@@ -245,12 +245,7 @@ if (property_exists($schema, 'columns')) {
     public function actionCreate()
     {
         // 赋值所需数据
-        $data = [
-<?php foreach ($generator->getTableSchema()->columns as $kL => $vL) { ?>
-<?php if ($vL->isPrimaryKey) continue; ?>
-            '<?=$vL->name?>' => $this->post('<?=$vL->name?>'),
-<?php } ?>
-        ];
+        $data = $this->post();
 
         // 实例化类
         $model = <?= $baseModelClass ?>::loadModel();
@@ -291,12 +286,7 @@ if (property_exists($schema, 'columns')) {
         }
 
         // 赋值所需数据
-        $data = [
-<?php foreach ($generator->getTableSchema()->columns as $kL => $vL) { ?>
-<?php if ($vL->isPrimaryKey) continue; ?>
-            '<?=$vL->name?>' => $this->post('<?=$vL->name?>'),
-<?php } ?>
-        ];
+        $data = $this->post();
 
         // 加载类数据
         $model->load($data, '');

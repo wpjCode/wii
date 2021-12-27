@@ -428,7 +428,7 @@ abstract class Generator extends Model
                 "`` 错误详情: {$class}有语法错误，{$error->getMessage()}     ``",
                 "`` 错误信息和参数详情:                                    ``",
                 "````````````````````````````````````````````````````````",
-                $error->getTrace()
+                $error->getTraceAsString()
             ]);
 
             $this->addError($attribute, "Class '$class' " . $this->langString('Class not exit'));

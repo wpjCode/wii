@@ -171,8 +171,8 @@ EOT;
                     <el-tooltip class="item" effect="light"
                                 :content="scope.row.title" placement="top-start">
                         <div class="text-more-ellipsis">
-                        <span v-text="scope.row.title"
-                              class="pointer text-over-flow"></span>
+                            <span v-text="scope.row.title"
+                                  class="pointer text-over-flow"></span>
                         </div>
                     </el-tooltip>
                 </template>
@@ -291,8 +291,6 @@ EOT;
 </el-container>
 <?= <<<EOT
 <?= BackendAsset::addScript(\$this, '{$generator->getPageJsPath('index')}'); ?>
-<?= \$this->registerJs('
-    new app();
-'); ?>
+<?= \$this->registerJs('app = new app();'); ?>
 EOT;
 ?>

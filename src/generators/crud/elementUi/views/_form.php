@@ -56,8 +56,6 @@ if (in_array($attribute->name, $safeAttributes)) {
 
 <?= <<<EOT
 <?= BackendAsset::addScript(\$this, '{$generator->getPageJsPath('form')}'); ?>
-<?= \$this->registerJs('
-    new app();
-'); ?>
+<?= \$this->registerJs('app = new app();'); ?>
 EOT;
 ?>

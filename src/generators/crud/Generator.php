@@ -408,7 +408,7 @@ class Generator extends \wpjCode\wii\Generator
                     '`` 错误详情:   获取页面上[CSS]路径出错                     ``',
                     '`` 错误信息和参数详情:                                    ``',
                     '````````````````````````````````````````````````````````',
-                    $error->getTrace()
+                    $error->getTraceAsString()
                 ]);
             }
             $this->addError('cssPath', '页面样式名称不能为空, 详情查看日志' . $page);
@@ -464,7 +464,7 @@ class Generator extends \wpjCode\wii\Generator
                     '`` 错误详情:   获取页面上[JS]路径出错                     ``',
                     '`` 错误信息和参数详情:                                    ``',
                     '````````````````````````````````````````````````````````',
-                    $error->getTrace()
+                    $error->getTraceAsString()
                 ]);
             }
             $this->addError('cssPath', '页面JS脚本名称不能为空, 详情查看日志' . $page);
@@ -639,12 +639,27 @@ class Generator extends \wpjCode\wii\Generator
                         placeholder="请输入{$label}" type="{$type}">
                 </el-input>
                 
+                <div class="form-element-append-inline" style="display: none;">
+                    <el-tooltip class="item" effect="light"
+                                placement="top-start">
+                        <div slot="content">
+                            行内说明内容
+                        </div>
+                        <div>
+                            <i class="el-icon-question font-second pointer"></i>
+                            <span class="font-third">
+                            什么是行内说明？
+                        </span>
+                        </div>
+                    </el-tooltip>
+                </div>
                 <div class="form-element-append" style="display: none;">
                     <i class="el-icon-question font-second"></i>
                     <span class="font-third">
-                        一些字段说明
+                        非行内说明文本
                     </span>
                 </div>
+                
             </el-form-item>
 EOT;
     }
@@ -672,7 +687,28 @@ EOT;
                     </el-radio>
             
                 </el-radio-group>
-            
+                
+                <div class="form-element-append-inline" style="display: none;">
+                    <el-tooltip class="item" effect="light"
+                                placement="top-start">
+                        <div slot="content">
+                            行内说明内容
+                        </div>
+                        <div>
+                            <i class="el-icon-question font-second pointer"></i>
+                            <span class="font-third">
+                            什么是行内说明？
+                        </span>
+                        </div>
+                    </el-tooltip>
+                </div>
+                <div class="form-element-append" style="display: none;">
+                    <i class="el-icon-question font-second"></i>
+                    <span class="font-third">
+                        非行内说明文本
+                    </span>
+                </div>
+                
             </el-form-item>
 EOT;
     }
@@ -701,6 +737,27 @@ EOT;
                     :autosize="{ minRows: 6}">
                 </el-input>
             
+                <div class="form-element-append-inline" style="display: none;">
+                    <el-tooltip class="item" effect="light"
+                                placement="top-start">
+                        <div slot="content">
+                            行内说明内容
+                        </div>
+                        <div>
+                            <i class="el-icon-question font-second pointer"></i>
+                            <span class="font-third">
+                            什么是行内说明？
+                        </span>
+                        </div>
+                    </el-tooltip>
+                </div>
+                <div class="form-element-append" style="display: none;">
+                    <i class="el-icon-question font-second"></i>
+                    <span class="font-third">
+                        非行内说明文本
+                    </span>
+                </div>
+                
             </el-form-item>
 EOT;
     }

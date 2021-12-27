@@ -14,6 +14,7 @@ var app = function () {
         el: '#vueContainer',
         data: {
             loadOver: false,
+            settingOver: false,
             setting: {
                 showAllSearch: false, // 是否出现[展示全部查询]按钮
                 smallScreenWidth: 998, // 小屏幕临界点(px)
@@ -92,6 +93,8 @@ var app = function () {
                         that.$nextTick(function () {
                             // 获取下列表
                             that.getList();
+                            // 设置加载完毕
+                            that.settingOver = true;
                             // 隐藏正在加载
                             loadingInstance.close();
                         });

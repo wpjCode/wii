@@ -17,6 +17,8 @@ var app = function () {
         el: '#vueContainer',
         data: {
             loadOver: false,
+            detailOver: false,
+            settingOver: false,
             setting: {
                 isAdd: false, // 添加状态
             },
@@ -92,6 +94,8 @@ EOT;
                     success: function (event) {
 
                         that.$nextTick(function () {
+                            // 设置加载完毕
+                            that.settingOver = true;
                             // 隐藏正在加载
                             loadingInstance.close();
                         });
@@ -163,7 +167,8 @@ EOT;
                 // id参数存在
                 if (!params['id'] || params['id'] === undefined) {
 
-                    this.loadOver = true;
+
+                    this.detailOver = true; // 详情加载完毕
                     this.setting.isAdd = true; // 正在添加
                     return loadingInstance.close();
                 }
@@ -179,6 +184,8 @@ EOT;
                     success: function (event) {
 
                         that.$nextTick(function () {
+                            // 详情加载完毕
+                            that.detailOver = true;
                             // 隐藏正在加载
                             loadingInstance.close();
                         });
@@ -239,15 +246,18 @@ EOT;
              */
             submitAdd: function () {
 
+                // 强制关闭下全部弹出层
+                this.$message.closeAll();
+                // 清空错误信息
+                this.$refs['ruleForm'].clearValidate();
+
                 var that = this;
                 // 清空错误信息
                 this.$set(that, 'customErrMsg', {});
                 this.$refs['ruleForm'].validate(function (valid, msg) {
 
                     // 验证不过
-                    if (!valid) {
-                        return false;
-                    }
+                    if (!valid) {return false;}
 
 <?php if ($model->hasAttribute('sort')) {?>
                     // 是否越出范围值 大于
@@ -348,6 +358,11 @@ EOT;
              * 修改操作
              */
             submitUpdate: function () {
+
+                // 强制关闭下全部弹出层
+                this.$message.closeAll();
+                // 清空错误信息
+                this.$refs['ruleForm'].clearValidate();
 
                 var that = this;
                 // 清空错误信息

@@ -250,7 +250,13 @@ class Generator extends \wpjCode\wii\Generator
         if (is_subclass_of($class, 'yii\db\ActiveRecord')) {
             return $class::getTableSchema();
         }
+        /* do db model */
+        $class = $this->doDbModel;
+        if (is_subclass_of($class, 'yii\db\ActiveRecord')) {
+            return $class::getTableSchema();
+        }
 
         return false;
     }
+
 }
