@@ -608,7 +608,24 @@ var app = function () {
                 window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update', {
                     id: $id
                 });
-            }
+            },
+            /**
+             * 去首页
+             */
+            goToIndex: function () {
+                // 父级
+                var parent = window.parent.window;
+                if (!parent) return false;
+
+                // 父级[vue]对象
+                var vueInstance = window.parent.window.menu;
+                if (!parent || !(typeof vueInstance === 'object')) return false;
+
+                // 键值
+                var key = vueInstance.indexKey;
+                // 操作点击
+                $(window.parent.window.document).find('#tab-' + key).click();
+            },
         },
         watch: {
             /**

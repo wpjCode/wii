@@ -632,8 +632,8 @@ class Generator extends \wpjCode\wii\Generator
         }
 
         return <<<EOT
-            <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
-                    :error="customErrMsg.{$attribute}" :inline-message="true">
+            <el-form-item label="{$label}" prop="{$attribute}" class="form-item" :inline-message="true"
+                    :error="customErrMsg.{$attribute}" ref="formItem_{$attribute}">
                   
                 <el-input v-model="form.{$attribute}" size="small" class="form-element"
                         placeholder="请输入{$label}" type="{$type}">
@@ -676,8 +676,8 @@ EOT;
         $label = $this->getColumnLabel($attribute);
 
         return <<<EOT
-            <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
-                    :error="customErrMsg.{$attribute}" :inline-message="true">
+            <el-form-item label="{$label}" prop="{$attribute}" class="form-item" :inline-message="true"
+                    :error="customErrMsg.{$attribute}" ref="formItem_{$attribute}">
                   
                 <el-radio-group v-model="form.{$attribute}" size="mini" class="form-element">
             
@@ -729,8 +729,8 @@ EOT;
         }
 
         return <<<EOT
-            <el-form-item label="{$label}" prop="{$attribute}" class="form-item"
-                    :error="customErrMsg.{$attribute}" :inline-message="true">
+            <el-form-item label="{$label}" prop="{$attribute}" class="form-item" :inline-message="true"
+                    :error="customErrMsg.{$attribute}" ref="formItem_{$attribute}">
                 
                 <el-input type="textarea" placeholder="请输入{$label}" v-model="form.{$attribute}"
                     class="form-element" maxlength="300" show-word-limit type="{$type}"

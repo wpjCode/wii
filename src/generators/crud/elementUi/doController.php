@@ -126,7 +126,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         return $this->jsonSuccess('成功', [
 <?php if ($class->hasAttribute('status') && $class->hasMethod('getStatusDefault')) { ?>
             'defaultStatus' => !empty($type) && $type == 'index' ?
-                $model::getStatusDefault() : $model::getStatusOpen(), // 默认选中状态
+                $model::get_status_default() : $model::getStatusOpen(), // 默认选中状态
 <?php }
 
 if (property_exists($schema, 'columns')) {
@@ -141,18 +141,19 @@ if (property_exists($schema, 'columns')) {
 
         # [ucwords]将每个单词的首字母大写
         # [str_replace]字符串替换
-        $capFirstName = ucwords(str_replace('_', ' ', $v->name));
+         $capFirstName = ucwords(str_replace('_', ' ', $v->name));
         # [ucfirst]将所有的字符串首字母大写；
-        $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
+         $capFirstName = str_replace(' ', '', ucfirst($capFirstName));
         # 首字母小写
-        $lowFirstName = lcfirst($capFirstName);
+        // $lowFirstName = lcfirst($capFirstName);
+        $lowFirstName = $v->name;
 
 ?>
-            '<?=$lowFirstName?>List' => $model::get<?=$capFirstName?>List(), // <?=$comment?>列表值
-            '<?=$lowFirstName?>TextList' => $model::get<?=$capFirstName?>TextList(), // <?=$comment?>文本列表值
+            '<?=$lowFirstName?>_list' => $model::get<?=$capFirstName?>List(), // <?=$comment?>列表值
+            '<?=$lowFirstName?>_text_list' => $model::get<?=$capFirstName?>TextList(), // <?=$comment?>文本列表值
 <?php }}} if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
-        'minSort' => $model::getMinSort(), // 最小排序值
-        'maxSort' => $model::getMaxSort(), // 最大排序值
+            'min_sort' => $model::getMinSort(), // 最小排序值
+            'max_sort' => $model::getMaxSort(), // 最大排序值
 <?php } ?>
         ]);
     }
@@ -257,7 +258,7 @@ if (property_exists($schema, 'columns')) {
 
             $error = $model->getFirstErrors();
             return $this->jsonFail('添加失败, 请确认各项数据是否合法', 400, [
-                'columnError' => CommonModel::chineseErr($error)
+                'column_error' => CommonModel::chineseErr($error)
             ]);
         }
 
@@ -296,7 +297,7 @@ if (property_exists($schema, 'columns')) {
 
             $error = $model->getFirstErrors();
             return $this->jsonFail('修改失败, 请确认各项数据是否合法', 400, [
-                'columnError' => CommonModel::chineseErr($error)
+                'column_error' => CommonModel::chineseErr($error)
             ]);
         }
 

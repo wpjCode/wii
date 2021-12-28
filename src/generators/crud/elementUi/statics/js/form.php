@@ -46,7 +46,7 @@ EOT;
     if ($v->isPrimaryKey) continue;
     $defaultVal = 'null';
     // 默认是数字
-    if ($v->phpType == 'integer') $defaultVal = 'null';
+    if ($v->phpType == 'integer') $defaultVal = '0';
     echo <<<EOT
                 {$v->name}: {$defaultVal}
 EOT;
@@ -242,6 +242,23 @@ EOT;
                 window.history.back();
             },
             /**
+             * 去首页
+             */
+            goToIndex: function () {
+                // 父级
+                var parent = window.parent.window;
+                if (!parent) return false;
+
+                // 父级[vue]对象
+                var vueInstance = window.parent.window.menu;
+                if (!parent || !(typeof vueInstance === 'object')) return false;
+
+                // 键值
+                var key = vueInstance.indexKey;
+                // 操作点击
+                $(window.parent.window.document).find('#tab-' + key).click();
+            },
+            /**
              * 添加
              */
             submitAdd: function () {
@@ -256,8 +273,11 @@ EOT;
                 this.$set(that, 'customErrMsg', {});
                 this.$refs['ruleForm'].validate(function (valid, msg) {
 
-                    // 验证不过
-                    if (!valid) {return false;}
+                    // 验证不过 - 滚动到错误字段
+                    if (!valid) {
+                        var first = $w.array_first_key(msg);
+                        return $w.scrollToFormItem(false, first);
+                    }
 
 <?php if ($model->hasAttribute('sort')) {?>
                     // 是否越出范围值 大于
@@ -323,11 +343,13 @@ EOT;
                             // 操作失败显示错误信息
                             if (parseInt(event.no) !== 200) {
 
-                                for (var i in event.data.columnError) {
-                                    if (!event.data.columnError.hasOwnProperty(i))
+                                for (var i in event.data.column_error) {
+                                    if (!event.data.column_error.hasOwnProperty(i))
                                         continue;
-                                    that.$set(that.customErrMsg, i, event.data.columnError[i]);
+                                    that.$set(that.column_error, i, event.data.column_error[i]);
                                 }
+                                // 滚动到错误字段
+                                $w.scrollToFormItem();
                                 return that.$message({
                                     type: 'error',
                                     showClose: true,
@@ -369,8 +391,11 @@ EOT;
                 this.$set(that, 'customErrMsg', {});
                 this.$refs['ruleForm'].validate(function (valid, msg) {
 
-                    // 验证不过
-                    if (!valid) {return false;}
+                    // 验证不过 - 滚动到错误字段
+                    if (!valid) {
+                        var first = $w.array_first_key(msg);
+                        return $w.scrollToFormItem(false, first);
+                    }
 
 <?php if ($model->hasAttribute('sort')) {?>
                     // 是否越出范围值 大于
@@ -437,11 +462,13 @@ EOT;
                             // 操作失败显示错误信息
                             if (parseInt(event.no) !== 200) {
 
-                                for (var i in event.data.columnError) {
-                                    if (!event.data.columnError.hasOwnProperty(i))
+                                for (var i in event.data.column_error) {
+                                    if (!event.data.column_error.hasOwnProperty(i))
                                         continue;
-                                    that.$set(that.customErrMsg, i, event.data.columnError[i]);
+                                    that.$set(that.customErrMsg, i, event.data.column_error[i]);
                                 }
+                                // 滚动到错误字段
+                                $w.scrollToFormItem();
                                 return that.$message({
                                     type: 'error',
                                     showClose: true,

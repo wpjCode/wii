@@ -21,7 +21,7 @@ EOT;
             <el-col :xs="9" :sm="7" :md="6" :lg="5">
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item>
-                        <a><i class="el-icon-location-outline"></i>&nbsp;首页</a>
+                        <a @click="goToIndex"><i class="el-icon-location-outline"></i>&nbsp;首页</a>
                     </el-breadcrumb-item>
                     <el-breadcrumb-item><?= $generator->expName ?></el-breadcrumb-item>
                 </el-breadcrumb>

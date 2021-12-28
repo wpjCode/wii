@@ -9,9 +9,11 @@
             <el-col>
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item>
-                        <a><i class="el-icon-location-outline"></i>&nbsp;首页</a>
+                        <a @click="goToIndex"><i class="el-icon-location-outline"></i>&nbsp;首页</a>
                     </el-breadcrumb-item>
-                    <el-breadcrumb-item>&nbsp;<?= $generator->expName; ?></el-breadcrumb-item>
+                    <el-breadcrumb-item>
+                        <a @click="cancel">&nbsp;<?= $generator->expName; ?></a>
+                    </el-breadcrumb-item>
                     <el-breadcrumb-item>修改</el-breadcrumb-item>
                 </el-breadcrumb>
             </el-col>

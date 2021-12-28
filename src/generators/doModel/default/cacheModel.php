@@ -69,7 +69,13 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
      * 数据库实例
      * @var {$doDbAlias}
      */
-    protected \$dbInstance;
+    private \$dbInstance;
+    /**
+     * 操作数据库实例
+     *  ` 通过[loadModelDB]此值会是[true]
+     * @var SettingDbModel
+     */
+    private \$doDb = false;
     /**
      * 基础[SQL]
      * @var \yii\redis\ActiveQuery
@@ -111,7 +117,7 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
         \$parent = parent::rules();
 
         return ArrayHelper::merge(\$parent, [
-
+            [['doDb'], 'boolean']
         ]);
     }
 
@@ -195,10 +201,10 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
             // 需要同步下
             if (\$sync) \$model->saveData();
         }
+        // 加载数据库需要以数据库为准|否则保存数据时以缓存为准会出现类型错误
+        \$model->load(array_merge(\$dbModel->getAttributes(), ['doDb' => true]), '');
         // 赋值数据库实例
         \$model->setDbInstance(\$dbModel);
-        // 加载数据库需要以数据库为准|否则保存数据时以缓存为准会出现类型错误
-        \$model->load(\$dbModel->getAttributes(), '');
 
         return \$model;
     }
@@ -454,21 +460,22 @@ echo <<<EOT
     public function saveData()
     {
 
-        ### 检测数据库暂存类
-        if (!\$this->dbInstance instanceof SettingDbModel) {
+        ### 按需操作数据库
+        // 检测是否数据库类型
+        if (\$this->doDb && !\$this->dbInstance instanceof SettingDbModel) {
             \$this->addError(500, '请使用初始化数据库方式声明设置模块');
             return false;
         }
-
-        ### 保存数据库
-        \$this->dbInstance->load(\$this->getAttributes(), '');
-        if (!\$this->dbInstance->saveData()) {
+        // 加载数据
+        if (\$this->doDb) \$this->dbInstance->load(\$this->getAttributes(), '');
+        // 保存数据库
+        if (\$this->doDb && !\$this->dbInstance->saveData(\$this->doDb)) {
             \$error = CommonModel::getModelError(\$this->dbInstance->getErrors());
             \$this->addError(\$error['column'], \$error['msg']);
             return false;
         }
-        // 本条数据完全赋值此条数据库记录值
-        \$this->setAttributes(\$this->dbInstance->getAttributes());
+        // 保存了数据看就需要把本条数据完全赋值到缓存以备保存
+        if (\$this->doDb) \$this->load(\$this->dbInstance->getAttributes(), '');
         
         ### 缓存保存前一些格式化
         // 批量操作

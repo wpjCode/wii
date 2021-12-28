@@ -122,14 +122,14 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         // 验证 规格编号
         if (empty($id)) {
 
-            return $this->showError(404, '请传输编号，请确认信息编号是否正确。');
+            return $this->showError('请传输编号，请确认信息编号是否正确。', 404);
         }
 
         $model = <?= $baseModelClass ?>::loadModel($id);
 
         if ($model == null) {
 
-            return $this->showError(404, '数据不存在，请确认信息编号是否正确。');
+            return $this->showError('数据不存在，请确认信息编号是否正确。', 404);
         }
 
         return $this->render('<?=$generator->getRenderViewPath('view')?>');
@@ -158,7 +158,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         // 验证 规格编号
         if (empty($id)) {
 
-            return $this->showError(404, '请传输编号，请确认信息编号是否正确。');
+            return $this->showError('请传输编号，请确认信息编号是否正确。', 404);
         }
 
         // 实例化类 - 并根据编号查询
@@ -166,7 +166,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         // 编号非法返回
         if (empty($model)) {
 
-            return $this->showError(404, '数据条目不存在，请确认信息编号是否正确。');
+            return $this->showError('数据条目不存在，请确认信息编号是否正确。', 404);
         }
 
         return $this->render('<?=$generator->getRenderViewPath('update')?>');

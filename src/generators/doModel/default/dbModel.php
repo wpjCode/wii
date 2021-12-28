@@ -604,10 +604,10 @@ echo <<<EOT
 
     /**
      * 添加|保存
-     * @param bool \$dontSave 仅仅验证，不要提交保存
+     * @param bool \$doSave 是否提交保存|false - 仅仅验证
      * @return bool
      */
-    public function saveData(\$dontSave = false)
+    public function saveData(\$doSave = true)
     {
 
 EOT;
@@ -684,7 +684,7 @@ echo <<<EOT
         }
         
         // 需要 && 执行保存
-        if (!\$dontSave && !\$this->save()) {
+        if (\$doSave && !\$this->save()) {
 
             // 记录下错误日志
             \Yii::error([
@@ -767,7 +767,7 @@ echo <<<EOT
 
             \$model = self::loadModel();
             \$model->load(\$createData[\$k], '');
-            if (!\$model->saveData(true)) {
+            if (!\$model->saveData(false)) {
                 // 取出错误信息
                 \$error = CommonModel::getModelError(\$model->errors);
                 // 添加到静态方法上
