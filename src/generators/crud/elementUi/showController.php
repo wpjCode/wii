@@ -5,6 +5,7 @@
 
 use yii\db\ActiveRecordInterface;
 use yii\helpers\StringHelper;
+use \yii\helpers\Inflector;
 
 
 /* @var $this yii\web\View */
@@ -12,6 +13,7 @@ use yii\helpers\StringHelper;
 
 $expName = StringHelper::basename($generator->expName);
 $controllerClass = StringHelper::basename($generator->controllerShowClass);
+$controllerDoClass = StringHelper::basename($generator->controllerDoClass);
 $baseModelClass = StringHelper::basename($generator->baseModelClass);
 
 /* @var $class ActiveRecordInterface */
@@ -24,6 +26,17 @@ $actionParamComments = $generator->generateActionParamComments();
 $times = time();
 $createDate = date('Y/m/d', $times);
 $createTime = date('H:i:s', $times);
+
+$doController = StringHelper::dirname(ltrim($generator->controllerDoClass, '\\'));
+// 取出[API]的模块所属
+$modules = array_keys(Yii::$app->modules);
+$apiModule = '';
+foreach ($modules as $k => $v) {
+    // 如果是 app\module\ 格式可以算是通过
+    if (preg_match('/app\\\\[a-z|A-Z|0-9]*\\\\' . $v . '.*/', $doController)) {
+        $apiModule = $v;break;
+    }
+}
 
 echo "<?php\n";
 ?>
@@ -47,6 +60,16 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
      * 页面布局文件
      */
     public $layout = '<?=$generator->controllerShowLayout?>';
+    /**
+     * 接口对应[模块名]
+     * @var string
+     */
+    public $apiModule = '<?=$apiModule;?>';
+    /**
+     * 接口对应[控制器名]
+     * @var string
+     */
+    public $apiController = '<?=$generator->getControllerDoId();?>';
 
     /**
      * {@inheritdoc}
@@ -80,7 +103,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     $temp = null;
                     // 未登录检测
                     if (\Yii::$app->admin->isGuest) {
-                        $temp = $this->showError('请先登录', 403, [
+                        $temp = $this->showError('请先登录', 401, [
                             'errorHint' => '您还未登录'
                         ]);
                         return true;
@@ -105,7 +128,12 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     public function actionIndex()
     {
 
-        return $this->render('<?=$generator->getRenderViewPath('index')?>');
+        return $this->render('<?=$generator->getRenderViewPath('index')?>', [
+            // API控制器名
+            'apiModule' => $this->apiModule,
+            // API模块名
+            'apiController' => $this->apiController,
+        ]);
     }
 
     /**
@@ -132,7 +160,12 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
             return $this->showError('数据不存在，请确认信息编号是否正确。', 404);
         }
 
-        return $this->render('<?=$generator->getRenderViewPath('view')?>');
+        return $this->render('<?=$generator->getRenderViewPath('view')?>', [
+            // [接口对应]控制器名
+            'apiModule' => $this->apiModule,
+            // [接口对应]模块名
+            'apiController' => $this->apiController,
+        ]);
     }
 
     /**
@@ -142,7 +175,12 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     public function actionCreate()
     {
 
-        return $this->render('<?=$generator->getRenderViewPath('create')?>');
+        return $this->render('<?=$generator->getRenderViewPath('create')?>', [
+            // [接口对应]控制器名
+            'apiModule' => $this->apiModule,
+            // [接口对应]模块名
+            'apiController' => $this->apiController,
+        ]);
     }
 
     /**
@@ -169,6 +207,11 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
             return $this->showError('数据条目不存在，请确认信息编号是否正确。', 404);
         }
 
-        return $this->render('<?=$generator->getRenderViewPath('update')?>');
+        return $this->render('<?=$generator->getRenderViewPath('update')?>', [
+            // [接口对应]控制器名
+            'apiModule' => $this->apiModule,
+            // [接口对应]模块名
+            'apiController' => $this->apiController,
+        ]);
     }
 }

@@ -34,7 +34,7 @@ use <?= ltrim($generator->baseModelClass, '\\') ?>;
 use <?= ltrim($generator->baseControllerClass, '\\') ?>;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use app\models\CommonModel;
+use app\service\ToolsService;
 
 /**
  * [<?= $expName ?>]操作控制器
@@ -97,7 +97,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                 'denyCallback' => function ($rule, $action) {
                     // 未登录
                     if (\Yii::$app->admin->isGuest) {
-                        return $this->jsonFail('会话过期，请先登录', 403, [
+                        return $this->jsonFail('会话过期，请先登录', 401, [
                             'errorHint' => '您还未登录'
                         ]);
                     }
@@ -126,7 +126,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         return $this->jsonSuccess('成功', [
 <?php if ($class->hasAttribute('status') && $class->hasMethod('getStatusDefault')) { ?>
             'defaultStatus' => !empty($type) && $type == 'index' ?
-                $model::get_status_default() : $model::getStatusOpen(), // 默认选中状态
+                $model::getStatusDefault() : $model::getStatusOpen(), // 默认选中状态
 <?php }
 
 if (property_exists($schema, 'columns')) {
@@ -233,7 +233,7 @@ if (property_exists($schema, 'columns')) {
 
 <?php if ($class->hasAttribute('content')) { ?>
         $detail['content'] = htmlspecialchars_decode($detail['content']);
-        $detail['content'] = CommonModel::addHtmlImgHost($detail['content']);
+        $detail['content'] = ToolsService::addHtmlImgHost($detail['content']);
 <?php } ?>
 
         return $this->jsonSuccess('成功', $detail);
@@ -258,7 +258,7 @@ if (property_exists($schema, 'columns')) {
 
             $error = $model->getFirstErrors();
             return $this->jsonFail('添加失败, 请确认各项数据是否合法', 400, [
-                'column_error' => CommonModel::chineseErr($error)
+                'column_error' => ToolsService::chineseErr($error)
             ]);
         }
 
@@ -297,7 +297,7 @@ if (property_exists($schema, 'columns')) {
 
             $error = $model->getFirstErrors();
             return $this->jsonFail('修改失败, 请确认各项数据是否合法', 400, [
-                'column_error' => CommonModel::chineseErr($error)
+                'column_error' => ToolsService::chineseErr($error)
             ]);
         }
 

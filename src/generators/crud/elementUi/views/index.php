@@ -8,13 +8,16 @@ echo <<<EOT
 <?php
     
 use \app\assets\BackendAsset;
+use \app\models\\tableModel\AdminRoleModel;
 
 /* @var \$this yii\web\View */
+/* @var \$apiModule string */
+/* @var \$apiController string */
 
-BackendAsset::addCss(\$this, '{$generator->getPageCssPath('index')}');
 ?>
 EOT;
 ?>
+
 <el-container class="index-wrapper">
     <el-header class="top-wrapper bg-white" height="auto">
         <el-row :inline="true" class="button-container">
@@ -27,25 +30,28 @@ EOT;
                 </el-breadcrumb>
             </el-col>
             <el-col :xs="15" :sm="17" :md="18" :lg="19" class="text-right">
+                <?= '<?php if (AdminRoleModel::checkAuth(\'create\')) { ?>'. "\n" ?>
                 <el-button class="" size="mini" type="success"
                            @click.native="goToCreate()">
                     新建
                 </el-button>
+                <?= '<?php } ?>' . "\n" ?>
                 <el-dropdown size="mini">
                     <el-button type="primary" size="mini">
                         更多操作
                         <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item size="mini"
-                                          @click.native="openItem(null)">
+                        <?= '<?php if (AdminRoleModel::checkAuth(\'open\', $apiController, $apiModule)) { ?>' . "\n" ?>
+                        <el-dropdown-item size="mini" @click.native="openItem(null)">
                             批量恢复
                         </el-dropdown-item>
-                        <el-dropdown-item size="mini"
-                                          @click.native="disabledItem(null)"
-                                          divided>
+                        <?= '<?php } ?>' . "\n" ?>
+                        <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\', $apiController, $apiModule)) { ?>' . "\n" ?>
+                        <el-dropdown-item size="mini" @click.native="disabledItem(null)" divided>
                             批量禁用
                         </el-dropdown-item>
+                        <?= '<?php } ?>' . "\n" ?>
                     </el-dropdown-menu>
                 </el-dropdown>
             </el-col>
@@ -214,6 +220,7 @@ EOT;
 
             <el-table-column prop="sort" label="排序" width="85" title="双击修改排序">
                 <template slot-scope="scope">
+                    <?= '<?php if (AdminRoleModel::checkAuth(\'sort\', $apiController, $apiModule)) { ?>' . "\n" ?>
                     <div class="column-border-dashed pointer" title="双击修改排序"
                          @dblclick="showEditSort(scope.row)">
                         <el-popover placement="top" width="160"
@@ -249,26 +256,35 @@ EOT;
                             </span>
                         </el-popover>
                     </div>
+                    <?= '<?php } else { ?>' . "\n" ?>
+                    <span v-text="scope.row.sort"></span>
+                    <?= '<?php } ?>' . "\n" ?>
                 </template>
             </el-table-column>
         <?php } ?>
 
             <el-table-column fixed="right" label="操作" width="180">
                 <template slot-scope="scope">
+                    <?= '<?php if (AdminRoleModel::checkAuth(\'edit\')) { ?>' . "\n" ?>
                     <el-button type="text" size="small"
                                @click.native="goToUpdate(scope.row.id)">编辑
                     </el-button>
-    <?php if ($model->hasAttribute('status')) { ?>
+                    <?= '<?php } ?>' . "\n" ?>
+<?php if ($model->hasAttribute('status')) { ?>
+                    <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\', $apiController, $apiModule)) { ?>' . "\n" ?>
                     <el-button type="text text-danger" size="small"
                                v-if="scope.row.status != setting.statusList.disabled"
                                @click.native="disabledItem(scope.row.id)">
                         {{setting.statusTextList[setting.statusList.disabled]}}
                     </el-button>
+                    <?= '<?php } ?>' . "\n" ?>
+                    <?= '<?php if (AdminRoleModel::checkAuth(\'open\', $apiController, $apiModule)) { ?>' . "\n" ?>
                     <el-button type="text text-success" size="small"
                                v-else @click.native="openItem(scope.row.id)">
                         {{setting.statusTextList[setting.statusList.open]}}
                     </el-button>
-    <?php } ?>
+                    <?= '<?php } ?>' . "\n" ?>
+<?php } ?>
                 </template>
             </el-table-column>
         </el-table>
@@ -276,8 +292,7 @@ EOT;
 
         <!-- 分页 START -->
         <div class="block pagination">
-            <el-pagination
-                    @size-change="handleSizeChange"
+            <el-pagination @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
                     :current-page="page"
                     :page-sizes="[20, 50, 100, 200]"
@@ -290,6 +305,9 @@ EOT;
     </el-main>
 </el-container>
 <?= <<<EOT
+
+<?= BackendAsset::addCss(\$this, '{$generator->getPageCssPath('index')}'); ?>
+
 <?= BackendAsset::addScript(\$this, '{$generator->getPageJsPath('index')}'); ?>
 <?= \$this->registerJs('app = new app();'); ?>
 EOT;

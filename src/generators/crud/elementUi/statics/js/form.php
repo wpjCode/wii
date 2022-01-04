@@ -20,7 +20,7 @@ var app = function () {
             detailOver: false,
             settingOver: false,
             setting: {
-                isAdd: false, // 添加状态
+                isCreate: false, // 添加状态
             },
             formRules: {
 <?php foreach ($safeAttributes as $k => $v) {
@@ -101,7 +101,7 @@ EOT;
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 403) {
+                        if (parseInt(event.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -132,7 +132,7 @@ EOT;
                         }
 
                         // 添加 - 初始化默认数据
-                        if (that.setting.isAdd) {
+                        if (that.setting.isCreate) {
 
                             // 1. 默认状态是 正常
                             that.form.status = that.setting.defaultStatus;
@@ -169,11 +169,11 @@ EOT;
 
 
                     this.detailOver = true; // 详情加载完毕
-                    this.setting.isAdd = true; // 正在添加
+                    this.setting.isCreate = true; // 正在添加
                     return loadingInstance.close();
                 }
 
-                this.setting.isAdd = false; // 正在修改
+                this.setting.isCreate = false; // 正在修改
 
                 // 获取各模块的值
                 $.ajax({
@@ -191,7 +191,7 @@ EOT;
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 403) {
+                        if (parseInt(event.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -261,7 +261,7 @@ EOT;
             /**
              * 添加
              */
-            submitAdd: function () {
+            submitCreate: function () {
 
                 // 强制关闭下全部弹出层
                 this.$message.closeAll();
@@ -326,7 +326,7 @@ EOT;
                             });
 
                             // 必须先登录
-                            if (parseInt(event.no) === 403) {
+                            if (parseInt(event.no) === 401) {
 
                                 that.$message({
                                     type: 'warning',
@@ -445,7 +445,7 @@ EOT;
                             });
 
                             // 必须先登录
-                            if (parseInt(event.no) === 403) {
+                            if (parseInt(event.no) === 401) {
 
                                 that.$message({
                                     type: 'warning',

@@ -52,7 +52,7 @@ if ($renderModelPath['dirname'] != $baseModelPath['dirname']) {
 }
 echo <<<EOT
 
-use app\models\CommonModel;
+use app\service\ToolsService;
 use {$generator->doDbModel} as {$doDbAlias};
 use yii\helpers\ArrayHelper;
 
@@ -322,7 +322,7 @@ if ($model->hasAttribute('content')):
             // 内容转化下
             if (!empty(\$v['content'])) {
                 \$v['content'] = htmlspecialchars_decode(\$v['content']);
-                \$v['content'] = CommonModel::addHtmlImgHost(\$v['content']);
+                \$v['content'] = ToolsService::addHtmlImgHost(\$v['content']);
             }
 EOT;
 endif;
@@ -470,7 +470,7 @@ echo <<<EOT
         if (\$this->doDb) \$this->dbInstance->load(\$this->getAttributes(), '');
         // 保存数据库
         if (\$this->doDb && !\$this->dbInstance->saveData(\$this->doDb)) {
-            \$error = CommonModel::getModelError(\$this->dbInstance->getErrors());
+            \$error = ToolsService::getModelError(\$this->dbInstance->getErrors());
             \$this->addError(\$error['column'], \$error['msg']);
             return false;
         }
@@ -489,7 +489,7 @@ echo <<<EOT
         if (empty(\$this->isNewRecord)) {
 
             // 可以是走[mongoId] - 缓存的话暂时编号不存在叫他报错吧
-            // {$primaryKey} = CommonModel::newMongoId();
+            // {$primaryKey} = ToolsService::newMongoId();
 EOT;
 if ($model->hasAttribute('add_time')):
     echo <<<EOT
@@ -517,7 +517,7 @@ if ($model->hasAttribute('content')):
             // 内容加密下
             \$this->content = htmlspecialchars(\$this->content);
             // 内容取出图片域名
-            \$this->content = CommonModel::removeHtmlImgHost(\$this->content);
+            \$this->content = ToolsService::removeHtmlImgHost(\$this->content);
         }
 EOT;
 endif;

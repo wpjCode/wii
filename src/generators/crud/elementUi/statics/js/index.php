@@ -100,7 +100,7 @@ var app = function () {
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 403) {
+                        if (parseInt(event.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -187,7 +187,7 @@ var app = function () {
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 403) {
+                        if (parseInt(event.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -325,7 +325,7 @@ var app = function () {
                             });
 
                             // 必须先登录
-                            if (parseInt(event.no) === 403) {
+                            if (parseInt(event.no) === 401) {
 
                                 that.$message({
                                     type: 'warning',
@@ -418,7 +418,7 @@ var app = function () {
                             });
 
                             // 必须先登录
-                            if (parseInt(event.no) === 403) {
+                            if (parseInt(event.no) === 401) {
 
                                 that.$message({
                                     type: 'warning',
@@ -538,7 +538,7 @@ var app = function () {
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 403) {
+                        if (parseInt(event.no) === 401) {
 
                             that.$message({
                                 type: 'warning',

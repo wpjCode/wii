@@ -15,12 +15,14 @@ echo <<<EOT
 <?php
 
 use \app\assets\BackendAsset;
+use \app\models\\tableModel\AdminRoleModel;
 
 /* @var \$this yii\web\View */
 /* @var \$model {$baseModelNS} */
 /* @var \$form yii\widgets\ActiveForm */
+/* @var \$apiModule string */
+/* @var \$apiController string */
 
-BackendAsset::addCss(\$this, '{$generator->getPageCssPath('form')}');
 ?>
 EOT;
 ?>
@@ -42,19 +44,27 @@ if (in_array($attribute->name, $safeAttributes)) {
 }
 ?>
     </el-form>
+    <div class="form-bottom-free"></div>
 </el-main>
 
 <el-footer class="bottom-button" :height="50">
-    <el-button size="mini" type="success" @click="submitAdd" v-if="setting.isAdd === true">
+    <?= '<?php if (AdminRoleModel::checkAuth(\'create\', $apiController, $apiModule)) { ?>' . "\n" ?>
+    <el-button size="mini" type="success" @click="submitCreate" v-if="setting.isCreate === true">
         创建
     </el-button>
-    <el-button size="mini" type="primary" @click="submitUpdate" v-if="setting.isAdd === false">
+    <?= '<?php } ?>' . "\n" ?>
+    <?= '<?php if (AdminRoleModel::checkAuth(\'update\', $apiController, $apiModule)) { ?>' . "\n" ?>
+    <el-button size="mini" type="primary" @click="submitUpdate" v-if="setting.isCreate === false">
         保存
     </el-button>
+    <?= '<?php } ?>' . "\n" ?>
     <el-button size="mini" type="danger" @click="cancel">取消</el-button>
 </el-footer>
 
 <?= <<<EOT
+
+<?= BackendAsset::addCss(\$this, '{$generator->getPageCssPath('form')}'); ?>
+
 <?= BackendAsset::addScript(\$this, '{$generator->getPageJsPath('form')}'); ?>
 <?= \$this->registerJs('app = new app();'); ?>
 EOT;

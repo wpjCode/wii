@@ -3,6 +3,15 @@
 /* @var $this yii\web\View */
 /* @var $generator wpjCode\wii\generators\crud\Generator */
 ?>
+<?php echo <<<EOT
+<?php
+
+/* @var \$apiModule string */
+/* @var \$apiController string */
+
+?>
+EOT;
+?>
 <el-container class="wp-form-container">
     <el-header class="top-wrapper no-pb" height="auto">
         <el-row :inline="true" class="button-container">
@@ -19,6 +28,6 @@
             </el-col>
         </el-row>
     </el-header>
-    <?= "<?= " ?>$this->render('_form') ?>
+    <?= "<?= " ?>$this->render('_form', ['apiModule' => $apiModule, 'apiController' => $apiController]) ?>
 </el-container>
 

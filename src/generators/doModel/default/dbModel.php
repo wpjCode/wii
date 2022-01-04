@@ -41,7 +41,7 @@ $createDate = date('Y/m/d', $times);
 $createTime = date('H:i:s', $times);
 echo <<<EOT
 
-use app\models\CommonModel;
+use app\service\ToolsService;
 use yii\db\Expression;
 use yii\db\ExpressionInterface;
 use yii\helpers\ArrayHelper;
@@ -428,7 +428,7 @@ if ($model->hasAttribute('content')) {
             // 内容转化下
             if (!empty(\$v['content'])) {
                 \$v['content'] = htmlspecialchars_decode(\$v['content']);
-                \$v['content'] = CommonModel::addHtmlImgHost(\$v['content']);
+                \$v['content'] = ToolsService::addHtmlImgHost(\$v['content']);
             }
 EOT;
 }
@@ -617,13 +617,13 @@ if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $sch
         if (empty(\$this->{$pk})) {
         
             // 可以是走[mongoId]
-            \$this->{$pk} = CommonModel::newMongoId();
+            \$this->{$pk} = ToolsService::newMongoId();
         }
         
         ### 批量操作[缓存保存前一些格式化]
         foreach (\$this->getAttributes() as \$k => \$v) {
             // 字段类型为[JSON]类型需要转为数组 - 保存自动转为[JSON]
-            if (is_string(\$v) && CommonModel::isJson(\$v)) {
+            if (is_string(\$v) && ToolsService::isJson(\$v)) {
                 \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
             }
         }
@@ -659,7 +659,7 @@ if ($model->hasAttribute('content')) {
         // 内容解密下 - 防止加密多次
         \$this->content = htmlspecialchars_decode(\$this->content);
         // 内容取出图片域名
-        \$this->content = CommonModel::removeHtmlImgHost(\$this->content);
+        \$this->content = ToolsService::removeHtmlImgHost(\$this->content);
         // 内容加密下
         \$this->content = htmlspecialchars(\$this->content);
 EOT;
@@ -769,7 +769,7 @@ echo <<<EOT
             \$model->load(\$createData[\$k], '');
             if (!\$model->saveData(false)) {
                 // 取出错误信息
-                \$error = CommonModel::getModelError(\$model->errors);
+                \$error = ToolsService::getModelError(\$model->errors);
                 // 添加到静态方法上
                 self::\$error_[\$error['column']] = \$error['msg'];
                 return false;
