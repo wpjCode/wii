@@ -134,7 +134,7 @@ EOT;
                         // 添加 - 初始化默认数据
                         if (that.setting.isCreate) {
 
-                            // 1. 默认状态是 正常
+                            // 默认[状态]是 正常
                             that.form.status = that.setting.default_status;
                         }
                     },

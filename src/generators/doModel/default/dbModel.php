@@ -619,19 +619,13 @@ if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $sch
             // 可以是走[mongoId]
             \$this->{$pk} = ToolsService::newMongoId();
         }
-        
-        ### 批量操作[缓存保存前一些格式化]
-        foreach (\$this->getAttributes() as \$k => \$v) {
-            // 字段类型为[JSON]类型需要转为数组 - 保存自动转为[JSON]
-            if (is_string(\$v) && ToolsService::isJson(\$v)) {
-                \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
-            }
-        }
-        
+EOT;
+}
+echo <<<EOT
+
         ### 单个操作[缓存保存前一些格式化]
         \$nowTime = time();
 EOT;
-}
 if ($model->hasAttribute('add_time')) {
     echo <<<EOT
     
@@ -666,6 +660,15 @@ EOT;
 }
 echo <<<EOT
 
+
+        ### 批量操作[缓存保存前一些格式化]
+        foreach (\$this->getAttributes() as \$k => \$v) {
+            // 字段类型为[JSON]类型需要转为数组 - 保存自动转为[JSON]
+            if (is_string(\$v) && ToolsService::isJson(\$v)) {
+                \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
+            }
+        }
+        
         // 检测
         if (\$this->hasErrors() || !\$this->validate()) {
 
@@ -900,7 +903,7 @@ if (property_exists($schema, 'columns')) {
 
 
     /**
-     * 获取[状态][关闭]值
+     * 获取[状态][默认]值
      * @return mixed
      */
     public static function getStatusDefault()
