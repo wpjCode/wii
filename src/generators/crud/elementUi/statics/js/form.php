@@ -135,7 +135,7 @@ EOT;
                         if (that.setting.isCreate) {
 
                             // 1. 默认状态是 正常
-                            that.form.status = that.setting.defaultStatus;
+                            that.form.status = that.setting.default_status;
                         }
                     },
                     error: function () {
