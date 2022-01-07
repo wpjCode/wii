@@ -606,7 +606,7 @@ class Generator extends \wpjCode\wii\Generator
         }
 
         $column = $tableSchema->columns[$attribute];
-        if ($column->type === 'text') {
+        if ($column->type === 'text' || $column->size > 50) {
             return $this->generateTextArea($attribute, $column);
         } else if ($column->type === 'tinyint') {
             return $this->generateRadio($attribute, $column);
