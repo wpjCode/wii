@@ -343,15 +343,15 @@ if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
     
             \$this->sqlBase->orderBy('sort desc, update_time desc');
 EOT;
-} else if ($model->hasAttribute('sort') && $primaryKey) {
+} else if ($model->hasAttribute('sort') && $pk) {
     echo <<<EOT
     
-            \$this->sqlBase->orderBy('sort desc, {$primaryKey} desc');
+            \$this->sqlBase->orderBy('sort desc, {$pk} desc');
 EOT;
-} else if (!$model->hasAttribute('sort') && $primaryKey) {
+} else if (!$model->hasAttribute('sort') && $pk) {
     echo <<<EOT
     
-            \$this->sqlBase->orderBy('{$primaryKey} desc');
+            \$this->sqlBase->orderBy('{$pk} desc');
 EOT;
 }
 echo <<<EOT

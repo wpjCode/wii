@@ -14,7 +14,7 @@ $baseModelNS = ltrim($generator->baseModelClass, '\\');
 echo <<<EOT
 <?php
 
-use \app\assets\BackendAsset;
+use \app\assets\BackendAsset as Asset;
 use \app\models\\tableModel\AdminRoleModel;
 
 /* @var \$this yii\web\View */
@@ -63,9 +63,9 @@ if (in_array($attribute->name, $safeAttributes)) {
 
 <?= <<<EOT
 
-<?= BackendAsset::addCss(\$this, '{$generator->getPageCssPath('form')}'); ?>
+<?= Asset::addCss(\$this, '{$generator->getPageCssPath('form')}'); ?>
 
-<?= BackendAsset::addScript(\$this, '{$generator->getPageJsPath('form')}'); ?>
+<?= Asset::addScript(\$this, '{$generator->getPageJsPath('form')}'); ?>
 <?= \$this->registerJs('app = new app();'); ?>
 EOT;
 ?>

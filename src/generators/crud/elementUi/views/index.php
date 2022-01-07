@@ -7,7 +7,7 @@ $model = new $generator->baseModelClass();
 echo <<<EOT
 <?php
     
-use \app\assets\BackendAsset;
+use \app\assets\BackendAsset as Asset;
 use \app\models\\tableModel\AdminRoleModel;
 
 /* @var \$this yii\web\View */
@@ -306,9 +306,9 @@ EOT;
 </el-container>
 <?= <<<EOT
 
-<?= BackendAsset::addCss(\$this, '{$generator->getPageCssPath('index')}'); ?>
+<?= Asset::addCss(\$this, '{$generator->getPageCssPath('index')}'); ?>
 
-<?= BackendAsset::addScript(\$this, '{$generator->getPageJsPath('index')}'); ?>
+<?= Asset::addScript(\$this, '{$generator->getPageJsPath('index')}'); ?>
 <?= \$this->registerJs('app = new app();'); ?>
 EOT;
 ?>

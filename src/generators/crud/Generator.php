@@ -999,7 +999,7 @@ EOT;
 
         $result = parent::save($files, $answers, $results);
 
-        // ☆--页面展示连接--☆
+        // ☆--后台页面展示连接--☆
         $baseName = StringHelper::basename($this->baseModelClass);
 
         // 基础类名去关键词
@@ -1023,16 +1023,14 @@ EOT;
             '下面是【前台】页面展示连接：',
             '{space}// ' . $this->expName,
             '{space}' . lcfirst($baseName) . ': {',
-            '{space}{space}// 列表页面',
-            "{space}{space}index: \$urlPre + '" . lcfirst($baseName) . "' + '.html',",
-            '{space}{space}// 添加页面',
-            "{space}{space}create: \$urlPre + '" . lcfirst($baseName) . "' + 'Create.html',",
-            '{space}{space}// 修改页面',
-            "{space}{space}update: \$urlPre + '" . lcfirst($baseName) . "' + 'Update.html',",
+            "{space}{space}_prefix:  '" . lcfirst($baseName) . "',",
+            "{space}{space}index: '.html',{tab}{tab}{space}// 列表页面",
+            "{space}{space}create: 'Create.html',{tab}// 添加页面",
+            "{space}{space}update: 'Update.html',{tab}// 修改页面",
             '{space}}'
         ];
 
-        // ☆--API操作连接--☆
+        // ☆--后台API操作连接--☆
         $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
                 ltrim($this->controllerDoClass, '\\')) . '.php');
         $files = new CodeFile($controlFile, '');
@@ -1078,43 +1076,35 @@ EOT;
                 "' . 'Sort.api' => \$routePre . '" . $route . "/sort',";
         }
 
+        // ☆--前台API操作连接--☆
         $row = array_merge($row, [
             '下面是【前台】API操作连接：',
             '{space}// ' . $this->expName,
             '{space}' . lcfirst($baseName) . ': {',
-            '{space}{space}// 获取设置API',
-            "{space}{space}setting: \$urlPre + '" . lcfirst($baseName) . "' + 'Setting.api',",
-            '{space}{space}// 获取列表API',
-            "{space}{space}list: \$urlPre + '" . lcfirst($baseName) . "' + 'List.api',",
-            '{space}{space}// 提交创建API',
-            "{space}{space}create: \$urlPre + '" . lcfirst($baseName) . "' + 'Create.api',",
-            '{space}{space}// 提交更新API',
-            "{space}{space}update: \$urlPre + '" . lcfirst($baseName) . "' + 'Update.api',",
-            '{space}{space}// 获取详情API',
-            "{space}{space}detail: \$urlPre + '" . lcfirst($baseName) . "' + 'Detail.api',",
+            "{space}{space}_prefix: '" . lcfirst($baseName) . "',",
+            "{space}{space}setting: 'Setting.api',{space}{space}// 获取设置API",
+            "{space}{space}list: 'List.api',{tab}{tab}{tab}// 获取列表API",
+            "{space}{space}create: 'Create.api',{tab}{tab}// 提交创建API",
+            "{space}{space}update: 'Update.api',{tab}{tab}// 提交更新API",
+            "{space}{space}detail: 'Detail.api',{tab}{tab}// 获取详情API",
         ]);
         // 有[状态]增加[状态]接口
         if (in_array('status', $this->getColumnNames())) {
-            $row[] = '{space}{space}// 禁用API';
-            $row[] = "{space}{space}disabled: \$urlPre + '" . lcfirst($baseName) .
-                "' + 'Disabled.api',";
-            $row[] = '{space}{space}// 开启API';
-            $row[] = "{space}{space}open: \$urlPre + '" . lcfirst($baseName) .
-                "' + 'Open.api',";
+            $row[] = "{space}{space}disabled: 'Disabled.api',{tab}// 禁用API";
+            $row[] = "{space}{space}open: 'Open.api',{tab}{tab}{tab}// 开启API";
         }
         // 有[排序]增加[排序]接口
         if (
             in_array('sort', $this->getColumnNames()) ||
             in_array('list_order', $this->getColumnNames())
         ) {
-            $row[] = '{space}{space}// 修改排序API';
-            $row[] = "{space}{space}sort: \$urlPre + '" . lcfirst($baseName) .
-                "' + 'Sort.api',";
+            $row[] = "{space}{space}sort: 'Sort.api',       // 修改排序API";
         }
         $row[] = "{space}}";
 
         $results .= implode("\n", $row);
         $results = str_replace('{space}', '&nbsp;&nbsp;&nbsp;', $results);
+        $results = str_replace('{tab}', "&nbsp;&nbsp;&nbsp;&nbsp;", $results);
 
         return $result;
     }
