@@ -53,7 +53,7 @@ var app = function () {
 <?php } if ($model->hasAttribute('name')) { ?>
                         name: '',
 <?php } if ($model->hasAttribute('status')) { ?>
-                        status: this.setting.defaultStatus
+                        status: this.setting.default_status
 <?php } ?>
                     };
                     return true;
@@ -65,7 +65,7 @@ var app = function () {
 <?php } if ($model->hasAttribute('name')) { ?>
                 this.searchForm['name'] = '';
 <?php } if ($model->hasAttribute('status')) { ?>
-                this.searchForm['status'] = this.setting.defaultStatus
+                this.searchForm['status'] = this.setting.default_status
 <?php } ?>
             },
             /**

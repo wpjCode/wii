@@ -84,7 +84,7 @@ EOT;
             <el-form-item label="" class="" class="padding-right-30" v-if="!setting.isSmallScreen">
                 <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
                     <el-radio-button label="">全部</el-radio-button>
-                    <el-radio-button :label="key" v-for="(item, key) in setting.statusTextList">
+                    <el-radio-button :label="key" v-for="(item, key) in setting.status_text_list">
                         {{item}}列表
                     </el-radio-button>
                 </el-radio-group>
@@ -129,7 +129,7 @@ EOT;
                                         @change="handleCurrentChange(1)">
                             <el-radio-button label="">全部</el-radio-button>
                             <el-radio-button :label="key"
-                                             v-for="(item, key) in setting.statusTextList">
+                                             v-for="(item, key) in setting.status_text_list">
                                 {{item}}列表
                             </el-radio-button>
                         </el-radio-group>
@@ -202,11 +202,11 @@ EOT;
 
             <el-table-column prop="status_text" label="状态" width="80">
                 <template slot-scope="scope">
-                    <div class="text-more-ellipsis" v-if="setting.statusList">
-                        <span v-if="scope.row.status == setting.statusList.disabled"
+                    <div class="text-more-ellipsis" v-if="setting.status_list">
+                        <span v-if="scope.row.status == setting.status_list.disabled"
                               v-text="'已' + scope.row.status_text"
                               class="pointer text-danger"></span>
-                        <span v-else-if="scope.row.status == setting.statusList.open"
+                        <span v-else-if="scope.row.status == setting.status_list.open"
                               v-text="'已' + scope.row.status_text"
                               class="pointer text-success"></span>
                         <span v-else v-text="'已' + scope.row.status_text"
@@ -272,15 +272,15 @@ EOT;
 <?php if ($model->hasAttribute('status')) { ?>
                     <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\', $apiController, $apiModule)) { ?>' . "\n" ?>
                     <el-button type="text text-danger" size="small"
-                               v-if="scope.row.status != setting.statusList.disabled"
+                               v-if="scope.row.status != setting.status_list.disabled"
                                @click.native="disabledItem(scope.row.id)">
-                        {{setting.statusTextList[setting.statusList.disabled]}}
+                        {{setting.status_text_list[setting.status_list.disabled]}}
                     </el-button>
                     <?= '<?php } ?>' . "\n" ?>
                     <?= '<?php if (AdminRoleModel::checkAuth(\'open\', $apiController, $apiModule)) { ?>' . "\n" ?>
                     <el-button type="text text-success" size="small"
                                v-else @click.native="openItem(scope.row.id)">
-                        {{setting.statusTextList[setting.statusList.open]}}
+                        {{setting.status_text_list[setting.status_list.open]}}
                     </el-button>
                     <?= '<?php } ?>' . "\n" ?>
 <?php } ?>

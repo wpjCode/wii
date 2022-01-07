@@ -1050,10 +1050,10 @@ EOT;
             "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.api' => \$routePre . '" .
             $route . "/create',",
             '{space}// [' . $this->expName . ']获取详情API',
-            "{space}\$urlPre . '" . lcfirst($baseName) . "' . 'Detail.api' => \$routePre . '" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Detail.api' => \$routePre . '" .
             $route . "/detail',",
             '{space}// [' . $this->expName . ']提交更新API',
-            "{space}\$urlPre . '" . lcfirst($baseName) . "' . 'Update.api' => \$routePre . '" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.api' => \$routePre . '" .
             $route . "/update',"
         ]);
 

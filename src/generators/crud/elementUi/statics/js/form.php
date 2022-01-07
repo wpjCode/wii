@@ -167,7 +167,6 @@ EOT;
                 // id参数存在
                 if (!params['id'] || params['id'] === undefined) {
 
-
                     this.detailOver = true; // 详情加载完毕
                     this.setting.isCreate = true; // 正在添加
                     return loadingInstance.close();

@@ -126,7 +126,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         return $this->jsonSuccess('成功', [
 <?php if ($class->hasAttribute('status') && $class->hasMethod('getStatusDefault')) { ?>
             'default_status' => !empty($type) && $type == 'index' ?
-                $model::getStatusDefault() : $model::getStatusOpen(), // 默认选中状态
+                '' : $model::getStatusOpen(), // 默认选中状态
 <?php }
 
 if (property_exists($schema, 'columns')) {
