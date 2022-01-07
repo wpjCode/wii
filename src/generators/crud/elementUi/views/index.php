@@ -13,7 +13,6 @@ use \app\models\\tableModel\AdminRoleModel;
 /* @var \$this yii\web\View */
 /* @var \$apiModule string */
 /* @var \$apiController string */
-
 ?>
 EOT;
 ?>
