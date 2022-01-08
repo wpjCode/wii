@@ -679,7 +679,7 @@ EOT;
             <el-form-item label="{$label}" prop="{$attribute}" class="form-item" :inline-message="true"
                     :error="customErrMsg.{$attribute}" ref="formItem_{$attribute}">
                   
-                <el-radio-group v-model="form.{$attribute}" size="mini" class="form-element">
+                <el-radio-group v-model="form.{$attribute} + ''" size="mini" class="form-element">
             
                     <el-radio v-for="(item, key) in setting.{$attribute}_text_list"
                         :label="parseInt(key)">
