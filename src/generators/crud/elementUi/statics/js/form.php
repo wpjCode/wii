@@ -6,7 +6,6 @@ $model = new $generator->baseModelClass();
 $safeAttributes = $generator->getTableSchema()->columns;
 
 ?>
-
 /**
  * [<?=$generator->expName?>]表单[JS]
  * @returns {*}
