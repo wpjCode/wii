@@ -613,7 +613,7 @@ echo <<<EOT
     {
 
 EOT;
-if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->type == 'string') {
+if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->phpType == 'string') {
     echo <<<EOT
         // 添加的话要赋值一些初始数据
         if (empty(\$this->{$pk})) {
