@@ -141,11 +141,12 @@ EOT;
     </el-header>
     <el-main class="content-wrapper transits bg-white">
         <!-- 主列表 表格 START -->
-        <el-table :data="dataList" style="width: 100%" class=""
-                  @selection-change="handleSelectionChange">
+        <el-table :data="dataList" style="width: 100%" class="" @selection-change="handleSelectionChange"
+                  @sort-change="handelSortChange">
+
             <el-table-column type="selection" width="55"></el-table-column>
 
-            <el-table-column fixed prop="id" label="编号" width="100">
+            <el-table-column fixed prop="id" label="编号" width="100" sortable="custom">
                 <template slot-scope="scope">
                     <el-tooltip class="item" effect="light" :content="scope.row.id"
                                 placement="top-start">
@@ -185,7 +186,7 @@ EOT;
         <?php } ?>
         <?php if ($model->hasAttribute('update_time')) { ?>
 
-            <el-table-column prop="update_time" label="修改时间" width="120">
+            <el-table-column prop="update_time" label="修改时间" width="120" sortable="custom">
                 <template slot-scope="scope">
                     <el-tooltip class="item" effect="light"
                                 :content="scope.row.update_time_text"
@@ -217,7 +218,7 @@ EOT;
         <?php } ?>
         <?php if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) { ?>
 
-            <el-table-column prop="sort" label="排序" width="85" title="双击修改排序">
+            <el-table-column prop="sort" label="排序" width="85" title="双击修改排序" sortable="custom">
                 <template slot-scope="scope">
                     <?= '<?php if (AdminRoleModel::checkAuth(\'sort\', $apiController, $apiModule)) { ?>' . "\n" ?>
                     <div class="column-border-dashed pointer" title="双击修改排序"

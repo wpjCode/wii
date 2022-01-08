@@ -23,6 +23,8 @@ var app = function () {
             searchForm: {}, // 搜索字段
             searchTopType: 'id', // 顶部搜索类型
             searchTopValue: '', // 顶部搜索内容
+            searchOrderField: '', // 查询排序字段
+            searchOrderType: '', // 查询排序类型
             dataList: [], // 父级数据列表
             handelSelectList: [], // 当前多选项
             page: 1,
@@ -278,6 +280,30 @@ var app = function () {
             handleCurrentChange: function ($val) {
                 $val = !parseInt($val) ? 1: $val;
                 this.page = $val;
+                this.getList();
+            },
+            /**
+             * 排序检测处理
+             * @param $column
+             */
+            handelSortChange: function ($column) {
+                // 没有排序|字段 置空
+                if (!$column.order || !$column.prop) {
+                    $column.order = null;
+                    $column.prop = null;
+                }
+                var type = '';
+                switch ($column.order) {
+                    case 'ascending':
+                        type = 'asc';
+                        break;
+                    case 'descending':
+                        type = 'desc';
+                        break;
+                }
+                this.searchOrderField = $column.prop;
+                this.searchOrderType = type;
+                // 调用加载列表
                 this.getList();
             },
             /**

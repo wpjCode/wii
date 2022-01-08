@@ -539,10 +539,12 @@ echo <<<EOT
     
     /**
      * 加载排序
-     * @param string|array \$sort 无需验证
+     * @param string|array \$sort 排序规则
+     *  ` 字符串格式为：field => sortType | id => desc
      * @param bool \$noCheck 无需验证
      * @return \$this
-     */
+     * @return \$this
+     */∂
     public function loadSort(\$sort, \$noCheck = false)
     {
 

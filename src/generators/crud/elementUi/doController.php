@@ -174,6 +174,11 @@ if (property_exists($schema, 'columns')) {
         // 每页显示多少条
         $pageSize = (!$this->get('pageSize') || $this->get('pageSize') <= 0 || $this->get('pageSize') > 100) ? \Yii::$app->params['dataLimit'] : $this->get('pageSize', 'int');
 
+        // 排序字段
+        $sort = [
+            $this->get('sortField', '', 'str') => $this->get('sortType', '', 'str')
+        ];
+
         // 字段1
         $field = [
 <?php foreach ($class->attributes() as $kL => $vL) { ?>
@@ -185,10 +190,10 @@ if (property_exists($schema, 'columns')) {
         $model = <?= $baseModelClass ?>::loadModel();
 
         // 数据列表
-        $list = $model->loadWhere($search)->getList($page, $pageSize, $field);
+        $list = $model->loadWhere($search)->loadSort($sort)->getList($page, $pageSize, $field);
 
         // 总数
-        $count = $model->loadWhere($search)->getCount();
+        $count = $model->getCount();
 
         return $this->jsonSuccess('成功', [
             'total' => $count,
