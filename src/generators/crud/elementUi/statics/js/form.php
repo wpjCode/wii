@@ -128,13 +128,9 @@ EOT;
                         for (var i in event.data) {
                             if (!event.data.hasOwnProperty(i)) continue;
                             that.$set(that.setting, i, event.data[i]);
-                        }
-
-                        // 添加 - 初始化默认数据
-                        if (that.setting.isCreate) {
-
-                            // 默认[状态]是 正常
-                            that.form.status = that.setting.default_status;
+                            // 不存在指定字符串直接返回
+                            if (i.indexOf('default_') === -1 || !that.setting.isCreate) continue;
+                            that.form[i.replace('default_', '')] = event.data[i];
                         }
                     },
                     error: function () {
