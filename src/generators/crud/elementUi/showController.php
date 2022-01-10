@@ -104,7 +104,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     // 未登录检测
                     if (\Yii::$app->admin->isGuest) {
                         $temp = $this->showError('请先登录', 401, [
-                            'errorHint' => '您还未登录'
+                            'error_hint' => '您还未登录'
                         ]);
                         return true;
                     }
