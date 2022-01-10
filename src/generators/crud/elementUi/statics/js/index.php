@@ -25,7 +25,7 @@ var app = function () {
             searchTopValue: '', // 顶部搜索内容
             searchOrderField: '', // 查询排序字段
             searchOrderType: '', // 查询排序类型
-            dataList: [], // 父级数据列表
+            dataList: [], // 数据列表
             handelSelectList: [], // 当前多选项
             page: 1,
             pageSize: 20,
@@ -67,7 +67,7 @@ var app = function () {
 <?php } if ($model->hasAttribute('name')) { ?>
                 this.searchForm['name'] = '';
 <?php } if ($model->hasAttribute('status')) { ?>
-                this.searchForm['status'] = this.setting.default_status
+                this.searchForm['status'] = this.setting.default_status;
 <?php } ?>
             },
             /**
@@ -236,8 +236,8 @@ var app = function () {
                 });
             },
             /**
-            * [更多查询]按钮点击
-            */
+             * [更多查询]按钮点击
+             */
             moreSearchClick: function () {
                 if(this.setting.showAllSearch) {
                     return this.setting.showAllSearch = false;

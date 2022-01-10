@@ -172,7 +172,7 @@ if (property_exists($schema, 'columns')) {
         $page = !$this->get('page') ? 0 : $this->get('page', 'int');
 
         // 每页显示多少条
-        $pageSize = (!$this->get('pageSize') || $this->get('pageSize') <= 0 || $this->get('pageSize') > 100) ? \Yii::$app->params['dataLimit'] : $this->get('pageSize', 'int');
+        $pageSize = (!$this->get('pageSize') || $this->get('pageSize') <= 0 || $this->get('pageSize') > \Yii::$app->params['maxDataLimit']) ? \Yii::$app->params['dataLimit'] : $this->get('pageSize', 'int');
 
         // 排序字段
         $sort = [
