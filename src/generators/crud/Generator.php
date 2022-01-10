@@ -1098,7 +1098,7 @@ EOT;
             in_array('sort', $this->getColumnNames()) ||
             in_array('list_order', $this->getColumnNames())
         ) {
-            $row[] = "{space}{space}sort: 'Sort.api',       // 修改排序API";
+            $row[] = "{space}{space}sort: 'Sort.api',{tab}{tab}{tab}// 修改排序API";
         }
         $row[] = "{space}}";
 
