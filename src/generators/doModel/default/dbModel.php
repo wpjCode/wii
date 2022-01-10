@@ -544,7 +544,7 @@ echo <<<EOT
      * @param bool \$noCheck 无需验证
      * @return \$this
      * @return \$this
-     */∂
+     */
     public function loadSort(\$sort, \$noCheck = false)
     {
 
