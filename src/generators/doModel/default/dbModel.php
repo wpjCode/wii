@@ -338,17 +338,17 @@ echo <<<EOT
             \$this->sqlBase->orderBy(\$this->orderBy);
         } else { // 无自定义排序
 EOT;
-if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
-    echo <<<EOT
-    
-            \$this->sqlBase->orderBy('sort desc, update_time desc');
-EOT;
-} else if ($model->hasAttribute('sort') && $pk) {
+if ($model->hasAttribute('sort') && $pk) {
     echo <<<EOT
     
             \$this->sqlBase->orderBy('sort desc, {$pk} desc');
 EOT;
-} else if (!$model->hasAttribute('sort') && $pk) {
+} else if ($model->hasAttribute('list_order') && $pk) {
+    echo <<<EOT
+    
+            \$this->sqlBase->orderBy('list_order desc, {$pk} desc');
+EOT;
+} else if (!$model->hasAttribute('sort') && !$model->hasAttribute('list_order') && $pk) {
     echo <<<EOT
     
             \$this->sqlBase->orderBy('{$pk} desc');
