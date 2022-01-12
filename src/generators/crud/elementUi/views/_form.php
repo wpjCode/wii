@@ -66,6 +66,6 @@ if (in_array($attribute->name, $safeAttributes)) {
 <?= Asset::addCss(\$this, '{$generator->getPageCssPath('form')}'); ?>
 
 <?= Asset::addScript(\$this, '{$generator->getPageJsPath('form')}'); ?>
-<?= \$this->registerJs('app = new app();'); ?>
+<?= \$this->registerJs('instance = new app();'); ?>
 EOT;
 ?>

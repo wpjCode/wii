@@ -309,6 +309,6 @@ EOT;
 <?= Asset::addCss(\$this, '{$generator->getPageCssPath('index')}'); ?>
 
 <?= Asset::addScript(\$this, '{$generator->getPageJsPath('index')}'); ?>
-<?= \$this->registerJs('app = new app();'); ?>
+<?= \$this->registerJs('instance = new app();'); ?>
 EOT;
 ?>
