@@ -175,9 +175,16 @@ if (property_exists($schema, 'columns')) {
         $pageSize = (!$this->get('pageSize') || $this->get('pageSize') <= 0 || $this->get('pageSize') > \Yii::$app->params['maxDataLimit']) ? \Yii::$app->params['dataLimit'] : $this->get('pageSize', 'int');
 
         // 排序字段
-        $sort = [
-            $this->get('sortField', '', 'str') => $this->get('sortType', '', 'str')
-        ];
+        $sortField = $this->get('sortField', '', 'str');
+        $sort = [$sortField => $this->get('sortType', '', 'str')];
+
+        // 设置
+        $opt = [];
+        $clientOpt = $this->get('option');
+        // 是否加载[其是否存在子集] -- 此处做过滤加载配置
+        // if (!empty($clientOpt['loadHasChild'])) {
+            // $opt['loadHasChild'] = true;
+        // }
 
         // 字段1
         $field = [
