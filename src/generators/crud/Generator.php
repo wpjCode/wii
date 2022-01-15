@@ -733,7 +733,7 @@ EOT;
                     :error="customErrMsg.{$attribute}" ref="formItem_{$attribute}">
                 
                 <el-input type="textarea" placeholder="请输入{$label}" v-model="form.{$attribute}"
-                    class="form-element" maxlength="300" show-word-limit type="{$type}"
+                    class="form-element" maxlength="{$column->size}" show-word-limit type="{$type}"
                     :autosize="{ minRows: 6}">
                 </el-input>
             
