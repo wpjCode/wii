@@ -667,7 +667,8 @@ echo <<<EOT
         foreach (\$this->getAttributes() as \$k => \$v) {
             // 字段类型为[JSON]类型需要转为数组 - 保存自动转为[JSON]
             if (is_string(\$v) && ToolsService::isJson(\$v)) {
-                \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
+                \$this->setAttribute(\$k, json_decode(\$v, true));
+                continue;
             }
         }
         
