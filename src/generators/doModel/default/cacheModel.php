@@ -461,8 +461,11 @@ echo <<<EOT
     {
 
         ### 按需操作数据库
+        \$dbTran = \Yii::\$app->db->beginTransaction();
         // 检测是否数据库类型
         if (\$this->doDb && !\$this->dbInstance instanceof SettingDbModel) {
+            // 回滚据库事务
+            \$dbTran->rollBack();
             \$this->addError(500, '请使用初始化数据库方式声明设置模块');
             return false;
         }
@@ -470,6 +473,8 @@ echo <<<EOT
         if (\$this->doDb) \$this->dbInstance->load(\$this->getAttributes(), '');
         // 保存数据库
         if (\$this->doDb && !\$this->dbInstance->saveData(\$this->doDb)) {
+            // 回滚据库事务
+            \$dbTran->rollBack();
             \$error = ToolsService::getModelError(\$this->dbInstance->getErrors());
             \$this->addError(\$error['column'], \$error['msg']);
             return false;
@@ -525,7 +530,9 @@ echo <<<EOT
 
 
         if (\$this->hasErrors() || !\$this->validate() || !\$this->save()) {
-
+            
+            // 回滚据库事务
+            \$dbTran->rollBack();
             // 记录下错误日志
             \Yii::error([
 
@@ -540,6 +547,8 @@ echo <<<EOT
             return false;
         }
 
+        // 提交数据库事务
+        \$dbTran->rollBack();
         return true;
     }
 
