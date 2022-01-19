@@ -71,7 +71,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                 'class' => AccessControl::className(),
                 'user' => 'admin',
                 'rules' => [
-                    [ // 必须登陆才能访问
+                    [ // 必须登录才能访问
                         'actions' => [
                             'setting',
                             'list',
@@ -88,7 +88,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                         'allow' => true,
                         'roles' => ['@'],
                     ],
-                    [ // 无需登陆即可访问 - 空的请保证里面有一个空字符串
+                    [ // 无需登录即可访问 - 空的请保证里面有一个空字符串
                         'actions' => [''],
                         'allow' => false,
                         'roles' => ['?']

@@ -105,7 +105,7 @@ EOT;
                             that.$message({
                                 type: 'warning',
                                 showClose: true,
-                                message: '登陆超时，请重新登陆'
+                                message: '登录超时，请重新登录'
                             });
 
                             // 几秒之后移除
@@ -190,7 +190,7 @@ EOT;
                             that.$message({
                                 type: 'warning',
                                 showClose: true,
-                                message: '登陆超时，请重新登陆'
+                                message: '登录超时，请重新登录'
                             });
 
                             // 几秒之后移除
@@ -325,7 +325,7 @@ EOT;
                                 that.$message({
                                     type: 'warning',
                                     showClose: true,
-                                    message: '登陆超时，请重新登陆'
+                                    message: '登录超时，请重新登录'
                                 });
 
                                 // 几秒之后移除
@@ -444,7 +444,7 @@ EOT;
                                 that.$message({
                                     type: 'warning',
                                     showClose: true,
-                                    message: '登陆超时，请重新登陆'
+                                    message: '登录超时，请重新登录'
                                 });
 
                                 // 几秒之后移除
