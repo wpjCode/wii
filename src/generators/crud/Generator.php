@@ -648,8 +648,8 @@ class Generator extends \wpjCode\wii\Generator
                         <div>
                             <i class="el-icon-question font-second pointer"></i>
                             <span class="font-third">
-                            什么是行内说明？
-                        </span>
+                                什么是行内说明？
+                            </span>
                         </div>
                     </el-tooltip>
                 </div>
@@ -697,8 +697,8 @@ EOT;
                         <div>
                             <i class="el-icon-question font-second pointer"></i>
                             <span class="font-third">
-                            什么是行内说明？
-                        </span>
+                                什么是行内说明？
+                            </span>
                         </div>
                     </el-tooltip>
                 </div>
@@ -746,8 +746,8 @@ EOT;
                         <div>
                             <i class="el-icon-question font-second pointer"></i>
                             <span class="font-third">
-                            什么是行内说明？
-                        </span>
+                                什么是行内说明？
+                            </span>
                         </div>
                     </el-tooltip>
                 </div>
