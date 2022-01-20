@@ -322,7 +322,7 @@ if ($model->hasAttribute('content')):
             // 内容转化下
             if (!empty(\$v['content'])) {
                 \$v['content'] = htmlspecialchars_decode(\$v['content']);
-                \$v['content'] = ToolsService::addHtmlImgHost(\$v['content']);
+                \$v['content'] = ToolsService::addHtmlImgDomain(\$v['content']);
             }
 EOT;
 endif;

@@ -245,7 +245,7 @@ if (property_exists($schema, 'columns')) {
 
 <?php if ($class->hasAttribute('content')) { ?>
         $detail['content'] = htmlspecialchars_decode($detail['content']);
-        $detail['content'] = ToolsService::addHtmlImgHost($detail['content']);
+        $detail['content'] = ToolsService::addHtmlImgDomain($detail['content']);
 <?php } ?>
 
         return $this->jsonSuccess('成功', $detail);
