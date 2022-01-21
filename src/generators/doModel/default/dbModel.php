@@ -659,7 +659,7 @@ if ($model->hasAttribute('content')) {
         // 内容解密下 - 防止加密多次
         \$this->content = htmlspecialchars_decode(\$this->content);
         // 内容取出图片域名
-        \$this->content = ToolsService::removeHtmlImgHost(\$this->content);
+        \$this->content = ToolsService::delHtmlImgDomain(\$this->content);
         // 内容加密下
         \$this->content = htmlspecialchars(\$this->content);
 EOT;
