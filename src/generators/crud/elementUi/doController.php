@@ -176,7 +176,10 @@ if (property_exists($schema, 'columns')) {
 
         // 排序字段
         $sortField = $this->get('sortField', '', 'str');
-        $sort = $sortField . ' ' . $this->get('sortType', '', 'str');
+        $sort = [
+            $sortField . ' ' . $this->get('sortType', '', 'str'),
+            'id ' . $this->get('sortType', '', 'str'),
+        ];
 
         // 设置
         $opt = [];
