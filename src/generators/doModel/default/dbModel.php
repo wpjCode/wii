@@ -565,12 +565,12 @@ echo <<<EOT
             \$sort = explode(',', \$sort);
         }
 
-        // 允许列表 - 无需验证
-        \$toExpList = ['RAND()'];
-        // 合法排序列表
-        \$typeList = [SORT_DESC, SORT_ASC, 'DESC', 'ASC'];
         // 循环  条件是否有效
         \$stagingSort = [];
+        // 合法排序列表
+        \$typeList = [SORT_DESC, SORT_ASC, 'DESC', 'ASC'];
+        // 允许列表 - 无需验证
+        \$toExpList = ['RAND()'];
         foreach (\$sort as \$k => \$v) {
 
             ### 做一定的过滤
@@ -588,17 +588,15 @@ echo <<<EOT
             }
 
             ### 字段验证
-            // 值已经是 排序列表中的数据
-            if (in_array(strtoupper(\$v), \$typeList) && \$this->hasAttribute(\$k)) {
-                \$stagingSort[\$k] = strtoupper(\$v);
+            // 数组模式：字段->排序类型
+            if (\$this->hasAttribute(\$k) && in_array(\$v, \$typeList)) {
+                \$stagingSort[\$k] = \$v;
                 continue;
             }
-
-            // 字符串 - 分割空格号
-            if (preg_match('/^(.*?)\s+(asc|desc)$/i', \$v, \$matches)) {
+            // 字符模式：'id DESC'
+            \$expResult = preg_match('/^(.*?)\s+(asc|desc)$/i', \$v, \$matches);
+            if (\$expResult && \$this->hasAttribute(\$matches[1])) {
                 \$stagingSort[\$matches[1]] = strcasecmp(\$matches[2], 'desc') ? SORT_ASC : SORT_DESC;
-            } else {
-                \$stagingSort[\$v] = SORT_ASC;
             }
         }
 
