@@ -558,9 +558,12 @@ echo <<<EOT
         }
 
         // 将[, ]转为[,]
-        if (is_string(\$sort)) \$sort = str_replace(', ', ',', \$sort);
-        // 如果排序是 字符
-        if (is_string(\$sort)) \$sort = explode(',', \$sort);
+        if (is_string(\$sort)) {
+            // 字符串替换
+            \$sort = str_replace(', ', ',', \$sort);
+            // 字符串分割
+            \$sort = explode(',', \$sort);
+        }
 
         // 允许列表 - 无需验证
         \$toExpList = ['RAND()'];
@@ -570,9 +573,9 @@ echo <<<EOT
         \$stagingSort = [];
         foreach (\$sort as \$k => \$v) {
 
+            ### 做一定的过滤
             // 数组 - 过滤
             if (is_array(\$v)) continue;
-
             // 类型是[表达式]
             if (\$v instanceof ExpressionInterface) {
                 \$stagingSort[\$k] = \$v;
@@ -583,6 +586,8 @@ echo <<<EOT
                 \$stagingSort[\$k] = new Expression(strtoupper(\$v));
                 continue;
             }
+
+            ### 字段验证
             // 值已经是 排序列表中的数据
             if (in_array(strtoupper(\$v), \$typeList) && \$this->hasAttribute(\$k)) {
                 \$stagingSort[\$k] = strtoupper(\$v);
@@ -590,11 +595,10 @@ echo <<<EOT
             }
 
             // 字符串 - 分割空格号
-            \$v = preg_split('/\s*/', strval(\$v));
-            if (!empty(\$v[0]) && strlen(\$v[0]) > 0 && \$this->hasAttribute(\$v[0])) {
-
-                \$stagingSort[\$v[0]] = strtoupper(\$v[1]);
-                continue;
+            if (preg_match('/^(.*?)\s+(asc|desc)$/i', \$v, \$matches)) {
+                \$stagingSort[\$matches[1]] = strcasecmp(\$matches[2], 'desc') ? SORT_ASC : SORT_DESC;
+            } else {
+                \$stagingSort[\$v] = SORT_ASC;
             }
         }
 
