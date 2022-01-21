@@ -177,7 +177,9 @@ var app = function () {
                     data: {
                         page: this.page,
                         pageSize: this.pageSize,
-                        search: this.searchForm
+                        search: this.searchForm,
+                        sortField: this.searchOrderField,
+                        sortType: this.searchOrderType
                     },
                     dataType: "json",
                     success: function (event) {
