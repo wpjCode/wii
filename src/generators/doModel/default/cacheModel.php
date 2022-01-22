@@ -411,39 +411,64 @@ echo <<<EOT
 
     /**
      * 加载排序
-     * @param \$sort
+     * @param string|array \$sort 排序规则
+     *  ` 字符串格式为：field => sortType | id => desc
+     * @param bool \$noCheck 无需验证
+     * @return \$this
      * @return \$this
      */
-    public function loadSort(\$sort)
+    public function loadSort(\$sort, \$noCheck = false)
     {
 
         // 条件不存在
         if (empty(\$sort)) return \$this;
 
-        // 如果排序是 字符
-        if (is_string(\$sort)) \$sort = explode(',', \$sort);
+        // 无需验证
+        if (\$noCheck || \$sort instanceof ExpressionInterface) {
+            \$this->orderBy = \$sort;
+            return \$this;
+        }
 
-        // 合法额排序列表
-        \$typeList = [SORT_DESC, SORT_ASC, 'DESC', 'ASC'];
+        // 将[, ]转为[,]
+        if (is_string(\$sort)) {
+            // 字符串替换
+            \$sort = str_replace(', ', ',', \$sort);
+            // 字符串分割
+            \$sort = explode(',', \$sort);
+        }
+
         // 循环  条件是否有效
         \$stagingSort = [];
+        // 合法排序列表
+        \$typeList = [SORT_DESC, SORT_ASC, 'DESC', 'ASC'];
+        // 允许列表 - 无需验证
+        \$toExpList = ['RAND()'];
         foreach (\$sort as \$k => \$v) {
 
+            ### 做一定的过滤
             // 数组 - 过滤
             if (is_array(\$v)) continue;
-
-            // 值已经是 排序列表中的数据
-            if (in_array(strtoupper(\$v), \$typeList) && strtoupper(\$v)) {
-                \$stagingSort[\$k] = strtoupper(\$v) == 'DESC' ? SORT_DESC : SORT_ASC;
+            // 类型是[表达式]
+            if (\$v instanceof ExpressionInterface) {
+                \$stagingSort[\$k] = \$v;
+                continue;
+            }
+            // 无需验证列表
+            if (in_array(strtoupper(\$v), \$toExpList)) {
+                \$stagingSort[\$k] = new Expression(strtoupper(\$v));
                 continue;
             }
 
-            // 字符串 - 分割空格号
-            \$v = preg_split('/\s+/', strval(\$v));
-            if (!empty(\$v[0]) && strlen(\$v[0]) > 0 && \$this->hasAttribute(\$v[0])) {
-
-                \$stagingSort[\$v[0]] = strtoupper(\$v[1]) == 'DESC' ? SORT_DESC : SORT_ASC;
+            ### 字段验证
+            // 数组模式：字段->排序类型
+            if (\$this->hasAttribute(\$k) && in_array(\$v, \$typeList)) {
+                \$stagingSort[\$k] = \$v;
                 continue;
+            }
+            // 字符模式：'id DESC'
+            \$expResult = preg_match('/^(.*?)\s+(asc|desc)$/i', \$v, \$matches);
+            if (\$expResult && \$this->hasAttribute(\$matches[1])) {
+                \$stagingSort[\$matches[1]] = strcasecmp(\$matches[2], 'desc') ? SORT_ASC : SORT_DESC;
             }
         }
 
