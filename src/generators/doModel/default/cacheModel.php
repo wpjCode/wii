@@ -480,7 +480,7 @@ echo <<<EOT
 
     /**
      * 添加|保存
-     * @return bool
+     * @throws \yii\db\Exception
      */
     public function saveData()
     {
@@ -573,7 +573,7 @@ echo <<<EOT
         }
 
         // 提交数据库事务
-        \$dbTran->rollBack();
+        \$dbTran->commit();
         return true;
     }
 
