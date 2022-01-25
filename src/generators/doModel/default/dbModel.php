@@ -936,7 +936,6 @@ EOT;
             }
             echo <<<EOT
 
-
     /**
      * 获取[{$comment}]文本
      * @param \$value
