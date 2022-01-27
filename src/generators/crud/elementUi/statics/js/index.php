@@ -42,33 +42,29 @@ var app = function () {
         methods: {
             /**
              * 顶部查询 - 初始化查询[FORM]
-             * @param $isClear
              * @returns {boolean}
              */
-            initSearchForm: function ($isClear) {
-                // 是否清空性质初始化
-                if ($isClear) {
-                    this.searchForm = {
-                        id: '',
-<?php if ($model->hasAttribute('title')) { ?>
-                        title: '',
-<?php } if ($model->hasAttribute('name')) { ?>
-                        name: '',
-<?php } if ($model->hasAttribute('status')) { ?>
-                        status: this.setting.default_status
-<?php } ?>
-                    };
-                    return true;
+            initSearchForm: function () {
+
+                // 默认搜索字段
+                this.searchForm = {
+                    id: '',
+                    <?php if ($model->hasAttribute('title')) { ?>
+                    title: '',
+                    <?php } if ($model->hasAttribute('name')) { ?>
+                    name: '',
+                    <?php } if ($model->hasAttribute('status')) { ?>
+                    status: ''
+                    <?php } ?>
+                };
+                // 赋值默认值
+                for (var i in this.setting) {
+                    if (!this.setting.hasOwnProperty(i)) continue;
+                    // 不存在指定字符串直接返回
+                    if (i.indexOf('default_') === -1) continue;
+                    if (this.searchForm[i.replace('default_', '')] === undefined) continue;
+                    this.searchForm[i.replace('default_', '')] = this.setting[i];
                 }
-                // 选择性初始化
-                this.searchForm['id'] = '';
-<?php if ($model->hasAttribute('title')) { ?>
-                this.searchForm['title'] = '';
-<?php } if ($model->hasAttribute('name')) { ?>
-                this.searchForm['name'] = '';
-<?php } if ($model->hasAttribute('status')) { ?>
-                this.searchForm['status'] = this.setting.default_status;
-<?php } ?>
             },
             /**
              * 获取设置
@@ -134,6 +130,7 @@ var app = function () {
 
                         // 最终清空性初始化查询
                         that.initSearchForm(true);
+
                         // 监测屏幕大小变化
                         return $(window).resize(function() {
                             // 超过此宽度展示 更多筛选

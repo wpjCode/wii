@@ -124,7 +124,7 @@ EOT;
                             });
                         }
 
-                        // 挨个赋值[setting]中
+                        // 挨个赋值[setting]中 && 默认值
                         for (var i in event.data) {
                             if (!event.data.hasOwnProperty(i)) continue;
                             that.$set(that.setting, i, event.data[i]);
