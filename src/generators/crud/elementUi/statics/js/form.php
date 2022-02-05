@@ -19,6 +19,7 @@ var app = function () {
             detailOver: false,
             settingOver: false,
             setting: {
+                pageType: 'form', // 页面类型
                 isCreate: false, // 添加状态
             },
             formRules: {

@@ -16,6 +16,7 @@ var app = function () {
             loadOver: false,
             settingOver: false,
             setting: {
+                pageType: 'index', // 页面类型
                 showAllSearch: false, // 是否出现[展示全部查询]按钮
                 smallScreenWidth: 998, // 小屏幕临界点(px)
                 isSmallScreen: false, // 是否是小屏幕
