@@ -81,6 +81,7 @@ EOT;
         <el-form :inline="true" :model="searchForm" @submit.native.prevent
                  class="search-container">
     <?php if ($model->hasAttribute('status')) { ?>
+
             <el-form-item label="" class="" class="padding-right-30" v-if="!setting.isSmallScreen">
                 <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
                     <el-radio-button label="">全部</el-radio-button>
@@ -90,6 +91,7 @@ EOT;
                 </el-radio-group>
             </el-form-item>
     <?php } ?>
+
             <el-form-item label="" :class="!setting.isSmallScreen?'float-right':''">
                 <el-input placeholder="请输入内容" v-model="searchTopValue" size="small" type="text"
                           class="input-with-select vert-align-init">
@@ -124,6 +126,7 @@ EOT;
                      class="more-search-container">
                     <!-- 此处添加[el-form-item] -->
     <?php if ($model->hasAttribute('status')) {?>
+
                     <el-form-item class="padding-right-30">
                         <el-radio-group v-model="searchForm.status"
                                         @change="handleCurrentChange(1)">
@@ -135,6 +138,7 @@ EOT;
                         </el-radio-group>
                     </el-form-item>
     <?php } ?>
+
                 </div>
             </el-collapse-transition>
         </el-form>
