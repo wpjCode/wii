@@ -84,7 +84,7 @@ EOT;
                  class="search-container">
             <?php if ($model->hasAttribute('status')) { ?>
 
-                <el-form-item label="" class="pr-30" v-if="!setting.isSmallScreen">
+                <el-form-item label="状态" class="pr-30" v-if="!setting.isSmallScreen">
                     <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
                         <el-radio-button label="">全部</el-radio-button>
                         <el-radio-button v-for="(item, key) in setting.status_text_list"
@@ -130,7 +130,7 @@ EOT;
                     <!-- 此处添加[el-form-item] -->
                     <?php if ($model->hasAttribute('status')) {?>
 
-                        <el-form-item class="padding-right-30">
+                        <el-form-item label="状态" class="padding-right-30">
                             <el-radio-group v-model="searchForm.status"
                                             @change="handleCurrentChange(1)">
                                 <el-radio-button label="">全部</el-radio-button>
