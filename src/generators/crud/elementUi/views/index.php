@@ -55,7 +55,9 @@ EOT;
                 </el-dropdown>
             </el-col>
         </el-row>
-        <div class="padding-10" style="display: none;">
+    </el-header>
+    <el-main class="content-wrapper transits bg-white">
+        <div class="pl-10 pr-10 pt-10 pb-10" style="display: none;">
             <!-- 提醒 START -->
             <div class="tip">
                 <el-collapse v-model="setting.activeNotice" accordion>
@@ -80,17 +82,18 @@ EOT;
         </div>
         <el-form :inline="true" :model="searchForm" @submit.native.prevent
                  class="search-container">
-    <?php if ($model->hasAttribute('status')) { ?>
+            <?php if ($model->hasAttribute('status')) { ?>
 
-            <el-form-item label="" class="" class="padding-right-30" v-if="!setting.isSmallScreen">
-                <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
-                    <el-radio-button label="">全部</el-radio-button>
-                    <el-radio-button :label="key" v-for="(item, key) in setting.status_text_list">
-                        {{item}}列表
-                    </el-radio-button>
-                </el-radio-group>
-            </el-form-item>
-    <?php } ?>
+                <el-form-item label="" class="pr-30" v-if="!setting.isSmallScreen">
+                    <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
+                        <el-radio-button label="">全部</el-radio-button>
+                        <el-radio-button v-for="(item, key) in setting.status_text_list"
+                                         :label="parseInt(key)">
+                            {{item}}列表
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            <?php } ?>
 
             <el-form-item label="" :class="!setting.isSmallScreen?'float-right':''">
                 <el-input placeholder="请输入内容" v-model="searchTopValue" size="small" type="text"
@@ -99,11 +102,11 @@ EOT;
                                placeholder="请选择" style="width: 130px;">
 
                         <el-option label="编号" value="id"></el-option>
-    <?php if ($model->hasAttribute('title')) { ?>
-                        <el-option label="标题" value="title"></el-option>
-    <?php } if ($model->hasAttribute('name')) { ?>
-                        <el-option label="名称" value="name"></el-option>
-    <?php } ?>
+                        <?php if ($model->hasAttribute('title')) { ?>
+                            <el-option label="标题" value="title"></el-option>
+                        <?php } if ($model->hasAttribute('name')) { ?>
+                            <el-option label="名称" value="name"></el-option>
+                        <?php } ?>
                     </el-select>
                     <el-button slot="append" type="primary" icon="el-icon-search"
                                size="small" @click="handleCurrentChange(1)">
@@ -125,25 +128,23 @@ EOT;
                 <div v-show="setting.showAllSearch" id="searchAllAni"
                      class="more-search-container">
                     <!-- 此处添加[el-form-item] -->
-    <?php if ($model->hasAttribute('status')) {?>
+                    <?php if ($model->hasAttribute('status')) {?>
 
-                    <el-form-item class="padding-right-30">
-                        <el-radio-group v-model="searchForm.status"
-                                        @change="handleCurrentChange(1)">
-                            <el-radio-button label="">全部</el-radio-button>
-                            <el-radio-button :label="key"
-                                             v-for="(item, key) in setting.status_text_list">
-                                {{item}}列表
-                            </el-radio-button>
-                        </el-radio-group>
-                    </el-form-item>
-    <?php } ?>
+                        <el-form-item class="padding-right-30">
+                            <el-radio-group v-model="searchForm.status"
+                                            @change="handleCurrentChange(1)">
+                                <el-radio-button label="">全部</el-radio-button>
+                                <el-radio-button v-for="(item, key) in setting.status_text_list"
+                                                 :label="parseInt(key)">
+                                    {{item}}列表
+                                </el-radio-button>
+                            </el-radio-group>
+                        </el-form-item>
+                    <?php } ?>
 
                 </div>
             </el-collapse-transition>
         </el-form>
-    </el-header>
-    <el-main class="content-wrapper transits bg-white">
         <!-- 主列表 表格 START -->
         <el-table :data="dataList" style="width: 100%" class="" @selection-change="handleSelectionChange"
                   @sort-change="handelSortChange">
