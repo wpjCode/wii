@@ -27,7 +27,7 @@ use \app\models\\tableModel\AdminRoleModel;
 EOT;
 ?>
 
-<el-main class="content-wrapper no-pb no-border bg-gray">
+<el-main class="content-wrapper no-pl no-pr no-border bg-gray">
     <el-form :model="form" :rules="formRules" ref="ruleForm" label-width="140px"
              class="form-400" label-position="left">
 
