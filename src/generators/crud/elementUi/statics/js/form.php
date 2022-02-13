@@ -91,7 +91,7 @@ EOT;
                         type: 'form' // 表单页
                     },
                     dataType: 'json',
-                    success: function (event) {
+                    complete: function (event) {
 
                         that.$nextTick(function () {
                             // 设置加载完毕
@@ -101,7 +101,7 @@ EOT;
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 401) {
+                        if (parseInt(event.responseJSON.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -116,33 +116,23 @@ EOT;
                         }
 
                         // 操作失败显示错误信息
-                        if (parseInt(event.no) !== 200) {
+                        if (parseInt(event.responseJSON.no) !== 200) {
 
                             return that.$message({
                                 type: 'error',
                                 showClose: true,
-                                message: event.msg
+                                message: event.responseJSON.msg
                             });
                         }
 
                         // 挨个赋值[setting]中 && 默认值
-                        for (var i in event.data) {
-                            if (!event.data.hasOwnProperty(i)) continue;
-                            that.$set(that.setting, i, event.data[i]);
+                        for (var i in event.responseJSON.data) {
+                            if (!event.responseJSON.data.hasOwnProperty(i)) continue;
+                            that.$set(that.setting, i, event.responseJSON.data[i]);
                             // 不存在指定字符串直接返回
                             if (i.indexOf('default_') === -1 || !that.setting.isCreate) continue;
-                            that.form[i.replace('default_', '')] = event.data[i];
+                            that.form[i.replace('default_', '')] = event.responseJSON.data[i];
                         }
-                    },
-                    error: function () {
-
-                        // 按钮正在加载
-                        loadingInstance.close();
-                            return that.$message({
-                            type: 'error',
-                            showClose: true,
-                            message: '操作频繁，请稍后尝试'
-                        });
                     }
                 });
             },
@@ -176,7 +166,7 @@ EOT;
                     type: 'get',
                     data: {id: params['id']},
                     dataType: "json",
-                    success: function (event) {
+                    complete: function (event) {
 
                         that.$nextTick(function () {
                             // 详情加载完毕
@@ -186,7 +176,7 @@ EOT;
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 401) {
+                        if (parseInt(event.responseJSON.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -202,26 +192,16 @@ EOT;
                         }
 
                         // 操作失败显示错误信息
-                        if (parseInt(event.no) !== 200) {
+                        if (parseInt(event.responseJSON.no) !== 200) {
 
                             return that.$message({
                                 type: 'error',
                                 showClose: true,
-                                message: event.msg
+                                message: event.responseJSON.msg
                             });
                         }
 
-                        that.form = event.data;
-                    },
-                    error: function () {
-
-                        // 按钮正在加载
-                        loadingInstance.close();
-                        return that.$message({
-                            type: 'error',
-                            showClose: true,
-                            message: '操作频繁，请稍后尝试'
-                        });
+                        that.form = event.responseJSON.data;
                     }
                 });
             },
@@ -312,7 +292,7 @@ EOT;
                         type: 'POST',
                         data: that.form,
                         dataType: "json",
-                        success: function (event) {
+                        complete: function (event) {
 
                             that.$nextTick(function () {
 
@@ -321,7 +301,7 @@ EOT;
                             });
 
                             // 必须先登录
-                            if (parseInt(event.no) === 401) {
+                            if (parseInt(event.responseJSON.no) === 401) {
 
                                 that.$message({
                                     type: 'warning',
@@ -336,37 +316,23 @@ EOT;
                             }
 
                             // 操作失败显示错误信息
-                            if (parseInt(event.no) !== 200) {
+                            if (parseInt(event.responseJSON.no) !== 200) {
 
-                                for (var i in event.data.column_error) {
-                                    if (!event.data.column_error.hasOwnProperty(i))
+                                for (var i in event.responseJSON.data.column_error) {
+                                    if (!event.responseJSON.data.column_error.hasOwnProperty(i))
                                         continue;
-                                    that.$set(that.column_error, i, event.data.column_error[i]);
+                                    that.$set(that.column_error, i, event.responseJSON.data.column_error[i]);
                                 }
                                 // 滚动到错误字段
                                 $w.scrollToFormItem();
                                 return that.$message({
                                     type: 'error',
                                     showClose: true,
-                                    message: event.msg
+                                    message: event.responseJSON.msg
                                 });
                             }
 
                             that.cancel();
-                        },
-                        error: function (event) {
-
-                            // 按钮正在加载
-                            that.$nextTick(function () {
-
-                                // 隐藏正在加载
-                                loadingInstance.close();
-                            });
-                            return that.$message({
-                                type: 'error',
-                                showClose: true,
-                                message: '操作频繁，请稍后尝试'
-                            });
                         }
                     });
                 });
@@ -431,7 +397,7 @@ EOT;
                         type: 'POST',
                         data: that.form,
                         dataType: "json",
-                        success: function (event) {
+                        complete: function (event) {
 
                             that.$nextTick(function () {
 
@@ -440,7 +406,7 @@ EOT;
                             });
 
                             // 必须先登录
-                            if (parseInt(event.no) === 401) {
+                            if (parseInt(event.responseJSON.no) === 401) {
 
                                 that.$message({
                                     type: 'warning',
@@ -455,35 +421,23 @@ EOT;
                             }
 
                             // 操作失败显示错误信息
-                            if (parseInt(event.no) !== 200) {
+                            if (parseInt(event.responseJSON.no) !== 200) {
 
-                                for (var i in event.data.column_error) {
-                                    if (!event.data.column_error.hasOwnProperty(i))
+                                for (var i in event.responseJSON.data.column_error) {
+                                    if (!event.responseJSON.data.column_error.hasOwnProperty(i))
                                         continue;
-                                    that.$set(that.customErrMsg, i, event.data.column_error[i]);
+                                    that.$set(that.customErrMsg, i, event.responseJSON.data.column_error[i]);
                                 }
                                 // 滚动到错误字段
                                 $w.scrollToFormItem();
                                 return that.$message({
                                     type: 'error',
                                     showClose: true,
-                                    message: event.msg
+                                    message: event.responseJSON.msg
                                 });
                             }
 
                             that.cancel();
-                        },
-                        error: function (event) {
-
-                            that.$nextTick(function () {
-                                // 隐藏正在加载
-                                loadingInstance.close();
-                            });
-                            return that.$message({
-                                type: 'error',
-                                showClose: true,
-                                message: '操作频繁，请稍后尝试'
-                            });
                         }
                     });
                 });

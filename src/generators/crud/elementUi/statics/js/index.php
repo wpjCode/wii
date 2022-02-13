@@ -87,7 +87,7 @@ var app = function () {
                         type: 'index' // 首页
                     },
                     dataType: 'json',
-                    success: function (event) {
+                    complete: function (event) {
 
                         that.$nextTick(function () {
                             // 获取下列表
@@ -99,7 +99,7 @@ var app = function () {
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 401) {
+                        if (parseInt(event.responseJSON.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -114,19 +114,19 @@ var app = function () {
                         }
 
                         // 操作失败显示错误信息
-                        if (parseInt(event.no) !== 200) {
+                        if (parseInt(event.responseJSON.no) !== 200) {
 
                             return that.$message({
                                 type: 'error',
                                 showClose: true,
-                                message: event.msg
+                                message: event.responseJSON.msg
                             });
                         }
 
                         // 挨个赋值[setting]中
-                        for (var i in event.data) {
-                            if (!event.data.hasOwnProperty(i)) continue;
-                            that.$set(that.setting, i, event.data[i]);
+                        for (var i in event.responseJSON.data) {
+                            if (!event.responseJSON.data.hasOwnProperty(i)) continue;
+                            that.$set(that.setting, i, event.responseJSON.data[i]);
                         }
 
                         // 最终清空性初始化查询
@@ -143,16 +143,6 @@ var app = function () {
                             }
                             return that.setting.isSmallScreen = false;
                         }).resize();
-                    },
-                    error: function () {
-
-                        // 按钮正在加载
-                        loadingInstance.close();
-                        return that.$message({
-                            type: 'error',
-                            showClose: true,
-                            message: '操作频繁，请稍后尝试'
-                        });
                     }
                 });
             },
@@ -180,7 +170,7 @@ var app = function () {
                         sortType: this.searchOrderType
                     },
                     dataType: "json",
-                    success: function (event) {
+                    complete: function (event) {
 
                         that.$nextTick(function () {
 
@@ -189,7 +179,7 @@ var app = function () {
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 401) {
+                        if (parseInt(event.responseJSON.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -204,34 +194,24 @@ var app = function () {
                         }
 
                         // 操作失败显示错误信息
-                        if (parseInt(event.no) !== 200) {
+                        if (parseInt(event.responseJSON.no) !== 200) {
 
                             return that.$message({
                                 type: 'error',
                                 showClose: true,
-                                message: event.msg
+                                message: event.responseJSON.msg
                             });
                         }
 
                         // 数据
-                        that.dataList = event.data.list;
+                        that.dataList = event.responseJSON.data.list;
                         for (var i in that.dataList) {
                             if (!that.dataList.hasOwnProperty(i)) continue;
                             that.$set(that.dataList[i], 'newSort', 0);
                             that.$set(that.dataList[i], 'sortEdit', false);
                         }
                         // 总条目
-                        that.dataTotal = parseInt(event.data.total);
-                    },
-                    error: function () {
-
-                        // 按钮正在加载
-                        loadingInstance.close();
-                        return that.$message({
-                            type: 'error',
-                            showClose: true,
-                            message: '操作频繁，请稍后尝试'
-                        });
+                        that.dataTotal = parseInt(event.responseJSON.data.total);
                     }
                 });
             },
@@ -318,7 +298,7 @@ var app = function () {
                 if (!$id || $id.length <= 0) {
                     return this.$message({
                         showClose: true,
-                        type: 'warning',
+                        type: 'error',
                         message: '请至少选择一个条目'
                     });
                 }
@@ -343,7 +323,7 @@ var app = function () {
                         type: 'POST',
                         data: {idList: $id},
                         dataType: "json",
-                        success: function (event) {
+                        complete: function (event) {
 
                             that.$nextTick(function () {
                                 // 隐藏正在加载
@@ -351,7 +331,7 @@ var app = function () {
                             });
 
                             // 必须先登录
-                            if (parseInt(event.no) === 401) {
+                            if (parseInt(event.responseJSON.no) === 401) {
 
                                 that.$message({
                                     type: 'warning',
@@ -366,12 +346,12 @@ var app = function () {
                             }
 
                             // 失败的返回|提示
-                            if (parseInt(event.no) !== 200) {
+                            if (parseInt(event.responseJSON.no) !== 200) {
 
                                 return that.$message({
                                     showClose: true,
                                     type: 'error',
-                                    message: event.msg
+                                    message: event.responseJSON.msg
                                 });
                             }
 
@@ -381,19 +361,6 @@ var app = function () {
                             return that.$nextTick(function () {
                                 // 隐藏正在加载
                                 that.getList();
-                            });
-                        },
-                        error: function () {
-
-                            that.$nextTick(function () {
-                                // 隐藏正在加载
-                                loadingInstance.close();
-                            });
-
-                            return that.$message({
-                                showClose: true,
-                                type: 'error',
-                                message: '请求用频繁稍后尝试'
                             });
                         }
                     });
@@ -411,7 +378,7 @@ var app = function () {
                 if (!$id || $id.length <= 0) {
                     return this.$message({
                         showClose: true,
-                        type: 'warning',
+                        type: 'error',
                         message: '请至少选择一个条目'
                     });
                 }
@@ -436,7 +403,7 @@ var app = function () {
                         type: 'POST',
                         data: {idList: $id},
                         dataType: "json",
-                        success: function (event) {
+                        complete: function (event) {
 
                             that.$nextTick(function () {
                                 // 隐藏正在加载
@@ -444,7 +411,7 @@ var app = function () {
                             });
 
                             // 必须先登录
-                            if (parseInt(event.no) === 401) {
+                            if (parseInt(event.responseJSON.no) === 401) {
 
                                 that.$message({
                                     type: 'warning',
@@ -459,12 +426,12 @@ var app = function () {
                             }
 
                             // 失败的返回|提示
-                            if (parseInt(event.no) !== 200) {
+                            if (parseInt(event.responseJSON.no) !== 200) {
 
                                 return that.$message({
                                     showClose: true,
                                     type: 'error',
-                                    message: event.msg
+                                    message: event.responseJSON.msg
                                 });
                             }
 
@@ -476,19 +443,6 @@ var app = function () {
                             return that.$nextTick(function () {
                                 // 隐藏正在加载
                                 that.getList();
-                            });
-                        },
-                        error: function () {
-
-                            that.$nextTick(function () {
-                                // 隐藏正在加载
-                                loadingInstance.close();
-                            });
-
-                            return that.$message({
-                                showClose: true,
-                                type: 'error',
-                                message: '请求用频繁稍后尝试'
                             });
                         }
                     });
@@ -555,7 +509,7 @@ var app = function () {
                         sort: parseInt($row['newSort'])
                     },
                     dataType: "json",
-                    success: function (event) {
+                    complete: function (event) {
 
                         that.$nextTick(function () {
 
@@ -564,7 +518,7 @@ var app = function () {
                         });
 
                         // 必须先登录
-                        if (parseInt(event.no) === 401) {
+                        if (parseInt(event.responseJSON.no) === 401) {
 
                             that.$message({
                                 type: 'warning',
@@ -579,12 +533,12 @@ var app = function () {
                         }
 
                         // 失败的返回|提示
-                        if (parseInt(event.no) !== 200) {
+                        if (parseInt(event.responseJSON.no) !== 200) {
 
                             return that.$message({
                                 showClose: true,
                                 type: 'error',
-                                message: event.msg
+                                message: event.responseJSON.msg
                             });
                         }
 
@@ -592,20 +546,6 @@ var app = function () {
                         return that.$nextTick(function () {
                             // 隐藏正在加载
                             that.getList();
-                        });
-                    },
-                    error: function () {
-
-                        that.$nextTick(function () {
-
-                            // 隐藏正在加载
-                            loadingInstance.close();
-                        });
-
-                        return that.$message({
-                            showClose: true,
-                            type: 'error',
-                            message: '请求用频繁稍后尝试'
                         });
                     }
                 });
