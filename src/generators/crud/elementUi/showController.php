@@ -48,7 +48,7 @@ use <?= ltrim($generator->baseControllerClass, '\\') ?>;
 use yii\filters\AccessControl;
 
 /**
- * [<?= $expName ?>]页面展示控制器
+ * [<?= $expName ?>]页面
  * User: Administrator
  * Date: <?=$createDate . "\n";?>
  * Time: <?=$createTime . "\n";?>

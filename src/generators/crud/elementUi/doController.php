@@ -37,7 +37,7 @@ use yii\filters\AccessControl;
 use app\service\ToolsService;
 
 /**
- * [<?= $expName ?>]操作控制器
+ * [<?= $expName ?>]API
  * User: Administrator
  * Date: <?=$createDate . "\n";?>
  * Time: <?=$createTime . "\n";?>
