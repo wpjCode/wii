@@ -71,12 +71,6 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
      */
     private \$dbInstance;
     /**
-     * 操作数据库实例
-     *  ` 通过[loadModelDB]此值会是[true]
-     * @var SettingDbModel
-     */
-    private \$doDb = false;
-    /**
      * 基础[SQL]
      * @var \yii\redis\ActiveQuery
     */
@@ -101,9 +95,6 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
     {
 
         parent::__construct(\$config);
-
-        // 先初始化下类
-        \$this->setDbInstance();
     }
 
     /**
@@ -116,9 +107,7 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
         // 走数据库的规则
         \$parent = parent::rules();
 
-        return ArrayHelper::merge(\$parent, [
-            [['doDb'], 'boolean']
-        ]);
+        return ArrayHelper::merge(\$parent, []);
     }
 
     /**
@@ -183,46 +172,27 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
      */
     public static function loadModelDB(\$id = true, \$sync = true, \$scenario = 'default')
     {
-    
+        
         ### 缓存数据
         // 查询缓存是否存在条目
         \$model = self::loadModel(\$id, \$scenario);
 
         ### 数据库数据
-        \$dbModel = {$doDbAlias}::loadModel(\$id);
+        \$dbModel = null;
+        if (!\$model) \$dbModel = {$doDbAlias}::loadModel(\$id);
         // 数据库查询的空
-        if (!\$dbModel) return null;
+        if (!\$model && !\$dbModel) return null;
 
         ### 最终操作
-        // 缓存数据空以数据库为准赋值下
+        // 缓存数据空 以数据库为准同步下
         if (!\$model) {
             \$model = new self();
             \$model->setAttributes(\$dbModel->getAttributes());
             // 需要同步下
             if (\$sync) \$model->saveData();
         }
-        // 加载数据库需要以数据库为准|否则保存数据时以缓存为准会出现类型错误
-        \$model->load(array_merge(\$dbModel->getAttributes(), ['doDb' => true]), '');
-        // 赋值数据库实例
-        \$model->setDbInstance(\$dbModel);
 
         return \$model;
-    }
-
-    /**
-     *  赋值数据库实例
-     * @param {$doDbAlias}|bool \$dbModel
-     * @return \$this
-     */
-    public function setDbInstance(\$dbModel = false)
-    {
-
-        if (!\$dbModel) {
-            \$this->dbInstance = {$doDbAlias}::loadModel();
-        } else {
-            \$this->dbInstance = \$dbModel;
-        }
-        return \$this;
     }
 
     /**
@@ -480,32 +450,11 @@ echo <<<EOT
 
     /**
      * 添加|保存
-     * @throws \yii\db\Exception
+     * @return bool
      */
     public function saveData()
     {
 
-        ### 按需操作数据库
-        \$dbTran = \Yii::\$app->db->beginTransaction();
-        // 检测是否数据库类型
-        if (\$this->doDb && !\$this->dbInstance instanceof SettingDbModel) {
-            // 回滚据库事务
-            \$dbTran->rollBack();
-            \$this->addError(500, '请使用初始化数据库方式声明设置模块');
-            return false;
-        }
-        // 加载数据
-        if (\$this->doDb) \$this->dbInstance->load(\$this->getAttributes(), '');
-        // 保存数据库
-        if (\$this->doDb && !\$this->dbInstance->saveData(\$this->doDb)) {
-            // 回滚据库事务
-            \$dbTran->rollBack();
-            \$error = ToolsService::getModelError(\$this->dbInstance->getErrors());
-            \$this->addError(\$error['column'], \$error['msg']);
-            return false;
-        }
-        // 保存了数据看就需要把本条数据完全赋值到缓存以备保存
-        if (\$this->doDb) \$this->load(\$this->dbInstance->getAttributes(), '');
         
         ### 缓存保存前一些格式化
         // 批量操作
@@ -514,50 +463,9 @@ echo <<<EOT
             if (is_array(\$v)) \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
         }
         // 单个操作
-        \$nowTime = time();
-        // 添加的话要赋值一些初始数据
-        if (empty(\$this->isNewRecord)) {
-
-            // 可以是走[mongoId] - 缓存的话暂时编号不存在叫他报错吧
-            // {$primaryKey} = ToolsService::newMongoId();
-EOT;
-if ($model->hasAttribute('add_time')):
-    echo <<<EOT
-
-            // 添加时间
-            \$this->add_time = \$nowTime;
-EOT;
-endif;
-echo <<<EOT
-    
-        }
-EOT;
-if ($model->hasAttribute('update_time')):
-    echo <<<EOT
-
-        // 更新时间
-        \$this->update_time = \$nowTime;
-EOT;
-endif;
-if ($model->hasAttribute('content')):
-    echo <<<EOT
-
-        // 内容不为空
-        if (!empty(\$this->content)) {
-            // 内容加密下
-            \$this->content = htmlspecialchars(\$this->content);
-            // 内容取出图片域名
-            \$this->content = ToolsService::removeHtmlImgHost(\$this->content);
-        }
-EOT;
-endif;
-echo <<<EOT
-
 
         if (\$this->hasErrors() || !\$this->validate() || !\$this->save()) {
             
-            // 回滚据库事务
-            \$dbTran->rollBack();
             // 记录下错误日志
             \Yii::error([
 
@@ -572,8 +480,6 @@ echo <<<EOT
             return false;
         }
 
-        // 提交数据库事务
-        \$dbTran->commit();
         return true;
     }
 
@@ -598,10 +504,7 @@ echo <<<EOT
             if (is_array(\$v)) \$fieldVal[\$k] = json_encode(\$fieldVal, JSON_UNESCAPED_UNICODE);
         }
 
-        try {
-
-            ### 更新下数据库数据
-            {$doDbAlias}::updateField(\$condition, \$fieldVal);
+        try {  
 
             ### 取出已更新的数据库条目
             // 取出数据库条目
