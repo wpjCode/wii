@@ -296,17 +296,19 @@ EOT;
         <!-- 主列表 表格 END -->
 
         <!-- 分页 START -->
-        <div class="block pagination">
+        <div class="block pagination" v-if="dataTotal >= pageSize">
             <el-pagination @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="page"
-                    :page-sizes="[20, 50, 100, 200]"
-                    :page-size="20"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="dataTotal">
+                           @current-change="handleCurrentChange"
+                           :current-page="page"
+                           :page-sizes="[20, 50, 100, 200]"
+                           :page-size="pageSize"
+                           layout="total, sizes, prev, pager, next, jumper"
+                           :total="dataTotal">
             </el-pagination>
         </div>
         <!-- 分页 END -->
+
+        <div class="clean-80px" v-else></div>
     </el-main>
 </el-container>
 <?= <<<EOT
