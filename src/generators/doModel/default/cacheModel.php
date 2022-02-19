@@ -123,6 +123,15 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
     }
 
     /**
+     * 字段文本
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return ArrayHelper::merge(parent::attributeLabels(), []);
+    }
+    
+    /**
      * 场景
      * @return array
      */
