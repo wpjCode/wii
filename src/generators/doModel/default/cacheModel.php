@@ -538,7 +538,7 @@ echo <<<EOT
 
             ### 数据提交
             // 更新数据
-            if (!empty(\$interIdList)) self::updateAll(\$fieldVal, \$condition);
+            if (!empty(\$interIdList)) {$doDbAlias}::updateField(\$condition, \$fieldVal);
 
             // 添加数据
             \$insertData = [];
