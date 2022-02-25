@@ -50,13 +50,13 @@ var app = function () {
                 // 默认搜索字段
                 this.searchForm = {
                     id: '',
-                    <?php if ($model->hasAttribute('title')) { ?>
+<?php if ($model->hasAttribute('title')) { ?>
                     title: '',
-                    <?php } if ($model->hasAttribute('name')) { ?>
+<?php } if ($model->hasAttribute('name')) { ?>
                     name: '',
-                    <?php } if ($model->hasAttribute('status')) { ?>
+<?php } if ($model->hasAttribute('status')) { ?>
                     status: ''
-                    <?php } ?>
+<?php } ?>
                 };
                 // 赋值默认值
                 for (var i in this.setting) {
