@@ -82,18 +82,18 @@ EOT;
         </div>
         <el-form :inline="true" :model="searchForm" @submit.native.prevent
                  class="search-container">
-            <?php if ($model->hasAttribute('status')) { ?>
+        <?php if ($model->hasAttribute('status')) { ?>
 
-                <el-form-item label="状态" class="pr-30" v-if="!setting.isSmallScreen">
-                    <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
-                        <el-radio-button label="">全部</el-radio-button>
-                        <el-radio-button v-for="(item, key) in setting.status_text_list"
-                                         :label="parseInt(key)">
-                            {{item}}列表
-                        </el-radio-button>
-                    </el-radio-group>
-                </el-form-item>
-            <?php } ?>
+            <el-form-item label="状态" class="pr-30" v-if="!setting.isSmallScreen">
+                <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
+                    <el-radio-button label="">全部</el-radio-button>
+                    <el-radio-button v-for="(item, key) in setting.status_text_list"
+                                     :label="parseInt(key)">
+                        {{item}}列表
+                    </el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        <?php } ?>
 
             <el-form-item label="" :class="!setting.isSmallScreen?'float-right':''">
                 <el-input placeholder="请输入内容" v-model="searchTopValue" size="small" type="text"
