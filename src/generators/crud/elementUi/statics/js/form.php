@@ -321,7 +321,9 @@ EOT;
                                 for (var i in event.responseJSON.data.column_error) {
                                     if (!event.responseJSON.data.column_error.hasOwnProperty(i))
                                         continue;
-                                    that.$set(that.column_error, i, event.responseJSON.data.column_error[i]);
+                                    that.$set(that.column_error, i,
+                                        event.responseJSON.data.column_error[i]
+                                    );
                                 }
                                 // 滚动到错误字段
                                 $w.scrollToFormItem();
@@ -426,7 +428,9 @@ EOT;
                                 for (var i in event.responseJSON.data.column_error) {
                                     if (!event.responseJSON.data.column_error.hasOwnProperty(i))
                                         continue;
-                                    that.$set(that.customErrMsg, i, event.responseJSON.data.column_error[i]);
+                                    that.$set(that.customErrMsg, i,
+                                        event.responseJSON.data.column_error[i]
+                                    );
                                 }
                                 // 滚动到错误字段
                                 $w.scrollToFormItem();
