@@ -93,29 +93,31 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     ],
                     [ // 无需登录即可访问 - 空的请保证里面有一个空字符串
                         'actions' => [''],
-                        'allow' => false,
+                        'allow' => true,
                         'roles' => ['?']
                     ]
                 ],
                 'denyCallback' => function ($rule, $action) {
 
-                    // 默认模板
-                    $temp = null;
+                    // PS: 此处无法使用return, 会触发其他报错[Headers already sent]
+
                     // 未登录检测
                     if (\Yii::$app->admin->isGuest) {
-                        $temp = $this->showError('请先登录', 401, [
-                            'error_hint' => '您还未登录'
-                        ]);
-                        return true;
+                        exit($this->showError('抱歉，请先登录', 401, [
+                            'title' => '抱歉，您还未登录',
+                            'reasons' => [
+                                '该页面暂时只对于已用户开放'
+                            ]
+                        ]));
                     }
 
-                    // 其余为 [404]
-                    $temp = $this->showError('页面不存在', 404, [
-                        'title' => '页面不存在'
-                    ]);
-
-                    // PS: 此处无法使用return, 会触发其他报错[Headers already sent]
-                    exit($temp);
+                    // 其余为 [403]
+                    exit($this->showError('抱歉，该页面您暂时无法访问', 403, [
+                        'title' => '抱歉，该页面您暂时无法访问',
+                        'reasons' => [
+                            '该页面暂时只对于未登录用户开放'
+                        ]
+                    ]));
                 }
             ]
         ];

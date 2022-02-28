@@ -90,21 +90,22 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                     ],
                     [ // 无需登录即可访问 - 空的请保证里面有一个空字符串
                         'actions' => [''],
-                        'allow' => false,
+                        'allow' => true,
                         'roles' => ['?']
                     ]
                 ],
                 'denyCallback' => function ($rule, $action) {
+
                     // 未登录
                     if (\Yii::$app->admin->isGuest) {
                         return $this->jsonFail('会话过期，请先登录', 401, [
                             'error_hint' => '您还未登录'
                         ]);
                     }
-
-                    // 其余页面未找到
-                    return $this->jsonFail('页面未找到', 404, [
-                        'error_hint' => '页面未找到'
+                    
+                    // 其余页面 暂时无法访问
+                    return $this->jsonFail('该页面您暂时无法访问', 403, [
+                        'error_hint' => '该页面暂不对于已登录用户开放'
                     ]);
                 }
             ]
