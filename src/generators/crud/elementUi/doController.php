@@ -102,7 +102,7 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
                             'error_hint' => '您还未登录'
                         ]);
                     }
-                    
+
                     // 其余页面 暂时无法访问
                     return $this->jsonFail('该页面您暂时无法访问', 403, [
                         'error_hint' => '该页面暂不对于已登录用户开放'

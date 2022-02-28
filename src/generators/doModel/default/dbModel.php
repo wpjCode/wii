@@ -941,7 +941,8 @@ EOT;
      * @param \$value
      * @return mixed|string
      */
-    public static function get{$capFirstName}Text(\$value) {
+    public static function get{$capFirstName}Text(\$value)
+    {
 
         // 列表
         \$list = self::\${$lowFirstName}TextList;
@@ -955,7 +956,8 @@ EOT;
      * 获取[{$comment}]列表 值
      * @return mixed|string
      */
-    public static function get{$capFirstName}List() {
+    public static function get{$capFirstName}List()
+    {
 
         // 最终正常返回
         return self::\${$lowFirstName}List;
@@ -964,7 +966,8 @@ EOT;
      * 获取[{$comment}]文本列表 值
      * @return mixed|string
      */
-    public static function get{$capFirstName}TextList() {
+    public static function get{$capFirstName}TextList()
+    {
 
         // 最终正常返回
         return self::\${$lowFirstName}TextList;
