@@ -474,22 +474,22 @@ var app = function () {
                 }
 
                 // 是否越出范围值 大于
-                if ($row['newSort'] > this.setting.maxSort) {
+                if ($row['newSort'] > this.setting.max_sort) {
 
                     return this.$message({
                         showClose: true,
                         type: 'warning',
-                        message: '排序最大不得超过 ' + this.setting.maxSort
+                        message: '排序最大不得超过 ' + this.setting.max_sort
                     });
                 }
 
                 //是否越出范围值 小于
-                if ($row['newSort'] < this.setting.minSort) {
+                if ($row['newSort'] < this.setting.min_sort) {
 
                     return this.$message({
                         showClose: true,
                         type: 'warning',
-                        message: '排序最小不得超过 ' + this.setting.minSort
+                        message: '排序最小不得超过 ' + this.setting.min_sort
                     });
                 }
 

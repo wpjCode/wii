@@ -29,7 +29,7 @@ EOT;
 
 <el-main class="content-wrapper no-pl no-pr no-border bg-gray">
     <el-form :model="form" :rules="formRules" ref="ruleForm" label-width="140px"
-             class="form-400" label-position="left">
+             class="form-400" label-position="left" :validate-on-rule-change="false">
 
 <?php
 $space = "";

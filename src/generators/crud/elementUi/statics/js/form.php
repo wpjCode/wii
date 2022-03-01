@@ -15,30 +15,12 @@ var app = function () {
     return new Vue({
         el: '#vueContainer',
         data: {
-            loadOver: false,
-            detailOver: false,
-            settingOver: false,
+            loadOver: false,    // 页面加载状态
+            detailOver: false,  // 详情加载状态
+            settingOver: false, // 设置加载状态
             setting: {
                 pageType: 'form', // 页面类型
                 isCreate: false, // 添加状态
-            },
-            formRules: {
-<?php foreach ($safeAttributes as $k => $v) {
-    // 键略过
-    if ($v->isPrimaryKey) continue;
-    // 允许空略过
-    if ($v->allowNull) continue;
-    echo <<<EOT
-                {$v->name}: [
-                    {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'}
-                ]
-EOT;
-    if ($k < (count($safeAttributes) -1)) {
-        echo ",\n";
-    } else {
-        echo "\n";
-    }
-}?>
             },
             form: {
 <?php foreach ($safeAttributes as $k => $v) {
@@ -254,33 +236,6 @@ EOT;
                         return $w.scrollToFormItem(false, first);
                     }
 
-<?php if ($model->hasAttribute('sort')) {?>
-                    // 是否越出范围值 大于
-                    if (parseInt(that.form.sort) > that.setting.maxSort) {
-
-                        that.$message({
-                            showClose: true,
-                            type: 'error',
-                            message: '排序最大不得超过 ' + that.setting.maxSort
-                        });
-
-                        return that.$set(that.customErrMsg, 'sort',
-                            '排序最大不得超过 ' + that.setting.maxSort);
-                    }
-
-                    // 是否越出范围值 小于
-                    if (parseInt(that.form.sort) < that.setting.minSort) {
-
-                        that.$message({
-                            showClose: true,
-                            type: 'error',
-                            message: '排序最小不得小于 ' + that.setting.minSort
-                        });
-
-                        return that.$set(that.customErrMsg, 'sort',
-                            '排序最小不得小于 ' + that.setting.minSort);
-                    }
-<?php } ?>
                     // 正在加载。。
                     var loadingInstance = ELEMENT.Loading.service({
                         fullscreen: false,
@@ -360,34 +315,6 @@ EOT;
                         return $w.scrollToFormItem(false, first);
                     }
 
-<?php if ($model->hasAttribute('sort')) {?>
-                    // 是否越出范围值 大于
-                    if (parseInt(that.form.sort) > that.setting.maxSort) {
-
-                        that.$message({
-                            showClose: true,
-                            type: 'error',
-                            message: '排序最大不得超过 ' + that.setting.maxSort
-                        });
-
-                        return that.$set(that.customErrMsg, 'sort',
-                            '排序最大不得超过 ' + that.setting.maxSort);
-                    }
-
-                    // 是否越出范围值 小于
-                    if (parseInt(that.form.sort) < that.setting.minSort) {
-
-                        that.$message({
-                            showClose: true,
-                            type: 'error',
-                            message: '排序最小不得小于 ' + that.setting.minSort
-                        });
-
-                        return that.$set(that.customErrMsg, 'sort',
-                            '排序最小不得小于 ' + that.setting.minSort);
-                    }
-<?php } ?>
-
                     // 正在加载。。
                     var loadingInstance = ELEMENT.Loading.service({
                         fullscreen: false,
@@ -446,6 +373,33 @@ EOT;
                     });
                 });
             },
+        },
+        computed: {
+            /**
+             * 表单验证规则
+             */
+            formRules: function () {
+
+                if (!this.settingOver || !this.detailOver) return {};
+                return {
+<?php foreach ($safeAttributes as $k => $v) {
+    // 键略过
+    if ($v->isPrimaryKey) continue;
+    // 允许空略过
+    if ($v->allowNull) continue;
+    echo <<<EOT
+                    {$v->name}: [
+                        {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'}
+                    ]
+EOT;
+    if ($k < (count($safeAttributes) -1)) {
+        echo ",\n";
+    } else {
+        echo "\n";
+    }
+}?>
+                };
+            }
         }
     });
 };
