@@ -723,11 +723,11 @@ echo <<<EOT
         \$model = new self();
         foreach (\$fieldVal as \$k => \$v) {
 
-            if (!\$model->hasAttribute(\$k)) {
+            // 没有字段删除
+            if (!\$model->hasAttribute(\$k)) {unset(\$fieldVal[\$k]);continue;}
 
-                unset(\$fieldVal[\$k]);
-                continue;
-            }
+            // 字段转[JSON]
+            if (is_array(\$v)) \$fieldVal[\$k] = json_encode(\$fieldVal, JSON_UNESCAPED_UNICODE);
         }
 
         \$db = \Yii::\$app->db->createCommand();
@@ -784,6 +784,15 @@ echo <<<EOT
             }
 
             \$createData[\$k] = \$model->getAttributes(array_keys(\$model->attributeLabels()));
+            
+            // 循环一些数据
+            foreach (\$createData[\$k] as \$kc => \$vc) {
+                // 字段类型为[JSON]类型需要转为[JSON]
+                if (is_array(\$vc)) {
+                    \$createData[\$k][\$kc] = json_encode(\$vc, JSON_UNESCAPED_UNICODE);
+                    continue;
+                }
+            }
         }
 
         try {
