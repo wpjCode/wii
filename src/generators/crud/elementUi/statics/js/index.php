@@ -80,53 +80,39 @@ var app = function () {
                 var that = this;
 
                 // 获取各模块的值
-                $.ajax({
+                $w.request({
                     url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.setting'),
                     type: 'get',
                     data: {
                         type: 'index' // 首页
                     },
                     dataType: 'json',
-                    complete: function (event) {
-
+                    beforeCallback: function () {
                         that.$nextTick(function () {
-                            // 获取下列表
-                            that.getList();
                             // 设置加载完毕
                             that.settingOver = true;
                             // 隐藏正在加载
                             loadingInstance.close();
+                            // 获取下列表
+                            that.getList();
                         });
+                    },
+                    callback: function (event) {
 
-                        // 必须先登录
-                        if (parseInt(event.responseJSON.no) === 401) {
-
-                            that.$message({
-                                type: 'warning',
-                                showClose: true,
-                                message: '登录超时，请重新登录'
-                            });
-
-                            // 几秒之后移除
-                            return setTimeout(function () {
-                                window.parent.location.href = $w.getPageUrl('login');
-                            }, 810);
-                        }
-
-                        // 操作失败显示错误信息
-                        if (parseInt(event.responseJSON.no) !== 200) {
+                        // 失败的返回|提示
+                        if (parseInt(event.no) !== 200) {
 
                             return that.$message({
-                                type: 'error',
                                 showClose: true,
-                                message: event.responseJSON.msg
+                                type: 'error',
+                                message: event.msg ? event.msg : '操作失败，请稍后尝试'
                             });
                         }
 
                         // 挨个赋值[setting]中
-                        for (var i in event.responseJSON.data) {
-                            if (!event.responseJSON.data.hasOwnProperty(i)) continue;
-                            that.$set(that.setting, i, event.responseJSON.data[i]);
+                        for (var i in event.data) {
+                            if (!event.data.hasOwnProperty(i)) continue;
+                            that.$set(that.setting, i, event.data[i]);
                         }
 
                         // 最终清空性初始化查询
@@ -159,7 +145,7 @@ var app = function () {
                 var that = this;
 
                 // 获取各模块的值
-                $.ajax({
+                $w.request({
                     url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.list'),
                     type: 'get',
                     data: {
@@ -170,48 +156,32 @@ var app = function () {
                         sortType: this.searchOrderType
                     },
                     dataType: "json",
-                    complete: function (event) {
-
+                    beforeCallback: function () {
                         that.$nextTick(function () {
-
                             // 隐藏正在加载
                             loadingInstance.close();
                         });
+                    },
+                    callback: function (event) {
 
-                        // 必须先登录
-                        if (parseInt(event.responseJSON.no) === 401) {
-
-                            that.$message({
-                                type: 'warning',
-                                showClose: true,
-                                message: '登录超时，请重新登录'
-                            });
-
-                            // 几秒之后移除
-                            return setTimeout(function () {
-                                window.parent.location.href = $w.getPageUrl('login');
-                            }, 810);
-                        }
-
-                        // 操作失败显示错误信息
-                        if (parseInt(event.responseJSON.no) !== 200) {
-
+                        // 失败的返回|提示
+                        if (parseInt(event.no) !== 200) {
                             return that.$message({
-                                type: 'error',
                                 showClose: true,
-                                message: event.responseJSON.msg
+                                type: 'error',
+                                message: event.msg ? event.msg : '操作失败，请稍后尝试'
                             });
                         }
 
                         // 数据
-                        that.dataList = event.responseJSON.data.list;
+                        that.dataList = event.data.list;
                         for (var i in that.dataList) {
                             if (!that.dataList.hasOwnProperty(i)) continue;
                             that.$set(that.dataList[i], 'newSort', 0);
                             that.$set(that.dataList[i], 'sortEdit', false);
                         }
                         // 总条目
-                        that.dataTotal = parseInt(event.responseJSON.data.total);
+                        that.dataTotal = parseInt(event.data.total);
                     }
                 });
             },
@@ -318,40 +288,26 @@ var app = function () {
                     });
 
                     // 获取各模块的值
-                    $.ajax({
+                    $w.request({
                         url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.open'),
                         type: 'POST',
                         data: {idList: $id},
                         dataType: "json",
-                        complete: function (event) {
-
+                        beforeCallback: function () {
                             that.$nextTick(function () {
                                 // 隐藏正在加载
                                 loadingInstance.close();
                             });
-
-                            // 必须先登录
-                            if (parseInt(event.responseJSON.no) === 401) {
-
-                                that.$message({
-                                    type: 'warning',
-                                    showClose: true,
-                                    message: '登录超时，请重新登录'
-                                });
-
-                                // 几秒之后移除
-                                return setTimeout(function () {
-                                    window.parent.location.href = $w.getPageUrl('login');
-                                }, 810);
-                            }
+                        },
+                        callback: function (event) {
 
                             // 失败的返回|提示
-                            if (parseInt(event.responseJSON.no) !== 200) {
+                            if (parseInt(event.no) !== 200) {
 
                                 return that.$message({
                                     showClose: true,
                                     type: 'error',
-                                    message: event.responseJSON.msg
+                                    message: event.msg ? event.msg : '操作失败，请稍后尝试'
                                 });
                             }
 
@@ -398,46 +354,31 @@ var app = function () {
                     });
 
                     // 获取各模块的值
-                    $.ajax({
+                    $w.request({
                         url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.disabled'),
                         type: 'POST',
                         data: {idList: $id},
                         dataType: "json",
-                        complete: function (event) {
-
+                        beforeCallback: function () {
                             that.$nextTick(function () {
                                 // 隐藏正在加载
                                 loadingInstance.close();
                             });
-
-                            // 必须先登录
-                            if (parseInt(event.responseJSON.no) === 401) {
-
-                                that.$message({
-                                    type: 'warning',
-                                    showClose: true,
-                                    message: '登录超时，请重新登录'
-                                });
-
-                                // 几秒之后移除
-                                return setTimeout(function () {
-                                    window.parent.location.href = $w.getPageUrl('login');
-                                }, 810);
-                            }
+                        },
+                        callback: function (event) {
 
                             // 失败的返回|提示
-                            if (parseInt(event.responseJSON.no) !== 200) {
+                            if (parseInt(event.no) !== 200) {
 
                                 return that.$message({
                                     showClose: true,
                                     type: 'error',
-                                    message: event.responseJSON.msg
+                                    message: event.msg ? event.msg : '操作失败，请稍后尝试'
                                 });
                             }
 
                             // 放空列表
                             that.handelSelectList = null;
-
 
                             // 成功 加载下列表
                             return that.$nextTick(function () {
@@ -501,7 +442,7 @@ var app = function () {
                 var that = this;
 
                 // 获取各模块的值
-                $.ajax({
+                $w.request({
                     url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.sort'),
                     type: 'POST',
                     data: {
@@ -509,36 +450,20 @@ var app = function () {
                         sort: parseInt($row['newSort'])
                     },
                     dataType: "json",
-                    complete: function (event) {
-
+                    beforeCallback: function () {
                         that.$nextTick(function () {
-
                             // 隐藏正在加载
                             loadingInstance.close();
                         });
-
-                        // 必须先登录
-                        if (parseInt(event.responseJSON.no) === 401) {
-
-                            that.$message({
-                                type: 'warning',
-                                showClose: true,
-                                message: '登录超时，请重新登录'
-                            });
-
-                            // 几秒之后移除
-                            return setTimeout(function () {
-                                window.parent.location.href = $w.getPageUrl('login');
-                            }, 810);
-                        }
+                    },
+                    callback: function (event) {
 
                         // 失败的返回|提示
-                        if (parseInt(event.responseJSON.no) !== 200) {
-
+                        if (parseInt(event.no) !== 200) {
                             return that.$message({
                                 showClose: true,
                                 type: 'error',
-                                message: event.responseJSON.msg
+                                message: event.msg ? event.msg : '操作失败，请稍后尝试'
                             });
                         }
 
