@@ -333,7 +333,16 @@ EOT;
     if ($v->allowNull) continue;
     echo <<<EOT
                     {$v->name}: [
-                        {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'}
+                        {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'},
+EOT;
+    if (property_exists($v, 'phpType') && $v->phpType == 'integer' && $v->size > 2) {
+        echo <<<EOT
+        
+                        {type: 'number', message: '{$model->getAttributeLabel($v->name)}必须为数字值', trigger: 'blur'}
+EOT;
+    }
+    echo <<<EOT
+    
                     ]
 EOT;
     if ($k < (count($safeAttributes) -1)) {
