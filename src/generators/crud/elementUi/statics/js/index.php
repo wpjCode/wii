@@ -485,6 +485,12 @@ var app = function () {
                     fullscreen: false,
                     text: '跳转中...'
                 });
+
+                var that = this;
+                setTimeout(function () {
+                    loadingInstance.close();
+                }, 1500);
+
                 window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.create');
             },
             /**
@@ -496,6 +502,12 @@ var app = function () {
                     fullscreen: false,
                     text: '跳转中...'
                 });
+
+                var that = this;
+                setTimeout(function () {
+                    loadingInstance.close();
+                }, 1500);
+
                 window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update', {
                     id: $id
                 });
