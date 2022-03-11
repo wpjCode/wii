@@ -687,7 +687,7 @@ echo <<<EOT
                 "`````````````````````````````````````````````````````````",
                 \$this->getAttributes(),
                 \$this->getErrors()
-            ], 'error');
+            ], 'db');
             return false;
         }
         
@@ -704,7 +704,7 @@ echo <<<EOT
                 "`````````````````````````````````````````````````````````",
                 \$this->getAttributes(),
                 \$this->getErrors()
-            ], 'error');
+            ], 'db');
             return false;
         }
 
@@ -751,7 +751,7 @@ echo <<<EOT
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
                 \$error->getTraceAsString()
-            ], 'error');
+            ], 'db');
 
             self::\$error_ = empty(\$error->errorInfo) ?
                 \$error->getMessage() :
@@ -816,7 +816,7 @@ echo <<<EOT
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
                 \$error->getTraceAsString()
-            ], 'error');
+            ], 'db');
 
             return false;
         }
@@ -851,7 +851,6 @@ echo <<<EOT
 
             // 记录下错误日志
             \Yii::error([
-
                 "`````````````````````````````````````````````````````````",
                 "``                      数据库错误                       ``",
                 "`` 错误详情: [$generator->expName]批量增/减[指定字段]失败   ``",
@@ -859,7 +858,7 @@ echo <<<EOT
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
                 \$error->getTraceAsString()
-            ], 'error');
+            ], 'db');
 
             self::\$error_ = empty(\$error->errorInfo) ?
                 \$error->getMessage() :

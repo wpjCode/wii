@@ -485,7 +485,7 @@ echo <<<EOT
                 "`````````````````````````````````````````````````````````",
                 \$this->getAttributes(),
                 \$this->getErrors()
-            ], 'error');
+            ], 'cache');
             return false;
         }
 
@@ -562,7 +562,7 @@ echo <<<EOT
                 "`` 错误信息和参数详情:                                      ``",
                 "`````````````````````````````````````````````````````````",
                 \$error->getTraceAsString()
-            ], 'error');
+            ], 'cache');
     
             self::\$error_ = empty(\$error->errorInfo) ?
                 \$error->getMessage() :
