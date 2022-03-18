@@ -159,12 +159,15 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
         // 实力化类
         \$model = new self();
 
-        if (!empty(\$id) && \$id !== true) \$model = \$model::findOne(\$id);
-
-        // 条目不存在或者需要[find]都返回 - 无法加载场景
+        ### 验证 + 查询
+        // 编号 不存在直接返回空
+        if (!\$id) return null;
+        // 编号为非特定值查询
+        if (\$id !== true) \$model = \$model::findOne(\$id);
+        // 条目不存在
         if (!\$model) return \$model;
 
-        // 场景
+        ### 场景
         \$sceList = array_keys(\$model->scenarios());
         if (!empty(\$scenario) && in_array(\$scenario, \$sceList)) \$model->setScenario(\$scenario);
 
