@@ -131,10 +131,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     {
 
         return $this->render('<?=$generator->getRenderViewPath('index')?>', [
-            // API控制器名
-            'apiModule' => $this->apiModule,
-            // API模块名
-            'apiController' => $this->apiController,
+            'apiModule'     => $this->apiModule,     // API控制器名
+            'apiController' => $this->apiController, // API模块名
         ]);
     }
 
@@ -163,10 +161,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         }
 
         return $this->render('<?=$generator->getRenderViewPath('view')?>', [
-            // [接口对应]控制器名
-            'apiModule' => $this->apiModule,
-            // [接口对应]模块名
-            'apiController' => $this->apiController,
+            'apiModule'     => $this->apiModule,     // API控制器名
+            'apiController' => $this->apiController, // API模块名
         ]);
     }
 
@@ -178,10 +174,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
     {
 
         return $this->render('<?=$generator->getRenderViewPath('create')?>', [
-            // [接口对应]控制器名
-            'apiModule' => $this->apiModule,
-            // [接口对应]模块名
-            'apiController' => $this->apiController,
+            'apiModule'     => $this->apiModule,     // API控制器名
+            'apiController' => $this->apiController, // API模块名
         ]);
     }
 
@@ -210,10 +204,8 @@ class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->bas
         }
 
         return $this->render('<?=$generator->getRenderViewPath('update')?>', [
-            // [接口对应]控制器名
-            'apiModule' => $this->apiModule,
-            // [接口对应]模块名
-            'apiController' => $this->apiController,
+            'apiModule'     => $this->apiModule,     // API控制器名
+            'apiController' => $this->apiController, // API模块名
         ]);
     }
 }
