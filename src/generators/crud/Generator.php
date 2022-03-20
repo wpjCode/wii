@@ -653,7 +653,7 @@ class Generator extends \wpjCode\wii\Generator
                         </div>
                     </el-tooltip>
                 </div>
-                <div class="form-element-append" style="display: none;">
+                <div class="form-element-append lh-normal mt-10" style="display: none;">
                     <i class="el-icon-question font-second"></i>
                     <span class="font-third">
                         非行内说明文本
@@ -702,7 +702,7 @@ EOT;
                         </div>
                     </el-tooltip>
                 </div>
-                <div class="form-element-append" style="display: none;">
+                <div class="form-element-append lh-normal mt-10" style="display: none;">
                     <i class="el-icon-question font-second"></i>
                     <span class="font-third">
                         非行内说明文本
@@ -751,7 +751,7 @@ EOT;
                         </div>
                     </el-tooltip>
                 </div>
-                <div class="form-element-append" style="display: none;">
+                <div class="form-element-append lh-normal mt-10" style="display: none;">
                     <i class="el-icon-question font-second"></i>
                     <span class="font-third">
                         非行内说明文本

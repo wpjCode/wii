@@ -296,12 +296,12 @@ echo <<<EOT
     
     /**
      * 加载整体[Model]
-     * @param null \$id 编号
+     * @param bool \$id 编号
      * @param string \$scenario 场景
      * @return {$modelPath['filename']}
      *  ` PS:[\$id]空为何不返回[\$model::find()]: 因为可能准确想返回条目是否存在查询结果可能null,返回在find报错。
      */
-    public static function loadModel(\$id = null, \$scenario = 'default')
+    public static function loadModel(\$id = true, \$scenario = 'default')
     {
 
         // 实力化类

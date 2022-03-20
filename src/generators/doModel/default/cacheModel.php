@@ -149,11 +149,11 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
 
     /**
      * 加载整体[Model]
-     * @param null \$id 编号
+     * @param bool \$id 编号
      * @param string \$scenario 场景
      * @return {$renderModelPath['filename']}
      */
-    public static function loadModel(\$id = null, \$scenario = 'default')
+    public static function loadModel(\$id = true, \$scenario = 'default')
     {
 
         // 实力化类
