@@ -55,6 +55,8 @@ echo <<<EOT
 use app\service\ToolsService;
 use {$generator->doDbModel} as {$doDbAlias};
 use yii\helpers\ArrayHelper;
+use yii\db\ExpressionInterface;
+use yii\db\Expression;
 
 /**
  * {$generator->expName} 缓存[Model]
@@ -72,7 +74,7 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
     private \$dbInstance;
     /**
      * 基础[SQL]
-     * @var \yii\redis\ActiveQuery
+     * @var \yii\\redis\ActiveQuery
     */
     private \$sqlBase;
     /**
@@ -209,7 +211,7 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
 
     /**
      * 初始化并返回当前基础[SQL]
-     * @return \yii\redis\ActiveQuery
+     * @return \yii\\redis\ActiveQuery
     */
     protected function getSqlBase()
     {
@@ -254,7 +256,7 @@ echo <<<EOT
      * @param int \$page 当前页
      * @param int \$limit 展示多少条
      * @param array \$opt 其他设置
-     * @return array|\yii\redis\ActiveRecord[]
+     * @return array|\yii\\redis\ActiveRecord[]
      */
     public function getList(\$page, \$limit, \$opt = [])
     {
