@@ -97,6 +97,8 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
     {
 
         parent::__construct(\$config);
+        // 先初始化下类
+        \$this->setDbInstance();
     }
 
     /**
@@ -178,37 +180,74 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
 
     /**
      * 初始化[数据库]实例
-     *  ` 逻辑：先从缓存中获取条目，条目不存在，从数据库拿，并缓存，返回[self]
-     * @param bool \$id 数据编号|直接初始化
-     * @param bool \$sync 是否以数据库为主同步数据
+     *  ` 逻辑：先从缓存中获取条目，条目不存在，从数据库拿，并存入缓存，返回[self] | 可以强制必须获取数据库`
+     * @param string \$id 数据编号|直接初始化
      * @param string \$scenario 场景|ps.缓存类场景
+     * @param bool \$forceDb 是否强制数据库
      * @return {$renderModelPath['filename']}
      */
-    public static function loadModelDB(\$id = true, \$sync = true, \$scenario = 'default')
+    public static function loadModelDB(\$id = null, \$forceDb = false, \$scenario = 'default')
     {
         
-        ### 缓存数据
+        ### 先查询缓存
         // 查询缓存是否存在条目
         \$model = self::loadModel(\$id, \$scenario);
 
-        ### 数据库数据
-        \$dbModel = null;
-        if (!\$model) \$dbModel = {$doDbAlias}::loadModel(\$id);
-        // 数据库查询的空
+        ### 强制数据库 || 缓存未找到
+        \$dbModel = false;
+        if (!\$model || \$forceDb) \$dbModel = {$doDbAlias}::loadModel(\$id);
+
+        // 数据库查询的空 && 数据库缓存空 - 返回数据空
         if (!\$model && !\$dbModel) return null;
 
-        ### 最终操作
-        // 缓存数据空 以数据库为准同步下
-        if (!\$model) {
-            \$model = new self();
-            \$model->setAttributes(\$dbModel->getAttributes());
-            // 需要同步下
-            if (\$sync) \$model->saveData();
+        ### 数据库 -> 缓存同步数据
+        // 缓存为空 初始化缓存
+        if (!\$model) \$model = self::loadModel(true, \$scenario);
+        // 需要把数据库[attribute]赋值到缓存
+        if (\$dbModel) {
+            \$attribute = \$dbModel->getAttributes();
+            \$model->setAttributes(\$attribute);
         }
+
+        // 如果数据是新的 先保存下
+        if (\$forceDb && \$model->isNewRecord) {
+            \$model->saveData(false);
+            \$model->setIsNewRecord(false); // 同步之后就不是新建了
+        }
+
+
+        // 赋值数据库实例
+        \$model->setDbInstance(\$dbModel);
 
         return \$model;
     }
 
+
+    /**
+     *  赋值数据库实例
+     * @param AdminRoleDBModel|bool \$dbModel
+     * @return {$renderModelPath['filename']}
+     */
+    public function setDbInstance(\$dbModel = false)
+    {
+
+        if (!\$dbModel) {
+            \$this->dbInstance = {$doDbAlias}::loadModel();
+        } else {
+            \$this->dbInstance = \$dbModel;
+        }
+        return \$this;
+    }
+
+    /**
+     * 获取数据库实例
+     * @return {$renderModelPath['filename']}
+     */
+    public function getDbInstance()
+    {
+        return \$this->dbInstance;
+    }
+    
     /**
      * 初始化并返回当前基础[SQL]
      * @return \yii\\redis\ActiveQuery
@@ -462,39 +501,80 @@ echo <<<EOT
         return \$this;
     }
 
+
     /**
-     * 添加|保存
+     * 同步|新建数据库数据
      * @return bool
      */
-    public function saveData()
+    public function saveDbData() {
+
+        \$db = null;
+        // 主键
+        \$pk = \$this->getAttribute('id');
+        // 需要新建 - 初始化
+        \$db = {$doDbAlias}::loadModel(!empty(\$pk) ? \$pk : true);
+        // 保存
+        \$db->setAttributes(\$this->getAttributes());
+        if (!\$db->saveData()) {\$this->addErrors(\$db->getErrors());return false;}
+        // 数据库数据原封不动赋值下 - 以数据库为主
+        \$this->setAttributes(\$db->getAttributes());
+
+        return true;
+    }
+    
+    /**
+     * 添加|保存
+     * @param bool \$saveDb 是否保存数据库
+     * @return bool
+     */
+    public function saveData(\$saveDb = true)
     {
 
-        
-        ### 缓存保存前一些格式化
-        // 批量操作
-        foreach (\$this->getAttributes() as \$k => \$v) {
-            // 数组需要转为JSON字符串
-            if (is_array(\$v)) \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
-        }
-        // 单个操作
-
-        if (\$this->hasErrors() || !\$this->validate() || !\$this->save()) {
+        \$dbTran = \Yii::\$app->db->beginTransaction();
             
+        try {
+
+             ### 先保存数据库
+            // 查询数据库记录
+            if (\$saveDb === true && !\$this->saveDbData()) {
+                \$dbTran->rollBack();
+                return false;
+            }
+
+            ### 保存此条缓存记录
+            if (\$this->hasErrors() || !\$this->validate() || !\$this->save()) {
+                \$dbTran->rollBack();
+                // 记录下错误日志
+                \Yii::error([
+
+                    "`````````````````````````````````````````````````````````",
+                    "``                      缓存保存错误                      ``",
+                    "`` 错误详情: [$generator->expName]验证数据失败              ``",
+                    "`` 错误信息和参数详情:                                     ``",
+                    "`````````````````````````````````````````````````````````",
+                    \$this->getErrors()
+                ], 'cache');
+                return false;
+            }
+
+            \$dbTran->commit();
+            return true;
+
+        } catch (Exception \$error) {
+
+            \$dbTran->rollBack();
             // 记录下错误日志
             \Yii::error([
 
                 "`````````````````````````````````````````````````````````",
-                "``                    缓存保存错误                       ``",
-                "`` 错误详情: [$generator->expName]验证数据失败             ``",
+                "``                      缓存保存错误                      ``",
+                "`` 错误详情: [{$generator->expName}]出现错误               ``",
                 "`` 错误信息和参数详情:                                     ``",
                 "`````````````````````````````````````````````````````````",
-                \$this->getAttributes(),
                 \$this->getErrors()
             ], 'cache');
             return false;
         }
-
-        return true;
     }
 
     /**
