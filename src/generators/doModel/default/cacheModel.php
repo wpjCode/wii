@@ -55,6 +55,7 @@ echo <<<EOT
 use app\service\ToolsService;
 use {$generator->doDbModel} as {$doDbAlias};
 use yii\helpers\ArrayHelper;
+use yii\db\Exception;
 use yii\db\ExpressionInterface;
 use yii\db\Expression;
 
@@ -224,8 +225,8 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
 
 
     /**
-     *  赋值数据库实例
-     * @param AdminRoleDBModel|bool \$dbModel
+     * 赋值数据库实例
+     * @param {$doDbAlias}|bool \$dbModel
      * @return {$renderModelPath['filename']}
      */
     public function setDbInstance(\$dbModel = false)
@@ -241,7 +242,7 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
 
     /**
      * 获取数据库实例
-     * @return {$renderModelPath['filename']}
+     * @return {$doDbAlias}
      */
     public function getDbInstance()
     {
@@ -500,10 +501,9 @@ echo <<<EOT
 
         return \$this;
     }
-
-
+    
     /**
-     * 同步|新建数据库数据
+     * 添加|保存
      * @return bool
      */
     public function saveDbData() {
@@ -541,6 +541,15 @@ echo <<<EOT
                 return false;
             }
 
+
+            ### 批量操作[缓存保存前一些格式化]
+            foreach (\$this->getAttributes() as \$k => \$v) {
+                // 字段类型为[JSON]类型需要转为数组 - 保存自动转为[JSON]
+                if (is_array(\$v)) {
+                    \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
+                }
+            }
+            
             ### 保存此条缓存记录
             if (\$this->hasErrors() || !\$this->validate() || !\$this->save()) {
                 \$dbTran->rollBack();

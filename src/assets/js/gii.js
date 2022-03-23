@@ -511,6 +511,18 @@ yii.gii = (function ($) {
                 $('form .field-generator-messagecategory').toggle($(this).is(':checked'));
             }).change();
 
+            // cache model
+            $('form #generator-iscachemodel').change(function ($target) {
+                var checked = $($target['target']).is(':checked');
+                if (checked) {
+                    $('.field-generator-db').hide();
+                    $('.field-generator-baseclass').hide();
+                } else {
+                    $('.field-generator-db').show();
+                    $('.field-generator-baseclass').show();
+                }
+            }).change();
+
             // hide Generate button if any input is changed
             $('#form-fields').find('input,select,textarea').change(function () {
                 $('.default-view-results,.default-view-files').hide();

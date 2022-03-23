@@ -341,6 +341,7 @@ class Generator extends \wpjCode\wii\Generator
         $lengths = [];
         foreach ($table->columns as $column) {
             if ($column->autoIncrement) {
+                if ($this->isCacheModel) $types['safe'][] = $column->name;
                 continue;
             }
             if (!$column->allowNull && $column->defaultValue === null) {
@@ -399,7 +400,6 @@ class Generator extends \wpjCode\wii\Generator
                 // Avoid validating auto incremental columns
                 if (!$this->isColumnAutoIncremental($table, $uniqueColumns)) {
                     $attributesCount = count($uniqueColumns);
-
                     if ($attributesCount === 1) {
                         $rules[] = "[['" . $uniqueColumns[0] . "'], 'unique']";
                     } elseif ($attributesCount > 1) {
