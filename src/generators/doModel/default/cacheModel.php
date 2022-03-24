@@ -267,25 +267,8 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
         if (property_exists(\$this, 'orderBy') && !empty(\$this->orderBy)) {
             \$this->sqlBase->orderBy(\$this->orderBy);
         } else { // 无自定义排序
-EOT;
-if ($model->hasAttribute('sort') && $model->hasAttribute('update_time')) {
-    echo <<<EOT
-    
-            \$this->sqlBase->orderBy('sort desc');
-EOT;
-} else if ($model->hasAttribute('sort') && $primaryKey) {
-    echo <<<EOT
-    
-            \$this->sqlBase->orderBy('sort desc');
-EOT;
-} else if (!$model->hasAttribute('sort') && $primaryKey) {
-    echo <<<EOT
-    
-            \$this->sqlBase->orderBy('{$primaryKey} desc');
-EOT;
-}
-echo <<<EOT
-
+            // 无自定义排序 - redis没有多序列排序暂且值为空
+            \$this->sqlBase->addOrderBy('');
         }
         
         return \$this->sqlBase;
@@ -548,6 +531,9 @@ echo <<<EOT
                 if (is_array(\$v)) {
                     \$this->setAttribute(\$k, json_encode(\$v, JSON_UNESCAPED_UNICODE));
                 }
+                
+                // 空的 - 赋值空的数据 保证字段在其中
+                if (\$v === null) \$this->setAttribute(\$k, '');
             }
             
             ### 保存此条缓存记录
