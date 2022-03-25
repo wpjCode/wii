@@ -388,7 +388,29 @@ echo <<<EOT
             ->limit(\$limit)
             ->asArray()->all();
 
-        // 格式化数据
+        return \$this::formatData(\$list);
+    }
+    
+    /**
+     * 格式化列表活详情数据
+     * @param array \$list 列表
+     * @return mixed
+     */
+    public static function formatData(\$list) {
+
+        // 为空直接返回
+        if (empty(\$list)) return \$list;
+        // 需要返回第一组（可能不是二维数组）
+        \$needFirst = false;
+        if (!is_array(array_values(\$list)[0])) {
+            \$needFirst = true;
+            \$list      = [\$list];
+        }
+
+        ### 某些参数初始化
+
+
+        ### 开始格式化
         foreach (\$list as \$k => &\$v) {
 EOT;
 if ($model->hasAttribute('add_time')) {
@@ -464,7 +486,8 @@ echo <<<EOT
 
         }
 
-        return \$list;
+        reset(\$list);
+        return \$needFirst ? current(\$list) : \$list;
     }
 
     /**
