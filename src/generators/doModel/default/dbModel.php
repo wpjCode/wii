@@ -88,29 +88,18 @@ EOT;
                 case 'status':
                     echo <<<EOT
 
-        'disabled' => -1,
-        'default' => 0,
-        'open' => 1\r
-    
-EOT;
-                    break;
-            }
-            echo <<<EOT
-];
-    /**
-     * {$comment}文本 列表
-     * @var array
-    */
-    private static \${$lowFirstName}TextList = [
-EOT;
-            switch ($v->name) {
-                // 状态默认值
-                case 'status':
-                    echo <<<EOT
-
-        -1 => '禁用',
-        0 => '审核',
-        1 => '开启'\r
+        'disabled' => [
+            'value' => -1,
+            'text' => '禁用'
+        ],
+        'default' => [
+            'value' => 0,
+            'text' => '审核'
+        ],
+        'open' => [
+            'value' => 1,
+            'text' => '开启'
+        ],\r
     
 EOT;
                     break;
@@ -192,7 +181,7 @@ if (property_exists($schema, 'columns')) {
         echo <<<EOT
 
         // [{$v->comment}]列表
-        \${$lowFirstName}List = array_values(self::get{$capFirstName}List());
+        \${$lowFirstName}List = array_column(self::get{$capFirstName}List(), 'value');
 EOT;
 
     }
@@ -947,7 +936,7 @@ if (property_exists($schema, 'columns')) {
      */
     public static function getStatusDefault()
     {
-        return self::\$statusList['default'];
+        return self::\$statusList['default']['value'];
     }
     /**
      * 获取[状态][关闭]值
@@ -955,7 +944,7 @@ if (property_exists($schema, 'columns')) {
      */
     public static function getStatusDisabled()
     {
-        return self::\$statusList['disabled'];
+        return self::\$statusList['disabled']['value'];
     }
     /**
      * 获取[状态][开启]值
@@ -963,7 +952,7 @@ if (property_exists($schema, 'columns')) {
      */
     public static function getStatusOpen()
     {
-        return self::\$statusList['open'];
+        return self::\$statusList['open']['value'];
     }
 EOT;
 
@@ -979,12 +968,12 @@ EOT;
     {
 
         // 列表
-        \$list = self::\${$lowFirstName}TextList;
+        \$list = array_column(self::\${$lowFirstName}List, null, 'value');
         // 不合法 - 不存在
-        if (empty(\$list[\$value])) return '--';
+        if (empty(\$list[\$value]['text'])) return '--';
 
         // 最终正常返回
-        return \$list[\$value];
+        return \$list[\$value]['text'];
     }
     /**
      * 获取[{$comment}]列表 值
@@ -995,16 +984,6 @@ EOT;
 
         // 最终正常返回
         return self::\${$lowFirstName}List;
-    }
-    /**
-     * 获取[{$comment}]文本列表 值
-     * @return mixed|string
-     */
-    public static function get{$capFirstName}TextList()
-    {
-
-        // 最终正常返回
-        return self::\${$lowFirstName}TextList;
     }
     
 EOT;

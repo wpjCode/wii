@@ -150,10 +150,10 @@ var app = function () {
                     type: 'get',
                     data: {
                         page: this.page,
-                        pageSize: this.pageSize,
+                        page_size: this.pageSize,
                         search: this.searchForm,
-                        sortField: this.searchOrderField,
-                        sortType: this.searchOrderType
+                        sort_field: this.searchOrderField,
+                        sort_type: this.searchOrderType
                     },
                     dataType: "json",
                     beforeCallback: function () {

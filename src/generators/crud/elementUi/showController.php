@@ -44,7 +44,6 @@ echo "<?php\n";
 namespace <?= StringHelper::dirname(ltrim($generator->controllerShowClass, '\\')) ?>;
 
 use <?= ltrim($generator->baseModelClass, '\\') ?>;
-use <?= ltrim($generator->baseControllerClass, '\\') ?>;
 use yii\filters\AccessControl;
 
 /**
@@ -53,23 +52,8 @@ use yii\filters\AccessControl;
  * Date: <?=$createDate . "\n";?>
  * Time: <?=$createTime . "\n";?>
 */
-class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->baseControllerClass) . "\n" ?>
+class <?= $controllerClass ?> extends BaseController
 {
-
-    /**
-     * 页面布局文件
-     */
-    public $layout = '<?=$generator->controllerShowLayout?>';
-    /**
-     * 接口对应[模块名]
-     * @var string
-     */
-    public $apiModule = '<?=$apiModule;?>';
-    /**
-     * 接口对应[控制器名]
-     * @var string
-     */
-    public $apiController = '<?=$generator->getControllerDoId();?>';
 
     /**
      * {@inheritdoc}

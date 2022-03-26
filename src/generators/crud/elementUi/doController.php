@@ -31,7 +31,6 @@ echo "<?php\n";
 namespace <?= StringHelper::dirname(ltrim($generator->controllerDoClass, '\\')) ?>;
 
 use <?= ltrim($generator->baseModelClass, '\\') ?>;
-use <?= ltrim($generator->baseControllerClass, '\\') ?>;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\service\ToolsService;
@@ -42,7 +41,7 @@ use app\service\ToolsService;
  * Date: <?=$createDate . "\n";?>
  * Time: <?=$createTime . "\n";?>
 */
-class <?= $controllerClass ?> extends <?= StringHelper::basename($generator->baseControllerClass) . "\n" ?>
+class <?= $controllerClass ?> extends BaseController
 {
 
     /**
@@ -151,7 +150,6 @@ if (property_exists($schema, 'columns')) {
 
 ?>
             '<?=$lowFirstName?>_list' => $model::get<?=$capFirstName?>List(), // <?=$comment?>列表值
-            '<?=$lowFirstName?>_text_list' => $model::get<?=$capFirstName?>TextList(), // <?=$comment?>文本列表值
 <?php }}} if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
             'min_sort' => $model::getMinSort(), // 最小排序值
             'max_sort' => $model::getMaxSort(), // 最大排序值
@@ -170,16 +168,16 @@ if (property_exists($schema, 'columns')) {
         $search = $this->get('search');
 
         // 显示当前第几页
-        $page = !$this->get('page') ? 0 : $this->get('page', 'int');
+        $page = $this->get('page', 0, 'int');
 
         // 每页显示多少条
-        $pageSize = (!$this->get('pageSize') || $this->get('pageSize') <= 0 || $this->get('pageSize') > \Yii::$app->params['maxDataLimit']) ? \Yii::$app->params['dataLimit'] : $this->get('pageSize', 'int');
+        $pageSize = $this->get('page_size', \Yii::$app->params['dataLimit'], 'int');
 
         // 排序字段
-        $sortField = $this->get('sortField', '', 'str');
+        $sortField = $this->get('sort_field', '', 'str');
         $sort = [
-            $sortField . ' ' . $this->get('sortType', '', 'str'),
-            'id ' . $this->get('sortType', '', 'str'),
+            $sortField . ' ' . $this->get('sort_type', '', 'str'),
+            'id ' . $this->get('sort_type', '', 'str'),
         ];
 
         // 设置

@@ -63,9 +63,9 @@ echo $form->field($generator, 'controllerShowLayout', [
     'fileSvgTitle' => $generator->langString('chose file/folder'),
     'useAlias' => true
 ]);
-echo $form->field($generator, 'baseControllerClass', [
+/* echo $form->field($generator, 'baseControllerClass', [
     'hasFileSvg' => true,
     'fileSvgTitle' => $generator->langString('chose file/folder')
-]);
+]); */
 
 Generator::regAssetsFile($this, 'js/custom-crud.js');

@@ -183,39 +183,29 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
      * 初始化[数据库]实例
      *  ` 逻辑：先从缓存中获取条目，条目不存在，从数据库拿，并存入缓存，返回[self] | 可以强制必须获取数据库`
      * @param string \$id 数据编号|直接初始化
-     * @param string \$scenario 场景|ps.缓存类场景
      * @param bool \$forceDb 是否强制数据库
+     * @param string \$scenario 场景|ps.缓存类场景
      * @return {$renderModelPath['filename']}
      */
     public static function loadModelDB(\$id = null, \$forceDb = false, \$scenario = 'default')
     {
         
-        ### 先查询缓存
+        ### 强制数据库 || 缓存未找到
+        \$dbModel = SettingDbModel::loadModel(\$id);
+        // 数据库查询的空 - 返回数据空
+        if (!\$dbModel) return null;
+
+        ### 查询缓存
         // 查询缓存是否存在条目
         \$model = self::loadModel(\$id, \$scenario);
-
-        ### 强制数据库 || 缓存未找到
-        \$dbModel = false;
-        if (!\$model || \$forceDb) \$dbModel = {$doDbAlias}::loadModel(\$id);
-
-        // 数据库查询的空 && 数据库缓存空 - 返回数据空
-        if (!\$model && !\$dbModel) return null;
-
-        ### 数据库 -> 缓存同步数据
-        // 缓存为空 初始化缓存
-        if (!\$model) \$model = self::loadModel(true, \$scenario);
-        // 需要把数据库[attribute]赋值到缓存
-        if (\$dbModel) {
+        // 缓存为空 初始化缓存 && 保存
+        if (!\$model) {
+            \$model     = self::loadModel(true, \$scenario);
             \$attribute = \$dbModel->getAttributes();
             \$model->setAttributes(\$attribute);
-        }
-
-        // 如果数据是新的 先保存下
-        if (\$forceDb && \$model->isNewRecord) {
-            \$model->saveData(false);
+            \$model->saveData(false);     // 保存一下
             \$model->setIsNewRecord(false); // 同步之后就不是新建了
         }
-
 
         // 赋值数据库实例
         \$model->setDbInstance(\$dbModel);
@@ -491,14 +481,14 @@ echo <<<EOT
      */
     public function saveDbData() {
 
-        \$db = null;
-        // 主键
-        \$pk = \$this->getAttribute('id');
         // 需要新建 - 初始化
-        \$db = {$doDbAlias}::loadModel(!empty(\$pk) ? \$pk : true);
+        \$db = clone \$this->getDbInstance();
         // 保存
         \$db->setAttributes(\$this->getAttributes());
-        if (!\$db->saveData()) {\$this->addErrors(\$db->getErrors());return false;}
+        if (!\$db->saveData()) {
+            \$this->addErrors(\$db->getErrors());
+            return false;
+        }
         // 数据库数据原封不动赋值下 - 以数据库为主
         \$this->setAttributes(\$db->getAttributes());
 
@@ -593,13 +583,14 @@ echo <<<EOT
             if (is_array(\$v)) \$fieldVal[\$k] = json_encode(\$fieldVal, JSON_UNESCAPED_UNICODE);
         }
 
+        \$dbTran = \Yii::$app->db->beginTransaction();
         try {  
 
             ### 取出已更新的数据库条目
             // 取出数据库条目
             \$dbList = {$doDbAlias}::find()->where(\$condition)->asArray()->all();
             // 数据库为空的直接为更新成功
-            if (!\$dbList) return true;
+            if (!\$dbList) {\$dbTran->rollBack(); return true;}
             // 取出数据库编号
             \$dbIdList = array_column(\$dbList, '{$primaryKey}');
 
@@ -617,21 +608,33 @@ echo <<<EOT
             \$interIdList = array_intersect(\$dbIdList, \$cacheIdList);
 
             ### 数据提交
-            // 更新数据
-            if (!empty(\$interIdList)) {$doDbAlias}::updateField(\$condition, \$fieldVal);
+            // 先将数据库更新
+            \$result = {$doDbAlias}::updateField(\$condition, \$fieldVal);
+            if (!\$result) {\$dbTran->rollBack(); return false;}
+
+            // 缓存 - 更新数据
+            if (!empty(\$interIdList) && !self::updateAll(\$fieldVal, \$condition)) {
+                \$dbTran->rollBack(); // 这里失败先回滚吧 管理员可以看到数据未变化
+                return false;
+            }
 
             // 添加数据
-            \$insertData = [];
             foreach (\$diffIdList as \$k => \$v) {
-                if (empty(\$dbList[\$v])) continue;
-                \$insertData[] = \$dbList[\$v];
+                \$model = new self();
+                /* @var array \$dbList[\$v] */
+                \$model->setAttributes(ArrayHelper::merge(\$dbList[\$v], \$fieldVal));
+                if (!\$model->insert(false)) {
+                    \$dbTran->rollBack(); // 这里失败先回滚吧 管理员可以看到数据未变化
+                    return false;
+                }
             }
-            if (!empty(\$insertData)) (new self())->insert(false, \$insertData);
 
+            \$dbTran->commit();
             // 否则成功
             return true;
         } catch (\Exception \$error) {
 
+            \$dbTran->rollBack();
             // 记录下错误日志
             \Yii::error([
     

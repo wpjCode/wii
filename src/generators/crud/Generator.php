@@ -151,11 +151,11 @@ class Generator extends \wpjCode\wii\Generator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['controllerDoClass', 'controllerShowClass', 'baseModelClass', 'baseControllerClass', 'expName', 'controllerShowLayout', 'viewPath', 'jsPath', 'cssPath'], 'filter', 'filter' => 'trim'],
-            [['baseModelClass', 'controllerDoClass', 'controllerShowClass', 'baseControllerClass', 'expName', 'viewPath', 'controllerShowLayout', 'jsPath', 'cssPath'], 'required'],
-            [['baseModelClass', 'controllerDoClass', 'controllerShowClass', 'baseControllerClass'], 'match', 'pattern' => '/^[\w\\\\]*$/', 'message' => $this->langString('just characters and backslashes')],
+            [['controllerDoClass', 'controllerShowClass', 'baseModelClass', 'expName', 'controllerShowLayout', 'viewPath', 'jsPath', 'cssPath'], 'filter', 'filter' => 'trim'],
+            [['baseModelClass', 'controllerDoClass', 'controllerShowClass', 'expName', 'viewPath', 'controllerShowLayout', 'jsPath', 'cssPath'], 'required'],
+            [['baseModelClass', 'controllerDoClass', 'controllerShowClass'], 'match', 'pattern' => '/^[\w\\\\]*$/', 'message' => $this->langString('just characters and backslashes')],
             [['baseModelClass'], 'validateClass', 'params' => ['extends' => BaseActiveRecord::className()]],
-            [['baseControllerClass'], 'validateClass', 'params' => ['extends' => Controller::className()]],
+            // [['baseControllerClass'], 'validateClass', 'params' => ['extends' => Controller::className()]],
             [['controllerDoClass', 'controllerShowClass'], 'match', 'pattern' => '/Controller$/', 'message' => $this->langString('controller suffixed error')],
             [['controllerDoClass', 'controllerShowClass'], 'match', 'pattern' => '/(^|\\\\)[A-Z][^\\\\]+Controller$/', 'message' => $this->langString('controller name error')],
             [['controllerDoClass', 'controllerShowClass'], 'validateNewClass'],
@@ -681,9 +681,8 @@ EOT;
                   
                 <el-radio-group v-model="form.{$attribute}" size="mini" class="form-element">
             
-                    <el-radio v-for="(item, key) in setting.{$attribute}_text_list"
-                        :label="parseInt(key)">
-                        {{item}}
+                    <el-radio v-for="item in setting.{$attribute}_list" :label="item.value">
+                        {{item.text}}
                     </el-radio>
             
                 </el-radio-group>
