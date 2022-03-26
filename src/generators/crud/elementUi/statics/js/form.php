@@ -163,12 +163,17 @@ EOT;
              * 取消 添加修改返回上一页
              */
             cancel: function () {
-                // 正在加载。。
-                var loadingInstance = ELEMENT.Loading.service({
-                    fullscreen: false,
-                    text: '返回中...'
-                });
-                window.history.back();
+                // 显示脚部 - 当前页面返回
+                if (this.showFooter) {
+                    // 正在加载。。
+                    var loadingInstance = ELEMENT.Loading.service({
+                        fullscreen: false,
+                        text: '返回中...'
+                    });
+                    window.history.back();
+                } else {
+                    window.parent.instance.showFormDialog = false;
+                }
             },
             /**
              * 去首页
