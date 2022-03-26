@@ -25,7 +25,9 @@ EOT;
                     <el-breadcrumb-item>
                         <a @click="goToIndex"><i class="el-icon-location-outline"></i>&nbsp;首页</a>
                     </el-breadcrumb-item>
-                    <el-breadcrumb-item><?= $generator->expName ?></el-breadcrumb-item>
+                    <el-breadcrumb-item @dblclick.native="window.open(window.location.href)">
+                        <?= $generator->expName ?>
+                    </el-breadcrumb-item>
                 </el-breadcrumb>
             </el-col>
             <el-col :xs="15" :sm="17" :md="18" :lg="19" class="text-right">
@@ -310,6 +312,25 @@ EOT;
         <div class="clean-80px" v-else></div>
     </el-main>
 </el-container>
+
+<!--新建|修改 弹出层-->
+<el-dialog :visible.sync="showFormDialog" class="dialog-wrapper scroll-dialog form-dialog"
+           lock-scroll fullscreen v-loading.lock="formLoading" element-loading-text="加载中..."
+           element-loading-background="rgba(255, 255, 255, 1)">
+
+    <iframe :src="formDialogUrl" id="formIframe" frameborder="0" width="100%" height="100%"></iframe>
+
+    <div slot="footer">
+        <el-button size="mini" type="danger" @click="showFormDialog = false">
+            取消
+        </el-button>
+        <el-button :type="formIsCreate ? 'success' : 'primary'" @click="submitForm" size="mini">
+            {{formIsCreate ? '创建' : '保存'}}
+        </el-button>
+    </div>
+</el-dialog>
+<!--新建|修改 弹出层-->
+
 <?= <<<EOT
 
 <?= Asset::addCss(\$this, '{$generator->getPageCssPath('index')}'); ?>

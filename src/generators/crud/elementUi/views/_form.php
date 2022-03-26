@@ -63,9 +63,12 @@ if (in_array($attribute->name, $safeAttributes)) {
 
 <?= <<<EOT
 
-<?= Asset::addCss(\$this, '{$generator->getPageCssPath('form')}'); ?>
+<?php
+Asset::addCss(\$this, '{$generator->getPageCssPath('form')}');
+Asset::addScript(\$this, '{$generator->getPageJsPath('form')}');
 
-<?= Asset::addScript(\$this, '{$generator->getPageJsPath('form')}'); ?>
-<?= \$this->registerJs('instance = new app();'); ?>
+\$isCreate = !isset(\$isCreate) || !\$isCreate ? 'false' : 'true'; // 是否新建
+\$this->registerJs('instance = new app(' . \$isCreate . ');');
+?>
 EOT;
 ?>

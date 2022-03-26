@@ -24,10 +24,14 @@ EOT;
                     <el-breadcrumb-item>
                         <a @click="cancel">&nbsp;<?= $generator->expName; ?></a>
                     </el-breadcrumb-item>
-                    <el-breadcrumb-item>添加</el-breadcrumb-item>
+                    <el-breadcrumb-item @dblclick.native="window.open(window.location.href)">
+                        添加
+                    </el-breadcrumb-item>
                 </el-breadcrumb>
             </el-col>
         </el-row>
     </el-header>
-    <?= "<?= " ?>$this->render('_form', ['apiModule' => $apiModule, 'apiController' => $apiController]) ?>
+    <?= "<?= " ?>$this->render('_form', [
+        'isCreate' => true, 'apiModule' => $apiModule, 'apiController' => $apiController
+    ]) ?>
 </el-container>

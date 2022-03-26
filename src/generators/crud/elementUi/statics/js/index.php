@@ -30,7 +30,11 @@ var app = function () {
             handelSelectList: [], // 当前多选项
             page: 1,
             pageSize: 20,
-            dataTotal: 0
+            dataTotal: 0,
+            showFormDialog: false, // 表单 - 是否展示弹出层
+            formDialogUrl: '',     // 表单 - 弹出层连接
+            formLoading: false,    // 表单 - 弹出层加载中
+            formIsCreate: false,   // 表单 - 是否为创建
         },
         created: function () {
             // 初始化下设置
@@ -476,40 +480,60 @@ var app = function () {
                 });
             },
 <?php } ?>
+
             /**
-             * 跳转到添加
+             * 提交表单
              */
-            goToCreate: function () {
-                // 正在加载。。
-                var loadingInstance = ELEMENT.Loading.service({
-                    fullscreen: false,
-                    text: '跳转中...'
-                });
+            submitForm: function () {
+
+                // 新建
+                if (this.isCreate) {
+                    $("#formIframe")[0].contentWindow.instance.submitCreate();
+                } else { // 更新
+                    $("#formIframe")[0].contentWindow.instance.submitUpdate();
+                }
 
                 var that = this;
-                setTimeout(function () {
-                    loadingInstance.close();
-                }, 1500);
-
-                window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.create');
+                this.$nextTick(function () {
+                    that.getList();              // 请求列表
+                    that.showFormDialog = false; // 隐藏弹出层
+                });
             },
             /**
-             * 跳转到编辑
-             */
-            goToUpdate: function ($id) {
-                // 正在加载。。
-                var loadingInstance = ELEMENT.Loading.service({
-                    fullscreen: false,
-                    text: '跳转中...'
+            * 跳转到添加
+            */
+            goToCreate: function () {
+
+                this.formDialogUrl = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.create', {
+                    show_footer: 0, // 隐藏尾部
                 });
-
+                this.showFormDialog = true; // 展示表单弹出层
+                this.formLoading = true;    // 表单弹出层加载中
+                this.formIsCreate = true;   // 表单弹为[创建]
+                // [IFRAME]加载完毕
                 var that = this;
-                setTimeout(function () {
-                    loadingInstance.close();
-                }, 1500);
+                $("#formIframe").load(function () {
+                    that.formLoading = false; // 页面加载中 否
+                });
+            },
+            /**
+            * 跳转到编辑
+            */
+            goToUpdate: function ($id) {
 
-                window.location.href = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update', {
-                    id: $id
+                this.formDialogUrl = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update', {
+                    id: $id,
+                    show_footer: 0, // 隐藏尾部
+                });
+                this.showFormDialog = true; // 展示表单弹出层
+                this.formLoading = true;    // 表单弹出层加载中
+                this.formIsCreate = false;   // 表单弹为[更新]
+                // [IFRAME]加载完毕
+                var that = this;
+                this.$nextTick(function () {
+                    $("#formIframe").load(function () {
+                        that.formLoading = false; // 页面加载中 否
+                    });
                 });
             },
             /**
@@ -547,6 +571,19 @@ var app = function () {
              */
             'searchTopValue': function ($val) {
                 this.searchForm[this.searchTopType] = $val;
+            },
+            /**
+             * 检测[表单弹出层加载中状态]
+             */
+            'formLoading': function ($value) {
+                // 未加载中||已经有计时器 不操作
+                if (!$value || this.timer) return false;
+                var that = this;
+                this.timer = setTimeout(function () {
+                    that.formLoading = false; // 加载完毕
+                    clearTimeout(that.timer); // 清除计时器
+                    that.timer = null;        // 清空变量存储
+                }, 1000)
             }
         }
     });

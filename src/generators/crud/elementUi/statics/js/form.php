@@ -8,9 +8,10 @@ $safeAttributes = $generator->getTableSchema()->columns;
 ?>
 /**
  * [<?=$generator->expName?>]表单[JS]
+ * @param $isCreate 是否新建
  * @returns {*}
  */
-var app = function () {
+var app = function ($isCreate) {
 
     return new Vue({
         el: '#vueContainer',
@@ -18,6 +19,7 @@ var app = function () {
             loadOver: false,    // 页面加载状态
             detailOver: false,  // 详情加载状态
             settingOver: false, // 设置加载状态
+            showFooter: false,  // 是否展示脚部
             setting: {
                 pageType: 'form', // 页面类型
                 isCreate: false, // 添加状态
@@ -116,9 +118,10 @@ EOT;
                 var that = this;
 
                 var params = $w.getParams();
-
-                // id参数存在
-                if (!params['id'] || params['id'] === undefined) {
+                // 是否隐藏尾部
+                this.showFooter = +params['show_footer'] !== 0;
+                // 是新建
+                if ($isCreate) {
 
                     this.detailOver = true; // 详情加载完毕
                     this.setting.isCreate = true; // 正在添加
@@ -131,7 +134,7 @@ EOT;
                 $w.request({
                     url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.detail'),
                     type: 'get',
-                    data: {id: params['id']},
+                    data: {id: params('id')},
                     dataType: "json",
                     beforeCallback: function () {
                         that.$nextTick(function () {
@@ -250,8 +253,6 @@ EOT;
                                     message: event.msg
                                 });
                             }
-
-                            that.cancel();
                         }
                     });
                 });
@@ -311,8 +312,6 @@ EOT;
                                     message: event.msg ? event.msg : '操作失败，请稍后尝试'
                                 });
                             }
-
-                            that.cancel();
                         }
                     });
                 });
