@@ -19,10 +19,9 @@ var app = function ($isCreate) {
             loadOver: false,    // 页面加载状态
             detailOver: false,  // 详情加载状态
             settingOver: false, // 设置加载状态
-            showFooter: false,  // 是否展示脚部
             setting: {
-                pageType: 'form', // 页面类型
-                isCreate: false, // 添加状态
+                pageType: 'form',    // 页面类型
+                isCreate: $isCreate, // 添加状态
             },
             form: {
 <?php foreach ($safeAttributes as $k => $v) {
@@ -41,20 +40,49 @@ EOT;
     }
 }?>
             },
-            customErrMsg: {} // 自定义错误列表
+            customErrMsg: {}, // 自定义错误列表
+            pageDialog: {
+                show: false,    // 页面 - 是否展示弹出层
+                url: '',        // 页面 - 弹出层连接
+                loading: false, // 页面 - 弹出层加载中
+                isIframe: false // 页面 - 是否[iframe]嵌入
+            },
         },
         created: function () {
-
-            // 初始化下设置
+            // 初始化
+            this.init();
+            // 初始化设置
             this.getSetting();
             // 初始化、获取详情
-            this.init();
+            this.initDetail();
             var that = this;
             this.$nextTick(function () {
                 that.loadOver = true;
             });
         },
         methods: {
+            /**
+             * 初始化的逻辑
+             */
+            init: function () {
+
+                var params = $w.getParams();
+                // 是否[iframe]嵌入
+                this.pageDialog.isIframe = +params['is_iframe'] === 1;
+
+                var that = this;
+                // [嵌入]返回事件监听 直接走自己的返回
+                if (this.pageDialog.isIframe) {
+                    window.addEventListener("popstate", function($event) {
+                        that.cancel();              // 返回上一页
+                        window.history.forward(-1); // 清理此页历史记录
+                    }, false);
+                    window.history.pushState({
+                        title: "title", url: "#"
+                    }, "title", "#");
+                    window.history.forward(1);
+                }
+            },
             /**
              * 获取设置
              * @returns {boolean}
@@ -108,7 +136,7 @@ EOT;
             /**
              * 获取下详细信息
              */
-            init: function () {
+            initDetail: function () {
 
                 // 正在加载。。
                 var loadingInstance = ELEMENT.Loading.service({
@@ -117,24 +145,18 @@ EOT;
                 });
                 var that = this;
 
-                var params = $w.getParams();
-                // 是否隐藏尾部
-                this.showFooter = +params['show_footer'] !== 0;
                 // 是新建
                 if ($isCreate) {
 
                     this.detailOver = true; // 详情加载完毕
-                    this.setting.isCreate = true; // 正在添加
                     return loadingInstance.close();
                 }
-
-                this.setting.isCreate = false; // 正在修改
 
                 // 获取各模块的值
                 $w.request({
                     url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.detail'),
                     type: 'get',
-                    data: {id: params('id')},
+                    data: {id: $w.getParams('id')},
                     dataType: "json",
                     beforeCallback: function () {
                         that.$nextTick(function () {
@@ -160,19 +182,25 @@ EOT;
                 });
             },
             /**
-             * 取消 添加修改返回上一页
+             * 返回上一页
+             * @param $reloadList 需要加载列表
              */
-            cancel: function () {
+            cancel: function ($reloadList) {
+
+                // 需要重新加载下列表
+                if ($reloadList) window.parent.instance.getList();
+
                 // 显示脚部 - 当前页面返回
-                if (this.showFooter) {
-                    // 正在加载。。
-                    var loadingInstance = ELEMENT.Loading.service({
-                        fullscreen: false,
-                        text: '返回中...'
-                    });
-                    window.history.back();
+                if (!this.pageDialog.isIframe) {
+                    // 非嵌入页面暂不操作 - 可根据逻辑自行修改
+                    // // 正在加载。。
+                    // var loadingInstance = ELEMENT.Loading.service({
+                    //     fullscreen: false,
+                    //     text: '返回中...'
+                    // });
+                    // window.history.back();
                 } else {
-                    window.parent.instance.showFormDialog = false;
+                    window.parent.instance.pageDialog.show = false;
                 }
             },
             /**
@@ -180,17 +208,17 @@ EOT;
              */
             goToIndex: function () {
                 // 父级
-                var parent = window.parent.window;
+                var parent = window.parent.top;
                 if (!parent) return false;
 
                 // 父级[vue]对象
-                var vueInstance = window.parent.window.menu;
+                var vueInstance = parent.instance;
                 if (!parent || !(typeof vueInstance === 'object')) return false;
 
                 // 键值
                 var key = vueInstance.indexKey;
                 // 操作点击
-                $(window.parent.window.document).find('#tab-' + key).click();
+                $(parent.document).find('#tab-' + key).click();
             },
             /**
              * 添加
@@ -232,16 +260,6 @@ EOT;
                         },
                         callback: function (event) {
 
-                            // 失败的返回|提示
-                            if (parseInt(event.no) !== 200) {
-
-                                return that.$message({
-                                    showClose: true,
-                                    type: 'error',
-                                    message: event.msg ? event.msg : '操作失败，请稍后尝试'
-                                });
-                            }
-
                             // 操作失败显示错误信息
                             if (parseInt(event.no) !== 200) {
 
@@ -258,6 +276,9 @@ EOT;
                                     message: event.msg
                                 });
                             }
+
+                            // 返回上一页
+                            that.cancel(true);
                         }
                     });
                 });
@@ -318,6 +339,9 @@ EOT;
                                 });
                             }
                         }
+
+                        // 返回上一页
+                        that.cancel(true);
                     });
                 });
             },

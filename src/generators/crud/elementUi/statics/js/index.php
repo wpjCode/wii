@@ -31,13 +31,17 @@ var app = function () {
             page: 1,
             pageSize: 20,
             dataTotal: 0,
-            showFormDialog: false, // 表单 - 是否展示弹出层
-            formDialogUrl: '',     // 表单 - 弹出层连接
-            formLoading: false,    // 表单 - 弹出层加载中
-            formIsCreate: false,   // 表单 - 是否为创建
+            pageDialog: {
+                show: false,    // 页面 - 是否展示弹出层
+                url: '',        // 页面 - 弹出层连接
+                loading: false, // 页面 - 弹出层加载中
+                isIframe: false // 页面 - 是否[iframe]嵌入
+            },
         },
         created: function () {
-            // 初始化下设置
+            // 初始化
+            this.init();
+            // 初始化设置
             this.getSetting();
             var that = this;
             this.$nextTick(function () {
@@ -45,6 +49,34 @@ var app = function () {
             });
         },
         methods: {
+            /**
+             * 初始化的逻辑
+             */
+            init: function () {
+
+                var params = $w.getParams();
+                // 是否[iframe]嵌入
+                this.pageDialog.isIframe = +params['is_iframe'] === 1;
+
+                var that = this;
+                // [嵌入]返回事件监听 直接走自己的返回
+                if (this.pageDialog.isIframe) {
+                    window.addEventListener("popstate", function($event) {
+                        that.cancel();              // 返回上一页
+                        window.history.forward(-1); // 清理此页历史记录
+                    }, false);
+                    window.history.pushState({
+                        title: "title", url: "#"
+                    }, "title", "#");
+                    window.history.forward(1);
+                }
+            },
+            /**
+             * 初始化的逻辑
+             */
+            init: function () {
+
+            },
             /**
              * 顶部查询 - 初始化查询[FORM]
              * @returns {boolean}
@@ -482,38 +514,19 @@ var app = function () {
 <?php } ?>
 
             /**
-             * 提交表单
-             */
-            submitForm: function () {
-
-                // 新建
-                if (this.isCreate) {
-                    $("#formIframe")[0].contentWindow.instance.submitCreate();
-                } else { // 更新
-                    $("#formIframe")[0].contentWindow.instance.submitUpdate();
-                }
-
-                var that = this;
-                this.$nextTick(function () {
-                    that.getList();              // 请求列表
-                    that.showFormDialog = false; // 隐藏弹出层
-                });
-            },
-            /**
             * 跳转到添加
             */
             goToCreate: function () {
 
-                this.formDialogUrl = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.create', {
-                    show_footer: 0, // 隐藏尾部
+                this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.create', {
+                    is_iframe: 1, // 隐藏尾部
                 });
-                this.showFormDialog = true; // 展示表单弹出层
-                this.formLoading = true;    // 表单弹出层加载中
-                this.formIsCreate = true;   // 表单弹为[创建]
+                this.pageDialog.show = true;    // 展示页面弹出层
+                this.pageDialog.loading = true; // 页面弹出层加载中
                 // [IFRAME]加载完毕
                 var that = this;
-                $("#formIframe").load(function () {
-                    that.formLoading = false; // 页面加载中 否
+                $("#pageIframe").load(function () {
+                    that.pageDialog.loading = false; // 页面加载中 否
                 });
             },
             /**
@@ -521,18 +534,17 @@ var app = function () {
             */
             goToUpdate: function ($id) {
 
-                this.formDialogUrl = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update', {
+                this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update', {
                     id: $id,
-                    show_footer: 0, // 隐藏尾部
+                    is_iframe: 1, // 隐藏尾部
                 });
-                this.showFormDialog = true; // 展示表单弹出层
-                this.formLoading = true;    // 表单弹出层加载中
-                this.formIsCreate = false;   // 表单弹为[更新]
+                this.pageDialog.show = true;    // 展示页面弹出层
+                this.pageDialog.loading = true; // 页面弹出层加载中
                 // [IFRAME]加载完毕
                 var that = this;
                 this.$nextTick(function () {
-                    $("#formIframe").load(function () {
-                        that.formLoading = false; // 页面加载中 否
+                    $("#pageIframe").load(function () {
+                        that.pageDialog.loading = false; // 页面加载中 否
                     });
                 });
             },
@@ -541,17 +553,17 @@ var app = function () {
              */
             goToIndex: function () {
                 // 父级
-                var parent = window.parent.window;
+                var parent = window.parent.top;
                 if (!parent) return false;
 
                 // 父级[vue]对象
-                var vueInstance = window.parent.window.menu;
+                var vueInstance = parent.instance;
                 if (!parent || !(typeof vueInstance === 'object')) return false;
 
                 // 键值
                 var key = vueInstance.indexKey;
                 // 操作点击
-                $(window.parent.window.document).find('#tab-' + key).click();
+                $(parent.document).find('#tab-' + key).click();
             },
         },
         watch: {
@@ -573,16 +585,16 @@ var app = function () {
                 this.searchForm[this.searchTopType] = $val;
             },
             /**
-             * 检测[表单弹出层加载中状态]
+             * 检测[页面弹出层加载中状态]
              */
-            'formLoading': function ($value) {
+            'pageDialog.loading': function ($value) {
                 // 未加载中||已经有计时器 不操作
                 if (!$value || this.timer) return false;
                 var that = this;
                 this.timer = setTimeout(function () {
-                    that.formLoading = false; // 加载完毕
-                    clearTimeout(that.timer); // 清除计时器
-                    that.timer = null;        // 清空变量存储
+                    that.pageDialog.loading = false; // 加载完毕
+                    clearTimeout(that.timer);        // 清除计时器
+                    that.timer = null;               // 清空变量存储
                 }, 1000)
             }
         }

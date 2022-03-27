@@ -20,7 +20,7 @@ EOT;
 <el-container class="index-wrapper">
     <el-header class="top-wrapper bg-white" height="auto">
         <el-row :inline="true" class="button-container">
-            <el-col :xs="9" :sm="7" :md="6" :lg="5">
+            <el-col :xs="12" :sm="12" :md="12" :lg="5">
                 <el-breadcrumb separator="/">
                     <el-breadcrumb-item>
                         <a @click="goToIndex"><i class="el-icon-location-outline"></i>&nbsp;首页</a>
@@ -30,7 +30,7 @@ EOT;
                     </el-breadcrumb-item>
                 </el-breadcrumb>
             </el-col>
-            <el-col :xs="15" :sm="17" :md="18" :lg="19" class="text-right">
+            <el-col :xs="12" :sm="12" :md="12" :lg="19" class="text-right">
                 <?= '<?php if (AdminRoleModel::checkAuth(\'create\')) { ?>'. "\n" ?>
                 <el-button class="" size="mini" type="success"
                            @click.native="goToCreate()">
@@ -312,24 +312,6 @@ EOT;
         <div class="clean-80px" v-else></div>
     </el-main>
 </el-container>
-
-<!--新建|修改 弹出层-->
-<el-dialog :visible.sync="showFormDialog" class="dialog-wrapper scroll-dialog form-dialog"
-           lock-scroll fullscreen v-loading.lock="formLoading" element-loading-text="加载中..."
-           element-loading-background="rgba(255, 255, 255, 1)">
-
-    <iframe :src="formDialogUrl" id="formIframe" frameborder="0" width="100%" height="100%"></iframe>
-
-    <div slot="footer">
-        <el-button size="mini" type="danger" @click="showFormDialog = false">
-            取消
-        </el-button>
-        <el-button :type="formIsCreate ? 'success' : 'primary'" @click="submitForm" size="mini">
-            {{formIsCreate ? '创建' : '保存'}}
-        </el-button>
-    </div>
-</el-dialog>
-<!--新建|修改 弹出层-->
 
 <?= <<<EOT
 
