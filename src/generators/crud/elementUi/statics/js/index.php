@@ -521,8 +521,8 @@ var app = function () {
                 this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.create', {
                     is_iframe: 1, // 隐藏尾部
                 });
-                this.pageDialog.show = true;    // 展示页面弹出层
                 this.pageDialog.loading = true; // 页面弹出层加载中
+                this.pageDialog.show = true;    // 展示页面弹出层
                 // [IFRAME]加载完毕
                 var that = this;
                 $("#pageIframe").load(function () {
@@ -538,8 +538,8 @@ var app = function () {
                     id: $id,
                     is_iframe: 1, // 隐藏尾部
                 });
-                this.pageDialog.show = true;    // 展示页面弹出层
                 this.pageDialog.loading = true; // 页面弹出层加载中
+                this.pageDialog.show = true;    // 展示页面弹出层
                 // [IFRAME]加载完毕
                 var that = this;
                 this.$nextTick(function () {
