@@ -126,12 +126,11 @@ EOT;
                 </el-button>
             </el-form-item>
             <el-collapse-transition>
-                <div v-show="setting.showAllSearch" id="searchAllAni"
-                     class="more-search-container">
+                <div v-show="setting.showAllSearch" id="searchAllAni" class="more-search-container">
                     <!-- 此处添加[el-form-item] -->
                     <?php if ($model->hasAttribute('status')) {?>
 
-                        <el-form-item label="状态" class="padding-right-30">
+                        <el-form-item label="状态" class="pr-30 mt-20">
                             <el-radio-group v-model="searchForm.status"
                                             @change="handleCurrentChange(1)">
                                 <el-radio-button label="">全部</el-radio-button>
