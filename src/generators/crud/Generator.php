@@ -70,15 +70,10 @@ class Generator extends \wpjCode\wii\Generator
      */
     public $baseModelClass;
     /**
-     * [操作]控制器名称
+     * 控制器名称
      * @var
      */
-    public $controllerDoClass;
-    /**
-     * [页面展示]控制器名称
-     * @var
-     */
-    public $controllerShowClass;
+    public $controllerClass;
     /**
      * [页面展示]控制器布局文件路径
      * @var
@@ -151,14 +146,14 @@ class Generator extends \wpjCode\wii\Generator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['controllerDoClass', 'controllerShowClass', 'baseModelClass', 'expName', 'controllerShowLayout', 'viewPath', 'jsPath', 'cssPath'], 'filter', 'filter' => 'trim'],
-            [['baseModelClass', 'controllerDoClass', 'controllerShowClass', 'expName', 'viewPath', 'controllerShowLayout', 'jsPath', 'cssPath'], 'required'],
-            [['baseModelClass', 'controllerDoClass', 'controllerShowClass'], 'match', 'pattern' => '/^[\w\\\\]*$/', 'message' => $this->langString('just characters and backslashes')],
+            [['controllerClass', 'baseModelClass', 'expName', 'controllerShowLayout', 'viewPath', 'jsPath', 'cssPath'], 'filter', 'filter' => 'trim'],
+            [['baseModelClass', 'controllerClass', 'expName', 'viewPath', 'controllerShowLayout', 'jsPath', 'cssPath'], 'required'],
+            [['baseModelClass', 'controllerClass'], 'match', 'pattern' => '/^[\w\\\\]*$/', 'message' => $this->langString('just characters and backslashes')],
             [['baseModelClass'], 'validateClass', 'params' => ['extends' => BaseActiveRecord::className()]],
             // [['baseControllerClass'], 'validateClass', 'params' => ['extends' => Controller::className()]],
-            [['controllerDoClass', 'controllerShowClass'], 'match', 'pattern' => '/Controller$/', 'message' => $this->langString('controller suffixed error')],
-            [['controllerDoClass', 'controllerShowClass'], 'match', 'pattern' => '/(^|\\\\)[A-Z][^\\\\]+Controller$/', 'message' => $this->langString('controller name error')],
-            [['controllerDoClass', 'controllerShowClass'], 'validateNewClass'],
+            [['controllerClass'], 'match', 'pattern' => '/Controller$/', 'message' => $this->langString('controller suffixed error')],
+            [['controllerClass'], 'match', 'pattern' => '/(^|\\\\)[A-Z][^\\\\]+Controller$/', 'message' => $this->langString('controller name error')],
+            [['controllerClass'], 'validateNewClass'],
             [['controllerShowLayout'], 'validateFile']
         ]);
     }
@@ -171,8 +166,7 @@ class Generator extends \wpjCode\wii\Generator
         return array_merge(parent::attributeLabels(), [
             'expName' => $this->langString('Exp Name'),
             'baseModelClass' => $this->langString('Base Model Class'),
-            'controllerDoClass' => $this->langString('Controller Do Class'),
-            'controllerShowClass' => $this->langString('Controller Show Class'),
+            'controllerClass' => $this->langString('Controller Do Class'),
             'controllerShowLayout' => $this->langString('Controller Show Layout'),
             'viewPath' => $this->langString('View Path'),
             'jsPath' => $this->langString('Js Path'),
@@ -189,8 +183,7 @@ class Generator extends \wpjCode\wii\Generator
         return array_merge(parent::hints(), [
             'expName' => $this->langString('Exp Name Hint'),
             'baseModelClass' => $this->langString('Base Model Class Hint'),
-            'controllerDoClass' => $this->langString('Controller Do Class Hint'),
-            'controllerShowClass' => $this->langString('Controller Show Class Hint'),
+            'controllerClass' => $this->langString('Controller Do Class Hint'),
             'controllerShowLayout' => $this->langString('Controller Show Layout Hint'),
             'viewPath' => $this->langString('View Path Hint'),
             'jsPath' => $this->langString('Js Path Hint'),
@@ -252,15 +245,11 @@ class Generator extends \wpjCode\wii\Generator
         $tempViewPath = $tempBasePath . '/views';
         $files = [];
 
-        // ****** 1、操作控制器渲染 ******
-        $doControlFile = Yii::getAlias('@' . str_replace('\\', '/', ltrim($this->controllerDoClass, '\\')) . '.php');
-        $files[] = new CodeFile($doControlFile, $this->render('doController.php'));
+        // ****** 1、页面展示控制器渲染 ******
+        $controllerClass = Yii::getAlias('@' . str_replace('\\', '/', ltrim($this->controllerClass, '\\')) . '.php');
+        $files[] = new CodeFile($controllerClass, $this->render('showController.php'));
 
-        // ****** 2、页面展示控制器渲染 ******
-        $showControlFile = Yii::getAlias('@' . str_replace('\\', '/', ltrim($this->controllerShowClass, '\\')) . '.php');
-        $files[] = new CodeFile($showControlFile, $this->render('showController.php'));
-
-        // ****** 3、各页面[CSS]渲染 ******
+        // ****** 2、各页面[CSS]渲染 ******
         // [CSS]即将渲染到的目录
         $cssPath = $this->getCssPath();
         $files = array_merge($files, [
@@ -272,7 +261,7 @@ class Generator extends \wpjCode\wii\Generator
                 $this->render(Yii::getAlias("/statics/css/form.php"))),
         ]);
 
-        // ****** 4、各页面[JS]渲染 ******
+        // ****** 3、各页面[JS]渲染 ******
         $jsPath = $this->getJsPath();
         $files = array_merge($files, [
             // 列表页[js]
@@ -329,8 +318,8 @@ class Generator extends \wpjCode\wii\Generator
      */
     public function getControllerShowID($type = 0)
     {
-        $pos = strrpos($this->controllerShowClass, '\\');
-        $class = substr(substr($this->controllerShowClass, $pos + 1), 0, -10);
+        $pos = strrpos($this->controllerClass, '\\');
+        $class = substr(substr($this->controllerClass, $pos + 1), 0, -10);
 
         if ($type == 1) {
             return Inflector::variablize($class);
@@ -358,7 +347,7 @@ class Generator extends \wpjCode\wii\Generator
     public function getControllerShowPath()
     {
 
-        return Yii::getAlias(str_replace('\\', '/', $this->controllerShowClass));
+        return Yii::getAlias(str_replace('\\', '/', $this->controllerClass));
     }
 
     /**
@@ -1004,7 +993,7 @@ EOT;
         // 基础类名去关键词
         $baseName = str_replace(['Model'], [''], $baseName);
         $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
-                ltrim($this->controllerShowClass, '\\')) . '.php');
+                ltrim($this->controllerClass, '\\')) . '.php');
         $files = new CodeFile($controlFile, '');
         $route = $files->getRoute(false);
 
@@ -1028,14 +1017,6 @@ EOT;
             "{space}{space}update: 'Update.html',{tab}// [修改]页面",
             '{space}}'
         ];
-
-        // ☆--后台API操作连接--☆
-        $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
-                ltrim($this->controllerDoClass, '\\')) . '.php');
-        $files = new CodeFile($controlFile, '');
-        $route = $files->getRoute(false);
-        // 基础类名去关键词
-        $baseName = str_replace(['Model'], [''], $baseName);
 
         $row = array_merge($row, [
             '下面是【后台】API操作连接：',

@@ -53,6 +53,11 @@ class <?= $controllerClass ?> extends BaseController
             'verbs' => [ // 请求方式
                 'class' => VerbFilter::className(),
                 'actions' => [
+                    ### 页面
+                    'index-page' => ['GET'],
+                    'create-page' => ['GET'],
+                    'update-page' => ['GET'],
+                    ### API接口
                     'setting' => ['GET'],
                     'list' => ['GET'],
                     'detail' => ['GET'],
@@ -72,6 +77,11 @@ class <?= $controllerClass ?> extends BaseController
                 'rules' => [
                     [ // 必须登录才能访问
                         'actions' => [
+                            ### 页面
+                            'index-page',
+                            'create-page',
+                            'update-page',
+                            ### API接口
                             'setting',
                             'list',
                             'detail',
@@ -110,6 +120,55 @@ class <?= $controllerClass ?> extends BaseController
             ]
         ];
     }
+
+
+    /**
+     * 列表页面
+     * @return mixed
+     */
+    public function actionIndexPage()
+    {
+
+        return $this->render('<?=$generator->getRenderViewPath('index')?>', []);
+    }
+
+    /**
+     * 创建页面
+     * @return mixed
+     */
+    public function actionCreatePage()
+    {
+
+        return $this->render('<?=$generator->getRenderViewPath('create')?>', []);
+    }
+
+    /**
+     * 更新页面
+     * @return mixed
+     */
+    public function actionUpdatePage()
+    {
+
+        // 编号
+        $id = $this->get('id');
+
+        // 验证 规格编号
+        if (empty($id)) {
+
+            return $this->showError('请传输编号，请确认信息编号是否正确。', 404);
+        }
+
+        // 实例化类 - 并根据编号查询
+        $model = <?= $baseModelClass ?>::loadModel($id);
+        // 编号非法返回
+        if (empty($model)) {
+
+            return $this->showError('数据条目不存在，请确认信息编号是否正确。', 404);
+        }
+
+        return $this->render('<?=$generator->getRenderViewPath('update')?>', []);
+    }
+
 
     /**
      * 获取设置
