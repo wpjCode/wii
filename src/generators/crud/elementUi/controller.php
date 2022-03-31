@@ -12,7 +12,7 @@ use yii\helpers\StringHelper;
 $schema = $generator->getTableSchema();
 
 $expName = StringHelper::basename($generator->expName);
-$controllerClass = StringHelper::basename($generator->controllerDoClass);
+$controllerClass = StringHelper::basename($generator->controllerClass);
 $baseModelClass = StringHelper::basename($generator->baseModelClass);
 /* @var $class \yii\db\ActiveRecord */
 $class = new $generator->baseModelClass();
@@ -28,9 +28,10 @@ $createTime = date('H:i:s', $times);
 echo "<?php\n";
 ?>
 
-namespace <?= StringHelper::dirname(ltrim($generator->controllerDoClass, '\\')) ?>;
+namespace <?= StringHelper::dirname(ltrim($generator->controllerClass, '\\')) ?>;
 
 use <?= ltrim($generator->baseModelClass, '\\') ?>;
+use \yii\console\Exception as consoleException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\service\ToolsService;
@@ -107,15 +108,11 @@ class <?= $controllerClass ?> extends BaseController
 
                     // 未登录
                     if (\Yii::$app->admin->isGuest) {
-                        return $this->jsonFail('会话过期，请先登录', 401, [
-                            'error_hint' => '您还未登录'
-                        ]);
+                        throw new consoleException('会话过期，请先登录', 401);
                     }
 
                     // 其余页面 暂时无法访问
-                    return $this->jsonFail('该页面您暂时无法访问', 403, [
-                        'error_hint' => '该页面暂不对于已登录用户开放'
-                    ]);
+                    throw new consoleException('该页面您暂时无法访问', 403);
                 }
             ]
         ];

@@ -72,12 +72,6 @@ var app = function () {
                 }
             },
             /**
-             * 初始化的逻辑
-             */
-            init: function () {
-
-            },
-            /**
              * 顶部查询 - 初始化查询[FORM]
              * @returns {boolean}
              */
@@ -117,7 +111,7 @@ var app = function () {
 
                 // 获取各模块的值
                 $w.request({
-                    url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.setting'),
+                    url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.setting'),
                     type: 'get',
                     data: {
                         type: 'index' // 首页
@@ -182,7 +176,7 @@ var app = function () {
 
                 // 获取各模块的值
                 $w.request({
-                    url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.list'),
+                    url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.list'),
                     type: 'get',
                     data: {
                         page: this.page,
@@ -325,7 +319,7 @@ var app = function () {
 
                     // 获取各模块的值
                     $w.request({
-                        url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.open'),
+                        url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.open'),
                         type: 'POST',
                         data: {idList: $id},
                         dataType: "json",
@@ -391,7 +385,7 @@ var app = function () {
 
                     // 获取各模块的值
                     $w.request({
-                        url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.disabled'),
+                        url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.disabled'),
                         type: 'POST',
                         data: {idList: $id},
                         dataType: "json",
@@ -479,7 +473,7 @@ var app = function () {
 
                 // 获取各模块的值
                 $w.request({
-                    url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.sort'),
+                    url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.sort'),
                     type: 'POST',
                     data: {
                         idList: $row['id'],
@@ -518,7 +512,7 @@ var app = function () {
             */
             goToCreate: function () {
 
-                this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.create', {
+                this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerID(1)?>.create', {
                     is_iframe: 1, // 隐藏尾部
                 });
                 this.pageDialog.loading = true; // 页面弹出层加载中
@@ -534,7 +528,7 @@ var app = function () {
             */
             goToUpdate: function ($id) {
 
-                this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerShowID(1)?>.update', {
+                this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerID(1)?>.update', {
                     id: $id,
                     is_iframe: 1, // 隐藏尾部
                 });

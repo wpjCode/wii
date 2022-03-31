@@ -16,7 +16,6 @@ use yii\db\BaseActiveRecord;
 use yii\db\Schema;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
-use yii\web\Controller;
 
 /**
  * Generates CRUD
@@ -75,11 +74,6 @@ class Generator extends \wpjCode\wii\Generator
      */
     public $controllerClass;
     /**
-     * [页面展示]控制器布局文件路径
-     * @var
-     */
-    public $controllerShowLayout;
-    /**
      * 控制器继承的基础控制器
      * @var string
      */
@@ -91,12 +85,12 @@ class Generator extends \wpjCode\wii\Generator
     public $strictInflector = true;
 
     protected static $setting = [
-        'baseViewPath' => '', // 根[模板]路径
-        'baseViewAlias' => '@app/views/', // 根[模板]别名
-        'baseControllerPath' => 'app/controllers', // 根[控制器]路径
+        'baseViewPath'          => '', // 根[模板]路径
+        'baseViewAlias'         => '@app/views/', // 根[模板]别名
+        'baseControllerPath'    => 'app/controllers', // 根[控制器]路径
         'modulesControllerPath' => 'app/modules/{name}/controllers', // 模块[控制器]路径
-        'modulesViewPath' => '@app/modules/{name}/views', // 模块[模板]路径
-        'modulesViewFilePath' => '@app/modules/{name}/views/{fileName}' // 模块[模板文件]路径
+        'modulesViewPath'       => '@app/modules/{name}/views', // 模块[模板]路径
+        'modulesViewFilePath'   => '@app/modules/{name}/views/{fileName}' // 模块[模板文件]路径
     ];
 
     public function __construct(array $config = [])
@@ -146,15 +140,15 @@ class Generator extends \wpjCode\wii\Generator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['controllerClass', 'baseModelClass', 'expName', 'controllerShowLayout', 'viewPath', 'jsPath', 'cssPath'], 'filter', 'filter' => 'trim'],
-            [['baseModelClass', 'controllerClass', 'expName', 'viewPath', 'controllerShowLayout', 'jsPath', 'cssPath'], 'required'],
+            [['controllerClass', 'baseModelClass', 'expName', 'viewPath', 'jsPath', 'cssPath'], 'filter', 'filter' => 'trim'],
+            [['baseModelClass', 'controllerClass', 'expName', 'viewPath', 'jsPath', 'cssPath'], 'required'],
             [['baseModelClass', 'controllerClass'], 'match', 'pattern' => '/^[\w\\\\]*$/', 'message' => $this->langString('just characters and backslashes')],
             [['baseModelClass'], 'validateClass', 'params' => ['extends' => BaseActiveRecord::className()]],
             // [['baseControllerClass'], 'validateClass', 'params' => ['extends' => Controller::className()]],
             [['controllerClass'], 'match', 'pattern' => '/Controller$/', 'message' => $this->langString('controller suffixed error')],
             [['controllerClass'], 'match', 'pattern' => '/(^|\\\\)[A-Z][^\\\\]+Controller$/', 'message' => $this->langString('controller name error')],
             [['controllerClass'], 'validateNewClass'],
-            [['controllerShowLayout'], 'validateFile']
+//            [['controllerShowLayout'], 'validateFile']
         ]);
     }
 
@@ -164,13 +158,12 @@ class Generator extends \wpjCode\wii\Generator
     public function attributeLabels()
     {
         return array_merge(parent::attributeLabels(), [
-            'expName' => $this->langString('Exp Name'),
-            'baseModelClass' => $this->langString('Base Model Class'),
-            'controllerClass' => $this->langString('Controller Do Class'),
-            'controllerShowLayout' => $this->langString('Controller Show Layout'),
-            'viewPath' => $this->langString('View Path'),
-            'jsPath' => $this->langString('Js Path'),
-            'cssPath' => $this->langString('Css Path'),
+            'expName'             => $this->langString('Exp Name'),
+            'baseModelClass'      => $this->langString('Base Model Class'),
+            'controllerClass'     => $this->langString('Controller Do Class'),
+            'viewPath'            => $this->langString('View Path'),
+            'jsPath'              => $this->langString('Js Path'),
+            'cssPath'             => $this->langString('Css Path'),
             'baseControllerClass' => $this->langString('Base Controller Class')
         ]);
     }
@@ -181,13 +174,12 @@ class Generator extends \wpjCode\wii\Generator
     public function hints()
     {
         return array_merge(parent::hints(), [
-            'expName' => $this->langString('Exp Name Hint'),
-            'baseModelClass' => $this->langString('Base Model Class Hint'),
-            'controllerClass' => $this->langString('Controller Do Class Hint'),
-            'controllerShowLayout' => $this->langString('Controller Show Layout Hint'),
-            'viewPath' => $this->langString('View Path Hint'),
-            'jsPath' => $this->langString('Js Path Hint'),
-            'cssPath' => $this->langString('Css Path Hint'),
+            'expName'             => $this->langString('Exp Name Hint'),
+            'baseModelClass'      => $this->langString('Base Model Class Hint'),
+            'controllerClass'     => $this->langString('Controller Do Class Hint'),
+            'viewPath'            => $this->langString('View Path Hint'),
+            'jsPath'              => $this->langString('Js Path Hint'),
+            'cssPath'             => $this->langString('Css Path Hint'),
             'baseControllerClass' => $this->langString('Base Controller Class Hint')
         ]);
     }
@@ -198,8 +190,7 @@ class Generator extends \wpjCode\wii\Generator
     public function requiredTemplates()
     {
         return [
-            'doController.php',
-            'showController.php',
+            'controller.php',
             'views/_form.php',
             'views/create.php',
             'views/index.php',
@@ -243,16 +234,16 @@ class Generator extends \wpjCode\wii\Generator
         $tempBasePath = $this->getTemplatePath();
         // 模板视图文件夹
         $tempViewPath = $tempBasePath . '/views';
-        $files = [];
+        $files        = [];
 
         // ****** 1、页面展示控制器渲染 ******
         $controllerClass = Yii::getAlias('@' . str_replace('\\', '/', ltrim($this->controllerClass, '\\')) . '.php');
-        $files[] = new CodeFile($controllerClass, $this->render('showController.php'));
+        $files[]         = new CodeFile($controllerClass, $this->render('controller.php'));
 
         // ****** 2、各页面[CSS]渲染 ******
         // [CSS]即将渲染到的目录
         $cssPath = $this->getCssPath();
-        $files = array_merge($files, [
+        $files   = array_merge($files, [
             // 列表页[css]
             new CodeFile("{$cssPath}-index.css",
                 $this->render(Yii::getAlias("/statics/css/index.php"))),
@@ -263,7 +254,7 @@ class Generator extends \wpjCode\wii\Generator
 
         // ****** 3、各页面[JS]渲染 ******
         $jsPath = $this->getJsPath();
-        $files = array_merge($files, [
+        $files  = array_merge($files, [
             // 列表页[js]
             new CodeFile("{$jsPath}-index.js",
                 $this->render(Yii::getAlias("/statics/js/index.php"))),
@@ -295,30 +286,13 @@ class Generator extends \wpjCode\wii\Generator
     }
 
     /**
-     * 获取[api]控制器名称
-     * @param int $type 类型[0 - do-name; 1 - doName]
-     * @return string the do controller ID (without the module ID prefix)
-     */
-    public function getControllerDoId($type = 0)
-    {
-        $pos = strrpos($this->controllerDoClass, '\\');
-        $class = substr(substr($this->controllerDoClass, $pos + 1), 0, -10);
-
-        if ($type == 1) {
-            return Inflector::variablize($class);
-        }
-
-        return Inflector::camel2id($class, '-', $this->strictInflector);
-    }
-
-    /**
      * 获取[HTML]控制器名称
      * @param int $type 类型[0 - do-name; 1 - doName]
      * @return string the show controller ID (without the module ID prefix)
      */
-    public function getControllerShowID($type = 0)
+    public function getControllerID($type = 0)
     {
-        $pos = strrpos($this->controllerClass, '\\');
+        $pos   = strrpos($this->controllerClass, '\\');
         $class = substr(substr($this->controllerClass, $pos + 1), 0, -10);
 
         if ($type == 1) {
@@ -333,18 +307,19 @@ class Generator extends \wpjCode\wii\Generator
      */
     public function getViewPath()
     {
+
         if (empty($this->viewPath)) {
-            return Yii::getAlias(self::$setting['baseViewAlias'] . $this->getControllerShowID());
+            return Yii::getAlias(self::$setting['baseViewAlias'] . $this->getControllerID());
         }
 
         return Yii::getAlias(str_replace('\\', '/', $this->viewPath));
     }
 
     /**
-     * 获取[页面展示]控制器路径
+     * 获取控制器路径
      * @return string
      */
-    public function getControllerShowPath()
+    public function getControllerPath()
     {
 
         return Yii::getAlias(str_replace('\\', '/', $this->controllerClass));
@@ -358,10 +333,17 @@ class Generator extends \wpjCode\wii\Generator
     {
 
         if (empty($this->cssPath)) {
-            return Yii::getAlias(self::$setting['baseViewAlias'] . $this->getControllerShowID());
+            return Yii::getAlias(self::$setting['baseViewAlias'] . $this->getControllerID());
         }
 
-        return Yii::getAlias(str_replace('\\', '/', $this->cssPath));
+        ### 别名
+        $path = Yii::getAlias(str_replace('\\', '/', $this->cssPath));
+        // 包含了直接返回
+        if (strstr($path, '/' . $this->getControllerID())) return $path;
+        // 不包含结尾添加控制器前缀
+        return Yii::getAlias(str_replace('\\', '/',
+                $path . '/' . $this->getControllerID())
+        );
     }
 
     /**
@@ -372,10 +354,17 @@ class Generator extends \wpjCode\wii\Generator
     {
 
         if (empty($this->jsPath)) {
-            return Yii::getAlias(self::$setting['baseViewAlias'] . $this->getControllerShowID());
+            return Yii::getAlias(self::$setting['baseViewAlias'] . $this->getControllerID());
         }
 
-        return Yii::getAlias(str_replace('\\', '/', $this->jsPath));
+        ### 别名
+        $path = Yii::getAlias(str_replace('\\', '/', $this->jsPath));
+        // 包含了直接返回
+        if (strstr($path, '/' . $this->getControllerID())) return $path;
+        // 不包含结尾添加控制器前缀
+        return Yii::getAlias(str_replace('\\', '/',
+            $path . '/' . $this->getControllerID())
+        );
     }
 
     /**
@@ -409,9 +398,9 @@ class Generator extends \wpjCode\wii\Generator
         // 将css路径中的web前全去除
         $webPath = Yii::getAlias('@app');
         $replace = [
-            '@web' => '',
+            '@web'            => '',
             $webPath . '/web' => '',
-            $webPath => '',
+            $webPath          => '',
         ];
 
         foreach ($replace as $k => $v) {
@@ -465,9 +454,9 @@ class Generator extends \wpjCode\wii\Generator
         // 将[js]路径中的web前全去除
         $webPath = Yii::getAlias('@app');
         $replace = [
-            '@web' => '',
+            '@web'            => '',
             $webPath . '/web' => '',
-            $webPath => '',
+            $webPath          => '',
         ];
 
         foreach ($replace as $k => $v) {
@@ -497,28 +486,31 @@ class Generator extends \wpjCode\wii\Generator
     public function getRenderViewPath($path)
     {
 
-        // 页面展示控制器 路径
-        $showConPath = $this->getControllerShowPath();
-        // 页面展示控制器 文件夹
-        $showConDir = StringHelper::dirname($showConPath);
+        // 控制器 路径
+        $controllerPath = $this->getControllerPath();
+        // 控制器 文件夹
+        $controllerDir = StringHelper::dirname($controllerPath);
 
         // ****** 控制器为根控制器 - 默认返回 ******
         $basePath = self::$setting['baseControllerPath'];
-        if ($showConDir == $basePath && $this->isControlViewPath($showConPath)) {
+        if ($controllerDir == $basePath && $this->isControlViewPath($controllerPath)) {
             return $path;
         }
 
         // ****** 走模块控制器 - 默认返回 ******
         $modulesConList = [];
         foreach (Yii::$app->modules as $k => $v) {
-            $modulesConList[] = str_replace('{name}', $k, self::$setting['modulesControllerPath']);
+            $modulesConList[] = str_replace('{name}', $k,
+                self::$setting['modulesControllerPath']
+            );
         }
-        if (in_array($showConDir, $modulesConList) && $this->isControlViewPath($showConPath)) {
+
+        if (in_array($controllerDir, $modulesConList) && $this->isControlViewPath($controllerPath)) {
             return $path;
         }
-        $rootPath = dirname(Yii::getAlias('@webroot'));
+        $rootPath  = dirname(Yii::getAlias('@webroot'));
         $inputPath = $this->getViewPath() . '/' . $path;
-        $endPath = str_replace($rootPath, '', $inputPath);
+        $endPath   = str_replace($rootPath, '', $inputPath);
         return '@app' . $endPath;
     }
 
@@ -544,7 +536,7 @@ class Generator extends \wpjCode\wii\Generator
 
         // 走模块控制器 - 默认返回
         foreach (Yii::$app->modules as $k => $v) {
-            $modulesConPath = str_replace('{name}', $k, self::$setting['modulesControllerPath']);
+            $modulesConPath  = str_replace('{name}', $k, self::$setting['modulesControllerPath']);
             $modulesViewPath = str_replace('{name}', $k, self::$setting['modulesViewFilePath']);
             $modulesViewPath = str_replace('{fileName}', $conDoName, $modulesViewPath);
             $modulesViewList = [
@@ -552,7 +544,6 @@ class Generator extends \wpjCode\wii\Generator
                 ltrim($modulesViewPath, '\\'),
                 $modulesViewPath . '/'
             ];
-
             // 控制器路径是modules中模板文件也是当前modules中的模板文件夹下的控制器操作文件夹
             if ($modulesConPath == $pathInfo['dirname'] && in_array($this->viewPath, $modulesViewList)) {
 
@@ -575,7 +566,7 @@ class Generator extends \wpjCode\wii\Generator
         }
         /* @var $class \yii\db\ActiveRecord */
         $class = $this->baseModelClass;
-        $pk = $class::primaryKey();
+        $pk    = $class::primaryKey();
 
         return $pk[0];
     }
@@ -861,7 +852,7 @@ EOT;
     {
         /* @var $class ActiveRecord */
         $class = $this->baseModelClass;
-        $pks = $class::primaryKey();
+        $pks   = $class::primaryKey();
         if (count($pks) === 1) {
             if (is_subclass_of($class, 'yii\mongodb\ActiveRecord')) {
                 return "'id' => (string)\$model->{$pks[0]}";
@@ -890,7 +881,7 @@ EOT;
     {
         /* @var $class ActiveRecord */
         $class = $this->baseModelClass;
-        $pks = $class::primaryKey();
+        $pks   = $class::primaryKey();
         if (count($pks) === 1) {
             return '$id';
         }
@@ -906,7 +897,7 @@ EOT;
     {
         /* @var $class ActiveRecord */
         $class = $this->baseModelClass;
-        $pks = $class::primaryKey();
+        $pks   = $class::primaryKey();
         if (($table = $this->getTableSchema()) === false) {
             $params = [];
             foreach ($pks as $pk) {
@@ -991,23 +982,23 @@ EOT;
         $baseName = StringHelper::basename($this->baseModelClass);
 
         // 基础类名去关键词
-        $baseName = str_replace(['Model'], [''], $baseName);
+        $baseName    = str_replace(['Model'], [''], $baseName);
         $controlFile = Yii::getAlias('@' . str_replace('\\', '/',
                 ltrim($this->controllerClass, '\\')) . '.php');
-        $files = new CodeFile($controlFile, '');
-        $route = $files->getRoute(false);
+        $files       = new CodeFile($controlFile, '');
+        $route       = $files->getRoute(false);
 
         $row = [
             '下面是【后台】页面展示连接：',
             '{space}// [' . $this->expName . ']列表 页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . '.html' => \$routePre . '" .
-            $route . "/index',",
+            "{space}\$urlPre . '/" . lcfirst($baseName) . ".html' => \$routePre . '" .
+            $route . "/index-page',",
             '{space}// [' . $this->expName . ']添加 页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.html' => \$routePre . '" .
-            $route . "/create',",
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "Create.html' => \$routePre . '" .
+            $route . "/create-page',",
             '{space}// [' . $this->expName . ']修改 页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.html' => \$routePre . '" .
-            $route . "/update',",
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "Update.html' => \$routePre . '" .
+            $route . "/update-page',",
             '下面是【前台】页面展示连接：',
             '{space}// ' . $this->expName,
             '{space}' . lcfirst($baseName) . ': {',
@@ -1021,19 +1012,19 @@ EOT;
         $row = array_merge($row, [
             '下面是【后台】API操作连接：',
             '{space}// [' . $this->expName . ']获取设置 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Setting.api' => \$routePre . '" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "Setting.api' => \$routePre . '" .
             $route . "/setting',",
             '{space}// [' . $this->expName . ']获取列表 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'List.api' => \$routePre . '" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "List.api' => \$routePre . '" .
             $route . "/list',",
             '{space}// [' . $this->expName . ']提交添加 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Create.api' => \$routePre . '" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "Create.api' => \$routePre . '" .
             $route . "/create',",
             '{space}// [' . $this->expName . ']获取详情 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Detail.api' => \$routePre . '" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "Detail.api' => \$routePre . '" .
             $route . "/detail',",
             '{space}// [' . $this->expName . ']提交更新 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "' . 'Update.api' => \$routePre . '" .
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "Update.api' => \$routePre . '" .
             $route . "/update',"
         ]);
 
@@ -1041,10 +1032,10 @@ EOT;
         if (in_array('status', $this->getColumnNames())) {
             $row[] = '{space}// [' . $this->expName . ']禁用 API';
             $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
-                "' . 'Disabled.api' => \$routePre . '" . $route . "/disabled',";
+                "Disabled.api' => \$routePre . '" . $route . "/disabled',";
             $row[] = '{space}// [' . $this->expName . ']开启 API';
             $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
-                "' . 'Open.api' => \$routePre . '" . $route . "/open',";
+                "Open.api' => \$routePre . '" . $route . "/open',";
         }
         // 有排序增加排序接口
         if (
@@ -1053,7 +1044,7 @@ EOT;
         ) {
             $row[] = '{space}// [' . $this->expName . ']修改排序 API';
             $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
-                "' . 'Sort.api' => \$routePre . '" . $route . "/sort',";
+                "Sort.api' => \$routePre . '" . $route . "/sort',";
         }
 
         // ☆--前台API操作连接--☆
@@ -1098,7 +1089,7 @@ EOT;
     {
         /* @var $class ActiveRecord */
         $class = $this->baseModelClass;
-        $db = $class::getDb();
+        $db    = $class::getDb();
         return $db instanceof \yii\db\Connection ? $db->driverName : null;
     }
 }

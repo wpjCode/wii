@@ -97,7 +97,7 @@ EOT;
 
                 // 获取各模块的值
                 $w.request({
-                    url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.setting'),
+                    url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.setting'),
                     type: 'get',
                     data: {
                         type: 'form' // 表单页
@@ -154,7 +154,7 @@ EOT;
 
                 // 获取各模块的值
                 $w.request({
-                    url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.detail'),
+                    url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.detail'),
                     type: 'get',
                     data: {id: $w.getParams('id')},
                     dataType: "json",
@@ -248,7 +248,7 @@ EOT;
                     });
 
                     $w.request({
-                        url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.create'),
+                        url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.create'),
                         type: 'POST',
                         data: that.form,
                         dataType: "json",
@@ -311,7 +311,7 @@ EOT;
                     });
 
                     $w.request({
-                        url: $w.getApiUrl('<?=$generator->getControllerDoID(1)?>.update'),
+                        url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.update'),
                         type: 'POST',
                         data: that.form,
                         dataType: "json",
@@ -338,10 +338,10 @@ EOT;
                                     message: event.msg ? event.msg : '操作失败，请稍后尝试'
                                 });
                             }
-                        }
 
-                        // 返回上一页
-                        that.cancel(true);
+                            // 返回上一页
+                            that.cancel(true);
+                        }
                     });
                 });
             },
@@ -359,7 +359,18 @@ EOT;
     if ($v->isPrimaryKey) continue;
     // 允许空略过
     if ($v->allowNull) continue;
-    echo <<<EOT
+    // 排序字段
+    if ($v->name == 'sort' || $v->name == 'list_order') echo <<<EOT
+
+                    {$v->name}: [
+                        {required: true, message: '请完善排序', trigger: 'blur'},
+                        {
+                            validator: \$w.validateNumRange, message: false, trigger: 'blur',
+                            max: this.setting.max_sort, min: this.setting.min_sort
+                        },
+EOT;
+
+    else echo <<<EOT
                     {$v->name}: [
                         {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'},
 EOT;

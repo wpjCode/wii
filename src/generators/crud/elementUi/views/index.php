@@ -11,8 +11,6 @@ use \app\assets\BackendAsset as Asset;
 use \app\models\\tableModel\AdminRoleModel;
 
 /* @var \$this yii\web\View */
-/* @var \$apiModule string */
-/* @var \$apiController string */
 ?>
 EOT;
 ?>
@@ -27,6 +25,7 @@ EOT;
                     </el-breadcrumb-item>
                     <el-breadcrumb-item @dblclick.native="window.open(window.location.href)">
                         <?= $generator->expName ?>
+
                     </el-breadcrumb-item>
                 </el-breadcrumb>
             </el-col>
@@ -43,12 +42,12 @@ EOT;
                         <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <?= '<?php if (AdminRoleModel::checkAuth(\'open\', $apiController, $apiModule)) { ?>' . "\n" ?>
+                        <?= '<?php if (AdminRoleModel::checkAuth(\'open\')) { ?>' . "\n" ?>
                         <el-dropdown-item size="mini" @click.native="openItem(null)">
                             批量恢复
                         </el-dropdown-item>
                         <?= '<?php } ?>' . "\n" ?>
-                        <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\', $apiController, $apiModule)) { ?>' . "\n" ?>
+                        <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\')) { ?>' . "\n" ?>
                         <el-dropdown-item size="mini" @click.native="disabledItem(null)" divided>
                             批量禁用
                         </el-dropdown-item>
@@ -225,7 +224,7 @@ EOT;
 
             <el-table-column prop="sort" label="排序" width="85" title="双击修改排序" sortable="custom">
                 <template slot-scope="scope">
-                    <?= '<?php if (AdminRoleModel::checkAuth(\'sort\', $apiController, $apiModule)) { ?>' . "\n" ?>
+                    <?= '<?php if (AdminRoleModel::checkAuth(\'sort\')) { ?>' . "\n" ?>
                     <div class="column-border-dashed pointer" title="双击修改排序"
                          @dblclick="showEditSort(scope.row)">
                         <el-popover placement="top" width="160"
@@ -276,14 +275,14 @@ EOT;
                     </el-button>
                     <?= '<?php } ?>' . "\n" ?>
 <?php if ($model->hasAttribute('status')) { ?>
-                    <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\', $apiController, $apiModule)) { ?>' . "\n" ?>
+                    <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\')) { ?>' . "\n" ?>
                     <el-button type="text text-danger" size="small"
                                v-if="scope.row.status != setting.status_list.disabled.value"
                                @click.native="disabledItem(scope.row.id)">
                         {{setting.status_list['disabled'].text}}
                     </el-button>
                     <?= '<?php } ?>' . "\n" ?>
-                    <?= '<?php if (AdminRoleModel::checkAuth(\'open\', $apiController, $apiModule)) { ?>' . "\n" ?>
+                    <?= '<?php if (AdminRoleModel::checkAuth(\'open\')) { ?>' . "\n" ?>
                     <el-button type="text text-success" size="small"
                                v-else @click.native="openItem(scope.row.id)">
                         {{setting.status_list['open'].text}}

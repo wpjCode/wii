@@ -49,11 +49,6 @@ echo $form->field($generator, 'cssPath', [
     'reduceFolder' => true,
     'reduceFolderTitle' => $generator->langString('reduce folder title')
 ]);
-echo $form->field($generator, 'controllerShowLayout', [
-    'hasFileSvg' => true,
-    'fileSvgTitle' => $generator->langString('chose file/folder'),
-    'useAlias' => true
-]);
 /* echo $form->field($generator, 'baseControllerClass', [
     'hasFileSvg' => true,
     'fileSvgTitle' => $generator->langString('chose file/folder')

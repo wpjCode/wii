@@ -20,8 +20,6 @@ use \app\models\\tableModel\AdminRoleModel;
 /* @var \$this yii\web\View */
 /* @var \$model {$baseModelNS} */
 /* @var \$form yii\widgets\ActiveForm */
-/* @var \$apiModule string */
-/* @var \$apiController string */
 
 ?>
 EOT;
@@ -49,12 +47,12 @@ if (in_array($attribute->name, $safeAttributes)) {
 
 <el-footer class="bottom-button" :height="50">
     <el-button size="mini" type="danger" @click="cancel">取消</el-button>
-    <?= '<?php if (AdminRoleModel::checkAuth(\'create\', $apiController, $apiModule)) { ?>' . "\n" ?>
+    <?= '<?php if (AdminRoleModel::checkAuth(\'create\')) { ?>' . "\n" ?>
     <el-button size="mini" type="success" @click="submitCreate" v-if="setting.isCreate === true">
         创建
     </el-button>
     <?= '<?php } ?>' . "\n" ?>
-    <?= '<?php if (AdminRoleModel::checkAuth(\'update\', $apiController, $apiModule)) { ?>' . "\n" ?>
+    <?= '<?php if (AdminRoleModel::checkAuth(\'update\')) { ?>' . "\n" ?>
     <el-button size="mini" type="primary" @click="submitUpdate" v-if="setting.isCreate === false">
         保存
     </el-button>

@@ -6,9 +6,6 @@
 <?php echo <<<EOT
 <?php
 
-/* @var \$apiModule string */
-/* @var \$apiController string */
-
 ?>
 EOT;
 ?>
@@ -31,7 +28,5 @@ EOT;
             </el-col>
         </el-row>
     </el-header>
-    <?= "<?= " ?>$this->render('_form', [
-        'isCreate' => true, 'apiModule' => $apiModule, 'apiController' => $apiController
-    ]) ?>
+    <?= "<?= " ?>$this->render('_form', ['isCreate' => true]) ?>
 </el-container>
