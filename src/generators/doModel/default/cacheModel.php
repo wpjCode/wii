@@ -481,14 +481,13 @@ echo <<<EOT
      */
     public function saveDbData() {
 
+        // 主键
+        \$pk = \$this->getPrimaryKey();
         // 需要新建 - 初始化
-        \$db = clone \$this->getDbInstance();
+        \$db = NewsCategoryDbModel::loadModel(!empty(\$pk) ? \$pk : true);
         // 保存
         \$db->setAttributes(\$this->getAttributes());
-        if (!\$db->saveData()) {
-            \$this->addErrors(\$db->getErrors());
-            return false;
-        }
+        if (!\$db->saveData()) {\$this->addErrors(\$db->getErrors());return false;}
         // 数据库数据原封不动赋值下 - 以数据库为主
         \$this->setAttributes(\$db->getAttributes());
 
