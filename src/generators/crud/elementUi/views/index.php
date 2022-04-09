@@ -58,7 +58,7 @@ EOT;
         </el-row>
     </el-header>
     <el-main class="content-wrapper transits bg-white">
-        <div class="pl-10 pr-10 pt-10 pb-10" style="display: none;">
+        <div class="p-10" style="display: none;">
             <!-- 提醒 START -->
             <div class="tip">
                 <el-collapse v-model="setting.activeNotice" accordion>
@@ -83,66 +83,70 @@ EOT;
         </div>
         <el-form :inline="true" :model="searchForm" @submit.native.prevent
                  class="search-container">
-        <?php if ($model->hasAttribute('status')) { ?>
+            <div class="item flex-center-auto">
+                <el-form-item label="">
+                    <el-input placeholder="请输入内容" v-model="searchTopValue" size="small" type="text"
+                              class="input-with-select vert-align-init">
+                        <el-select v-model="searchTopType" slot="prepend" size="small"
+                                   placeholder="请选择" style="width: 130px;">
 
-            <el-form-item label="状态" class="pr-30" v-if="!setting.isSmallScreen">
-                <el-radio-group size="" v-model="searchForm.status" @change="handleCurrentChange(1)">
-                    <el-radio-button label="">全部</el-radio-button>
-                    <el-radio-button v-for="item in setting.status_list" :label="item.value">
-                        {{item.text}}列表
-                    </el-radio-button>
-                </el-radio-group>
-            </el-form-item>
-        <?php } ?>
+                            <el-option label="编号" value="id"></el-option>
+                            <?php if ($model->hasAttribute('title')) { ?>
+                                <el-option label="标题" value="title"></el-option>
+                            <?php } if ($model->hasAttribute('name')) { ?>
+                                <el-option label="名称" value="name"></el-option>
+                            <?php } ?>
+                        </el-select>
+                        <el-button slot="append" type="primary" icon="el-icon-search"
+                                   size="small" @click="handleCurrentChange(1)">
+                            搜索
+                        </el-button>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="" class="el-form-item-more">
+                    <el-popover :width="setting.bodyWidth * 0.9" v-model="showAllSearch"
+                                placement="bottom" @hide="moreSearchCancel" popper-class="ph-20">
+                        <el-form class="search-container text-center"
+                                 :inline="true" @submit.native.prevent>
+                            <el-form-item label="" class="pr-30">
+                                <el-empty description="暂无更多查询" image-size="70"
+                                          class="no-p"></el-empty>
+                                <!-- 可以删除empty组件增加自己其他查询，一般非必要查询都放入这里面 -->
+                            </el-form-item>
+                        </el-form>
+                        <div class="mt-20">
+                            <el-button type="danger" size="mini" @click="moreSearchReset">
+                                重置
+                            </el-button>
+                            <el-button type="primary" size="mini" @click="moreSearchSubmit">
+                                确定
+                            </el-button>
+                        </div>
+                        <el-button :type="showAllSearch ? 'primary' : ''" size="mini"
+                                   @click.native="moreSearchClick" slot="reference">
+                            <span  :class="showAllSearch ? '' : 'font-fourth'">
+                                更多查询&nbsp;
+                                <i v-if="!showAllSearch" class="el-icon-setting font-fourth"></i>
+                                <i v-else class="el-icon-setting el-icon-s-tools"></i>
+                            </span>
+                        </el-button>
+                    </el-popover>
+                </el-form-item>
+            </div>
+            <div class="item flex-center-auto">
+            <?php if ($model->hasAttribute('status')) { ?>
 
-            <el-form-item label="" :class="!setting.isSmallScreen?'float-right':''">
-                <el-input placeholder="请输入内容" v-model="searchTopValue" size="small" type="text"
-                          class="input-with-select vert-align-init">
-                    <el-select v-model="searchTopType" slot="prepend" size="small"
-                               placeholder="请选择" style="width: 130px;">
-
-                        <el-option label="编号" value="id"></el-option>
-                        <?php if ($model->hasAttribute('title')) { ?>
-                            <el-option label="标题" value="title"></el-option>
-                        <?php } if ($model->hasAttribute('name')) { ?>
-                            <el-option label="名称" value="name"></el-option>
-                        <?php } ?>
-                    </el-select>
-                    <el-button slot="append" type="primary" icon="el-icon-search"
-                               size="small" @click="handleCurrentChange(1)">
-                        搜索
-                    </el-button>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="" class="el-form-item-more" v-show="setting.isSmallScreen">
-                <el-button type="text" @click="moreSearchClick">
-                    <span v-if="!setting.showAllSearch" class="font-fourth">
-                        更多&nbsp;<i class="el-icon-caret-bottom font-fourth"></i>
-                    </span>
-                    <span v-else>
-                        隐藏&nbsp;<i class="el-icon-caret-top"></i>
-                    </span>
-                </el-button>
-            </el-form-item>
-            <el-collapse-transition>
-                <div v-show="setting.showAllSearch" id="searchAllAni" class="more-search-container">
-                    <!-- 此处添加[el-form-item] -->
-                    <?php if ($model->hasAttribute('status')) {?>
-
-                        <el-form-item label="状态" class="pr-30 mt-20">
-                            <el-radio-group v-model="searchForm.status"
-                                            @change="handleCurrentChange(1)">
-                                <el-radio-button label="">全部</el-radio-button>
-                                <el-radio-button v-for="item in setting.status_list"
-                                                 :label="item.value">
-                                    {{item.text}}列表
-                                </el-radio-button>
-                            </el-radio-group>
-                        </el-form-item>
-                    <?php } ?>
-
-                </div>
-            </el-collapse-transition>
+                <el-form-item label="状态" class="pr-30">
+                    <el-radio-group v-model="searchForm.status" @change="handleCurrentChange(1)"
+                                    size="">
+                        <el-radio-button label="">全部列表</el-radio-button>
+                        <el-radio-button v-for="item in setting.status_list" :label="item.value">
+                            {{item.text}}列表
+                        </el-radio-button>
+                    </el-radio-group>
+                </el-form-item>
+            <?php } ?>
+            </div>
         </el-form>
         <!-- 主列表 表格 START -->
         <el-table :data="dataList" style="width: 100%" class="" @selection-change="handleSelectionChange"

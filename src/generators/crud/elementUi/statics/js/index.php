@@ -17,13 +17,16 @@ var app = function () {
             settingOver: false,
             setting: {
                 pageType: 'index', // 页面类型
-                showAllSearch: false, // 是否出现[展示全部查询]按钮
+                bodyWidth: document.documentElement.clientWidth, // body宽度
                 smallScreenWidth: 998, // 小屏幕临界点(px)
                 isSmallScreen: false, // 是否是小屏幕
             },
             searchForm: {}, // 搜索字段
             searchTopType: 'id', // 顶部搜索类型
             searchTopValue: '', // 顶部搜索内容
+            showAllSearch: false, // 是否出现[更多查询]按钮
+            searchFormAll: {},    // [更多查询]搜索字段
+            allSearchDid: false,  // 已经提交过[更多查询]
             searchOrderField: '', // 查询排序字段
             searchOrderType: '', // 查询排序类型
             dataList: [], // 数据列表
@@ -98,6 +101,23 @@ var app = function () {
                 }
             },
             /**
+             * 顶部[更多查询] - 初始化查询[FORM]
+             * @returns {boolean}
+             */
+            initSearchFormAll: function () {
+
+                // 默认搜索字段
+                this.searchFormAll = {};
+                // 赋值默认值
+                for (var i in this.setting) {
+                    if (!this.setting.hasOwnProperty(i)) continue;
+                    // 不存在指定字符串直接返回
+                    if (i.indexOf('default_') === -1) continue;
+                    if (this.searchFormAll[i.replace('default_', '')] === undefined) continue;
+                    this.searchFormAll[i.replace('default_', '')] = this.setting[i];
+                }
+            },
+            /**
              * 获取设置
              * @returns {boolean}
              */
@@ -146,7 +166,9 @@ var app = function () {
                         }
 
                         // 最终清空性初始化查询
-                        that.initSearchForm(true);
+                        that.initSearchForm();
+                        // 最终清空性初始化更多查询
+                        that.initSearchFormAll();
 
                         // 监测屏幕大小变化
                         return $(window).resize(function() {
@@ -219,10 +241,63 @@ var app = function () {
              * [更多查询]按钮点击
              */
             moreSearchClick: function () {
-                if(this.setting.showAllSearch) {
-                    return this.setting.showAllSearch = false;
+                if(this.showAllSearch) {
+                    return this.showAllSearch = false;
                 }
-                this.setting.showAllSearch = true;
+                this.showAllSearch = true;
+            },
+            /**
+            * [更多查询]提交
+            */
+            moreSearchSubmit: function () {
+
+                // 先将更多查询合并入普通查询
+                this.searchForm = $w.eachAdd(this.searchForm, this.searchFormAll);
+                this.page = 1;  // 默认到 第一页
+                this.getList(); // 查询列表
+
+                var that = this;
+                this.$nextTick(function () {
+                    that.allSearchDid = true;   // 更多搜索- 已提交过
+                    that.showAllSearch = false; // 更多搜索- 隐藏
+                });
+            },
+            /**
+            * [更多查询]取消
+            */
+            moreSearchCancel: function () {
+                // 如果未提交过则 重新初始化
+                if (!this.allSearchDid) {
+                    // 还原初始化
+                    this.initSearchFormAll();
+                }
+                // 以[普通查询]为主，[更多查询]中有的字段同步到[更多查询]
+                else for (var i in this.searchForm) {
+                    if (!this.searchForm.hasOwnProperty(i)) continue;
+                    if (this.searchFormAll[i] === undefined) continue;
+                    this.searchFormAll[i] = this.searchForm[i];
+                }
+
+                // 取消展示
+                this.showAllSearch = false;
+            },
+            /**
+            * [更多查询]重置
+            */
+            moreSearchReset: function () {
+
+                // 重新初始化
+                this.initSearchFormAll();
+
+                // 先将更多查询合并入普通查询
+                this.searchForm = $w.eachAdd(this.searchForm, this.searchFormAll);
+                // 默认到 第一页
+                this.page = 1;
+
+                var that = this;
+                this.$nextTick(function () {
+                    that.getList();
+                });
             },
             /**
              * 列表选择监测处理
