@@ -16,21 +16,22 @@ var app = function () {
             loadOver: false,
             settingOver: false,
             setting: {
-                pageType: 'index', // 页面类型
-                bodyWidth: document.documentElement.clientWidth, // body宽度
+                pageType: 'index',     // 页面类型
                 smallScreenWidth: 998, // 小屏幕临界点(px)
-                isSmallScreen: false, // 是否是小屏幕
+                isSmallScreen: false,  // 是否是小屏幕
+                bodyWidth: document.documentElement.clientWidth, // body宽度
             },
-            searchForm: {}, // 搜索字段
-            searchTopType: 'id', // 顶部搜索类型
-            searchTopValue: '', // 顶部搜索内容
+            searchForm: {},       // 搜索字段
+            searchTopType: 'id',  // 顶部搜索类型
+            searchTopValue: '',   // 顶部搜索内容
             showAllSearch: false, // 是否出现[更多查询]按钮
             searchFormAll: {},    // [更多查询]搜索字段
             allSearchDid: false,  // 已经提交过[更多查询]
             searchOrderField: '', // 查询排序字段
-            searchOrderType: '', // 查询排序类型
-            dataList: [], // 数据列表
+            searchOrderType: '',  // 查询排序类型
+            dataList: [],         // 数据列表
             handelSelectList: [], // 当前多选项
+            showTopScroll: false, // 是否已滚动，默认否
             page: 1,
             pageSize: 20,
             dataTotal: 0,
@@ -73,6 +74,13 @@ var app = function () {
                     }, "title", "#");
                     window.history.forward(1);
                 }
+
+                this.$nextTick(function () {
+                    // 监听主滚动条
+                    that.$refs['mainScroller'].wrap.addEventListener('scroll', function ($event) {
+                        that.showTopScroll = $event.srcElement.scrollTop > 10; // 顶部以滚动
+                    })
+                });
             },
             /**
              * 顶部查询 - 初始化查询[FORM]
@@ -666,6 +674,18 @@ var app = function () {
                     that.timer = null;               // 清空变量存储
                 }, 1000)
             }
-        }
+        },
+        computed: {
+        /**
+         * 获得顶部样式
+         */
+        getTopClass: function () {
+            var className = [];
+            // 如果已经滚动
+            if (this.showTopScroll) className.push('is-scroll');
+
+                return className.join(' ');
+            }
+        },
     });
 };

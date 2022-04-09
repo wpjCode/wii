@@ -16,7 +16,7 @@ EOT;
 ?>
 
 <el-container class="index-wrapper">
-    <el-header class="top-wrapper bg-white" height="auto">
+    <el-header class="top-wrapper bg-white" :class="getTopClass" height="auto">
         <el-row :inline="true" class="button-container">
             <el-col :xs="12" :sm="12" :md="12" :lg="5">
                 <el-breadcrumb separator="/">
