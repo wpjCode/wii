@@ -150,7 +150,7 @@ EOT;
         </el-form>
         <!-- 主列表 表格 START -->
         <el-table :data="dataList" style="width: 100%" class="" @selection-change="handleSelectionChange"
-                  @sort-change="handelSortChange">
+                  @sort-change="handleSortChange">
 
             <el-table-column type="selection" width="55"></el-table-column>
 

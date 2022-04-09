@@ -30,7 +30,7 @@ var app = function () {
             searchOrderField: '', // 查询排序字段
             searchOrderType: '',  // 查询排序类型
             dataList: [],         // 数据列表
-            handelSelectList: [], // 当前多选项
+            handleSelectList: [], // 当前多选项
             showTopScroll: false, // 是否已滚动，默认否
             page: 1,
             pageSize: 20,
@@ -323,7 +323,7 @@ var app = function () {
                     }
                 });
                 // 赋值
-                this.handelSelectList = id_list;
+                this.handleSelectList = id_list;
             },
             /**
              * 分页大小监测处理
@@ -349,7 +349,7 @@ var app = function () {
              * 排序检测处理
              * @param $column
              */
-            handelSortChange: function ($column) {
+            handleSortChange: function ($column) {
                 // 没有排序|字段 置空
                 if (!$column.order || !$column.prop) {
                     $column.order = null;
@@ -375,7 +375,7 @@ var app = function () {
             openItem: function ($id) {
 
                 // 如果 $id 不传值 就 走列表
-                if (!$id || $id.length <= 0) {$id = this.handelSelectList;}
+                if (!$id || $id.length <= 0) {$id = this.handleSelectList;}
 
                 // 判断id是否为空
                 if (!$id || $id.length <= 0) {
@@ -425,7 +425,7 @@ var app = function () {
                             }
 
                             // 放空列表
-                            that.handelSelectList = null;
+                            that.handleSelectList = null;
                             // 成功 加载下列表
                             return that.$nextTick(function () {
                                 // 隐藏正在加载
@@ -441,7 +441,7 @@ var app = function () {
             disabledItem: function ($id) {
 
                 // 如果 $id 不传值 就 走列表
-                if (!$id || $id.length <= 0) {$id = this.handelSelectList;}
+                if (!$id || $id.length <= 0) {$id = this.handleSelectList;}
 
                 // 判断id是否为空
                 if (!$id || $id.length <= 0) {
@@ -491,7 +491,7 @@ var app = function () {
                             }
 
                             // 放空列表
-                            that.handelSelectList = null;
+                            that.handleSelectList = null;
 
                             // 成功 加载下列表
                             return that.$nextTick(function () {
