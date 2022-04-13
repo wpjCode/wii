@@ -46,7 +46,9 @@ if (in_array($attribute->name, $safeAttributes)) {
 </el-main>
 
 <el-footer class="bottom-button" :height="50">
-    <el-button size="mini" type="danger" @click="cancel">取消</el-button>
+    <el-button size="mini" type="danger" @click="cancel" v-show="pageDialog.isIframe">
+        取消
+    </el-button>
     <?= '<?php if (AdminRoleModel::checkAuth(\'create\')) { ?>' . "\n" ?>
     <el-button size="mini" type="success" @click="submitCreate" v-if="setting.isCreate === true">
         创建
