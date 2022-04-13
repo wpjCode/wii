@@ -81,73 +81,16 @@ EOT;
             </div>
             <!-- 提醒 END -->
         </div>
-        <el-form :inline="true" :model="searchForm" @submit.native.prevent
-                 class="search-container">
-            <div class="item flex-center-auto">
-                <el-form-item label="">
-                    <el-input placeholder="请输入内容" v-model="searchTopValue" size="small" type="text"
-                              class="input-with-select vert-align-init">
-                        <el-select v-model="searchTopType" slot="prepend" size="small"
-                                   placeholder="请选择" style="width: 130px;">
-
-                            <el-option label="编号" value="id"></el-option>
-                            <?php if ($model->hasAttribute('title')) { ?>
-                                <el-option label="标题" value="title"></el-option>
-                            <?php } if ($model->hasAttribute('name')) { ?>
-                                <el-option label="名称" value="name"></el-option>
-                            <?php } ?>
-                        </el-select>
-                        <el-button slot="append" type="primary" icon="el-icon-search"
-                                   size="small" @click="handleCurrentChange(1)">
-                            搜索
-                        </el-button>
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="" class="el-form-item-more">
-                    <el-popover :width="setting.bodyWidth * 0.9" v-model="showAllSearch"
-                                placement="bottom" @hide="moreSearchCancel" popper-class="ph-20">
-                        <el-form class="search-container text-center"
-                                 :inline="true" @submit.native.prevent>
-                            <el-form-item label="" class="pr-30">
-                                <el-empty description="暂无更多查询" image-size="70"
-                                          class="no-p"></el-empty>
-                                <!-- 可以删除empty组件增加自己其他查询，一般非必要查询都放入这里面 -->
-                            </el-form-item>
-                        </el-form>
-                        <div class="mt-20">
-                            <el-button type="danger" size="mini" @click="moreSearchReset">
-                                重置
-                            </el-button>
-                            <el-button type="primary" size="mini" @click="moreSearchSubmit">
-                                确定
-                            </el-button>
-                        </div>
-                        <el-button :type="showAllSearch ? 'primary' : ''" size="mini"
-                                   @click.native="moreSearchClick" slot="reference">
-                            <span  :class="showAllSearch ? '' : 'font-fourth'">
-                                更多查询&nbsp;
-                                <i v-if="!showAllSearch" class="el-icon-setting font-fourth"></i>
-                                <i v-else class="el-icon-setting el-icon-s-tools"></i>
-                            </span>
-                        </el-button>
-                    </el-popover>
-                </el-form-item>
-            </div>
-            <div class="item flex-center-auto">
-            <?php if ($model->hasAttribute('status')) { ?>
-
-                <el-form-item label="状态" class="pr-30">
-                    <el-radio-group v-model="searchForm.status" @change="handleCurrentChange(1)"
-                                    size="">
-                        <el-radio-button label="">全部列表</el-radio-button>
-                        <el-radio-button v-for="item in setting.status_list" :label="item.value">
-                            {{item.text}}列表
-                        </el-radio-button>
-                    </el-radio-group>
-                </el-form-item>
-            <?php } ?>
-            </div>
-        </el-form>
+        <!-- 查询 START -->
+        <?= $this->render('../common/search.php', [
+            'groupFields'      => 'searchForm.group',
+            'groupOtherFields' => 'searchForm.groupOther',
+            'baseFields'       => 'searchForm.base',
+            'moreFields'       => 'searchForm.more',
+            'export'           => 'searchForm.value',
+            'submit'           => 'handleCurrentChange'
+        ]); ?>
+        <!-- 查询 START -->
         <!-- 主列表 表格 START -->
         <el-table :data="dataList" style="width: 100%" class="" @selection-change="handleSelectionChange"
                   @sort-change="handleSortChange">
