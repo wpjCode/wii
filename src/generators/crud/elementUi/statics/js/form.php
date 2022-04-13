@@ -68,14 +68,14 @@ EOT;
 
                 var params = $w.getParams();
                 // 是否[iframe]嵌入
-                this.pageDialog.isIframe = +params['is_iframe'] === 1;
+                this.pageDialog.isIframe = window.self !== window.top || +params['is_iframe'] === 1;
 
                 var that = this;
                 // [嵌入]返回事件监听 直接走自己的返回
                 if (this.pageDialog.isIframe) {
                     window.addEventListener("popstate", function($event) {
-                        that.cancel();              // 返回上一页
-                        window.history.forward(-1); // 清理此页历史记录
+                        if (that.cancel) that.cancel(); // 返回上一页
+                        window.history.forward(-1);     // 清理此页历史记录
                     }, false);
                     window.history.pushState({
                         title: "title", url: "#"
@@ -126,9 +126,16 @@ EOT;
                         for (var i in event.data) {
                             if (!event.data.hasOwnProperty(i)) continue;
                             that.$set(that.setting, i, event.data[i]);
-                            // 不存在指定字符串直接返回
-                            if (i.indexOf('default_') === -1 || !that.setting.isCreate) continue;
-                            that.form[i.replace('default_', '')] = event.data[i];
+
+                            // 改变键值
+                            if (i.indexOf('_list') !== -1) {
+                                that.setting[i] = $w.array_index(event.data[i], 'key');
+                            }
+
+                            // 默认值
+                            if (i.indexOf('default_') !== -1 && that.setting.isCreate) {
+                                that.form[i.replace('default_', '')] = that.setting[i];
+                            }
                         }
                     }
                 });
@@ -188,7 +195,9 @@ EOT;
             cancel: function ($reloadList) {
 
                 // 需要重新加载下列表
-                if ($reloadList) window.parent.instance.getList();
+                if ($reloadList && this.pageDialog.isIframe) {
+                    window.parent.instance.getList();
+                }
 
                 // 显示脚部 - 当前页面返回
                 if (!this.pageDialog.isIframe) {

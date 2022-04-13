@@ -88,15 +88,18 @@ EOT;
                 case 'status':
                     echo <<<EOT
 
-        'disabled' => [
+        [
+            'key' => 'disabled',
             'value' => -1,
             'text' => '禁用'
         ],
-        'default' => [
+        [
+            'key' => 'disabled',
             'value' => 0,
             'text' => '审核'
         ],
-        'open' => [
+        [
+            'key' => 'disabled',
             'value' => 1,
             'text' => '开启'
         ],\r
@@ -936,7 +939,9 @@ if (property_exists($schema, 'columns')) {
      */
     public static function getStatusDefault()
     {
-        return self::\$statusList['default']['value'];
+    
+        \$list = array_column(self::\$statusList, null, 'key');
+        return \$list['default']['value'];
     }
     /**
      * 获取[状态][关闭]值
@@ -944,7 +949,9 @@ if (property_exists($schema, 'columns')) {
      */
     public static function getStatusDisabled()
     {
-        return self::\$statusList['disabled']['value'];
+    
+        \$list = array_column(self::\$statusList, null, 'key');
+        return \$list['disabled']['value'];
     }
     /**
      * 获取[状态][开启]值

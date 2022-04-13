@@ -21,12 +21,24 @@ var app = function () {
                 isSmallScreen: false,  // 是否是小屏幕
                 bodyWidth: document.documentElement.clientWidth, // body宽度
             },
-            searchForm: {},       // 搜索字段
-            searchTopType: 'id',  // 顶部搜索类型
-            searchTopValue: '',   // 顶部搜索内容
-            showAllSearch: false, // 是否出现[更多查询]按钮
-            searchFormAll: {},    // [更多查询]搜索字段
-            allSearchDid: false,  // 已经提交过[更多查询]
+            searchForm: {
+                group: [ // 组合查询
+                    {name: 'id', text: '编号'},
+                    <?php if ($model->hasAttribute('title')) { ?>
+                    {name: 'title', text: '标题'},
+                    <?php } if ($model->hasAttribute('name')) { ?>
+                    {name: 'title', text: '名称'},
+                    <?php } ?>
+                ],
+                groupOther: [
+                    <?php if ($model->hasAttribute('status')) { ?>
+                    {name: 'status', type: 'radio', text: '状态'},
+                    <?php } ?>
+                ],  // 组合查询 右侧
+                base: [],  // 基础
+                more: [],  // 更多
+                value: {}  // 值
+            },                    // 搜索字段
             searchOrderField: '', // 查询排序字段
             searchOrderType: '',  // 查询排序类型
             dataList: [],         // 数据列表
@@ -60,14 +72,14 @@ var app = function () {
 
                 var params = $w.getParams();
                 // 是否[iframe]嵌入
-                this.pageDialog.isIframe = +params['is_iframe'] === 1;
+                this.pageDialog.isIframe = window.self !== window.top || +params['is_iframe'] === 1;
 
                 var that = this;
                 // [嵌入]返回事件监听 直接走自己的返回
                 if (this.pageDialog.isIframe) {
                     window.addEventListener("popstate", function($event) {
-                        that.cancel();              // 返回上一页
-                        window.history.forward(-1); // 清理此页历史记录
+                        if (that.cancel) that.cancel(); // 返回上一页
+                        window.history.forward(-1);     // 清理此页历史记录
                     }, false);
                     window.history.pushState({
                         title: "title", url: "#"
@@ -88,41 +100,85 @@ var app = function () {
              */
             initSearchForm: function () {
 
-                // 默认搜索字段
-                this.searchForm = {
-                    id: '',
-<?php if ($model->hasAttribute('title')) { ?>
-                    title: '',
-<?php } if ($model->hasAttribute('name')) { ?>
-                    name: '',
-<?php } if ($model->hasAttribute('status')) { ?>
-                    status: ''
-<?php } ?>
-                };
+                // 暂存
+                var stage;
                 // 赋值默认值
                 for (var i in this.setting) {
                     if (!this.setting.hasOwnProperty(i)) continue;
                     // 不存在指定字符串直接返回
-                    if (i.indexOf('default_') === -1) continue;
-                    if (this.searchForm[i.replace('default_', '')] === undefined) continue;
-                    this.searchForm[i.replace('default_', '')] = this.setting[i];
-                }
-            },
-            /**
-             * 顶部[更多查询] - 初始化查询[FORM]
-             * @returns {boolean}
-             */
-            initSearchFormAll: function () {
+                    if (i.indexOf('default_') === -1 && i.indexOf('_list') === -1) continue;
 
-                // 默认搜索字段
-                this.searchFormAll = {};
-                // 赋值默认值
-                for (var i in this.setting) {
-                    if (!this.setting.hasOwnProperty(i)) continue;
-                    // 不存在指定字符串直接返回
-                    if (i.indexOf('default_') === -1) continue;
-                    if (this.searchFormAll[i.replace('default_', '')] === undefined) continue;
-                    this.searchFormAll[i.replace('default_', '')] = this.setting[i];
+                    // 组合字段右侧 默认值, 值列表
+                    for (var x in this.searchForm['groupOther']) {
+                        if (!this.searchForm['groupOther'].hasOwnProperty(x)) continue;
+                        if (!this.searchForm['groupOther'][x]) continue;
+                        // 字段默认值 键值
+                        stage = 'default_' + this.searchForm['groupOther'][x]['name'];
+                        // 相同则需要赋值[默认值]
+                        if (stage === i) {
+                            this.$set(this.searchForm['groupOther'][x], 'default',
+                                this.setting[i]
+                            );
+                            continue;
+                        }
+
+                        // 字段默列表 键值
+                        stage = this.searchForm['groupOther'][x]['name'] + '_list';
+                        // 相同则需要赋值[默认值]
+                        if (stage === i) {
+                            this.$set(this.searchForm['groupOther'][x], 'option',
+                                this.setting[i]
+                            );
+                        }
+                    }
+
+                    // 基础字段 默认值, 值列表
+                    for (var y in this.searchForm['base']) {
+                        if (!this.searchForm['base'].hasOwnProperty(y)) continue;
+                        if (!this.searchForm['base'][y]) continue;
+                        // 字段默认值 键值
+                        stage = 'default_' + this.searchForm['base'][y]['name'];
+                        // 相同则需要赋值[默认值]
+                        if (stage === i) {
+                            this.$set(this.searchForm['base'][y], 'default',
+                                this.setting[i]
+                            );
+                            continue;
+                        }
+
+                        // 字段默列表 键值
+                        stage = this.searchForm['base'][y]['name'] + '_list';
+                        // 相同则需要赋值[默认值]
+                        if (stage === i) {
+                            this.$set(this.searchForm['base'][y], 'option',
+                                this.setting[i]
+                            );
+                        }
+                    }
+
+                    // 更多字段 默认值, 值列表
+                    for (var z in this.searchForm['more']) {
+                        if (!this.searchForm['more'].hasOwnProperty(z)) continue;
+                        if (!this.searchForm['more'][z]) continue;
+                        // 字段默认值 键值
+                        stage = 'default_' + this.searchForm['more'][z]['name'];
+                        // 相同则需要赋值[默认值]
+                        if (stage === i) {
+                            this.$set(this.searchForm['more'][z], 'default',
+                                i, this.setting
+                            );
+                            continue;
+                        }
+
+                        // 字段默列表 键值
+                        stage = this.searchForm['more'][z]['name'] + '_list';
+                        // 相同则需要赋值[默认值]
+                        if (stage === i) {
+                            this.$set(this.searchForm['more'][z], 'option',
+                                this.setting[i]
+                            );
+                        }
+                    }
                 }
             },
             /**
@@ -171,6 +227,11 @@ var app = function () {
                         for (var i in event.data) {
                             if (!event.data.hasOwnProperty(i)) continue;
                             that.$set(that.setting, i, event.data[i]);
+
+                            // 字段是列表值 需要更改键
+                            if (i.indexOf('_list') !== -1) {
+                                that.setting[i] = $w.array_index(that.setting[i], 'key');
+                            }
                         }
 
                         // 最终清空性初始化查询
@@ -211,7 +272,7 @@ var app = function () {
                     data: {
                         page: this.page,
                         page_size: this.pageSize,
-                        search: this.searchForm,
+                        search: this.searchForm.value,
                         sort_field: this.searchOrderField,
                         sort_type: this.searchOrderType
                     },
@@ -644,23 +705,6 @@ var app = function () {
             },
         },
         watch: {
-            /**
-             * 顶部查询 - 顶部查询类型变化
-             * @param val
-             */
-            'searchTopType': function (val) {
-                // 先初始化[FORM]
-                this.initSearchForm();
-                // 重新赋值下值 - 具体效果就是不清空现在查询框内容
-                this.searchForm[val] = this.searchTopValue;
-            },
-            /**
-             * 顶部查询类型变化
-             * @param $val
-             */
-            'searchTopValue': function ($val) {
-                this.searchForm[this.searchTopType] = $val;
-            },
             /**
              * 检测[页面弹出层加载中状态]
              */
