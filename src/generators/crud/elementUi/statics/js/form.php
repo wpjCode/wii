@@ -123,10 +123,13 @@ EOT;
                         }
 
                         // 挨个赋值[setting]中 && 默认值
+                        var filters = ['value_need_opt_list'];
                         for (var i in event.data) {
                             if (!event.data.hasOwnProperty(i)) continue;
                             that.$set(that.setting, i, event.data[i]);
 
+                            // 在过滤列表中进行过滤
+                            if ($w.in_array(i, filters)) continue;
                             // 改变键值
                             if (i.indexOf('_list') !== -1) {
                                 that.setting[i] = $w.array_index(event.data[i], 'key');
