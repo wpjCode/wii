@@ -82,14 +82,14 @@ EOT;
             <!-- 提醒 END -->
         </div>
         <!-- 查询 START -->
-        <?= $this->render('../common/search.php', [
+        <?= '<?=' ?>$this->render('../common/search.php', [
             'groupFields'      => 'searchForm.group',
             'groupOtherFields' => 'searchForm.groupOther',
             'baseFields'       => 'searchForm.base',
             'moreFields'       => 'searchForm.more',
             'export'           => 'searchForm.value',
             'submit'           => 'handleCurrentChange'
-        ]); ?>
+        ]); <?= '?>' ?>
         <!-- 查询 START -->
         <!-- 主列表 表格 START -->
         <el-table :data="dataList" style="width: 100%" class="" @selection-change="handleSelectionChange"

@@ -730,6 +730,97 @@ echo <<<EOT
     }
     
     /**
+     * 导出到[excel]文件
+     * @param \$filePath
+     * @param \$records
+     * @return bool
+     */
+    public function exportExcel(\$filePath, \$records)
+    {
+
+        ### 判断结果
+        if (empty(\$records)) return true;
+
+        try {
+
+            ### 执行表格
+            // 配置
+            \$config = [
+                'id' => '编号',
+                // ...可以在这边补充其他字段+说明，格式：字段 => 文字说明(标头)
+            ];
+            // 实例化
+            \$spreadsheet = new Spreadsheet();
+            // 获取活动工作薄
+            \$sheet = \$spreadsheet->getActiveSheet();
+            // 当前此次添加开始sheet数
+            if (file_exists(\$filePath)) {
+                \$reader = new ReadExcel();
+                \$index  = \$reader->load(\$filePath)->getActiveSheetIndex();
+            } else {
+                \$index = 1;
+                ### 先添加标头
+                \$i = 0;
+                foreach (\$config as \$k => \$v) {
+                    
+                    // 最终数据
+                    \$sheet->getCell(chr(65 + \$i) . '1')->setValue(
+                        \$v
+                    )->getStyle()->applyFromArray([
+                        'font' => [
+                            'bold' => true,
+                        ],
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_LEFT, // 水平居中
+                        ],
+                    ]);
+                    \$i++;
+                }
+            }
+
+            ### 添加数据
+            // 循环表格
+            \$i = 1;
+            foreach (\$records as \$item) {
+                \$ci = 0; // 字段增加
+                foreach (\$config as \$k2 => \$v2) {
+                    if (empty(\$item[\$k2])) continue;
+                    
+                    // 时间格式化
+                    if (strstr(\$k2, 'time')) {
+                        \$item[\$k2] = date('Y-m-d H:i:s', \$item[\$k2]);
+                    }
+                    
+                    // 获取单元格
+                    \$cellA = \$sheet->getCell(chr(65 + \$ci) . (\$index + \$i));
+                    \$cellA->getStyle()->applyFromArray([
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_LEFT,
+                        ],
+                    ]);
+                    // 给单元格赋值
+                    \$cellA->setValue(\$item[\$k2]);
+                    \$ci++;
+                }
+                \$i++;
+            }
+
+            // 先建立下文件夹
+            ToolsService::mkdir(dirname(\$filePath));
+            // Xlsx类 将电子表格保存到文件
+            \$writer = new WriteExcel(\$spreadsheet);
+            \$writer->save(\$filePath);
+
+            return true;
+        } catch (\Exception \$error) {
+
+            \$this->addError(500, \$error->getMessage());
+            return false;
+        }
+    }
+    
+    
+    /**
      * [静态方法]批量快速更新某些字段|PS：无验证，请在调用此方法前做好各字段验证
      * @param \$condition
      * @param array \$fieldVal

@@ -513,4 +513,62 @@ if (property_exists($schema, 'columns')) {
         return $this->jsonSuccess('成功');
     }
 <?php } ?>
+    /**
+     * 列表
+     * @return mixed
+     */
+    public function actionExport()
+    {
+
+        ### 参数
+        // 查询内容
+        $find = $this->post('search');
+        // 显示当前第几页
+        $page = $this->post('page', 0, 'int');
+        // 每页操作多少条
+        $pageSize = \Yii::$app->params['exportLimit'];
+        // 导出保存路径
+        $endPath = $this->post('file_path');
+        // 导出路径默认生成
+        if (!$endPath) $endPath = ToolsService::generatePath(
+            '/export/<?=$generator->getControllerID(2)?>/{DATE}/{RANDOM}.xlsx'
+        );
+        // 文件路径
+        $filePath = \Yii::getAlias('@webroot') . $endPath;
+        // 字段1
+        $field = [
+            'id',
+            'user_name',
+            'nick_name',
+            'salt',
+            'password_hash',
+            'status',
+            'add_time',
+            'update_time',
+            'avatar',
+            'role_id',
+        ];
+
+        ### 查询
+        // 父级别[model]
+        $model = AdminUserModel::loadModel();
+        // 数据条目
+        $records = $model->loadWhere($find)->getList($page, $pageSize, $field);
+        // 导出
+        if (!$model->exportExcel($filePath, $records)) {
+
+            $error = $model->getFirstErrors();
+            return $this->jsonFail('导出失败，请联系管理员', 400, [
+                'column_error' => ToolsService::chineseErr($error)
+            ]);
+        }
+
+        ### 下一页是否还有数据
+        $nextPage = $model->getList($page + 1, $pageSize, $field);
+
+        return $this->jsonSuccess('成功', [
+            'path'      => $endPath,
+            'next_have' => !empty($nextPage) ? 1 : 0
+        ]);
+    }
 }
