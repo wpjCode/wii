@@ -36,6 +36,11 @@ EOT;
                     新建
                 </el-button>
                 <?= '<?php } ?>' . "\n" ?>
+                <?= '<?php if (AdminRoleModel::checkAuth(\'export\')) { ?>'. "\n" ?>
+                <el-button class="" size="mini" type="primary" @click.native="exportConfirm()">
+                    导出
+                </el-button>
+                <?= '<?php } ?>' . "\n" ?>
                 <el-dropdown size="mini">
                     <el-button type="primary" size="mini">
                         更多操作

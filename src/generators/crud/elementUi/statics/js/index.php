@@ -702,6 +702,81 @@ var app = function () {
                 // 操作点击
                 $(parent.document).find('#tab-' + key).click();
             },
+            /**
+             * 导出询问
+             */
+            exportConfirm: function () {
+                var that = this;
+                this.$confirm('此操作将[导出]全部查询结果为Excel文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    // 导出
+                    that.exportItem(1);
+                });
+            },
+            /**
+             * 导出执行
+             * @param $page
+             * @param $filePath
+             */
+            exportItem: function ($page, $filePath) {
+
+                $page = $page || 1;
+                $filePath = $filePath || null;
+
+                var that = this;
+
+                // 正在加载。。
+                var loadingInstance = ELEMENT.Loading.service({
+                    fullscreen: false,
+                    text: '导出第' + $page + '页...'
+                });
+
+                // 获取各模块的值
+                $w.request({
+                    url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.export'),
+                    type: 'POST',
+                    data: {
+                        page: $page,
+                        page_size: this.pageSize,
+                        search: this.searchForm.value,
+                        file_path: $filePath
+                    },
+                    dataType: "json",
+                    beforeCallback: function () {},
+                    callback: function (event) {
+
+                        // 失败的返回|提示
+                        if (parseInt(event.no) !== 200) {
+
+                            // 隐藏正在加载
+                            loadingInstance.close();
+                            return that.$message({
+                                showClose: true,
+                                type: 'error',
+                                message: event.msg ? event.msg : '操作失败，请稍后尝试'
+                            });
+                        }
+
+                        // 如果下一页没有了 直接打卡下载
+                        if (parseInt(event.data.next_have) !== 1) {
+
+                            // 隐藏正在加载
+                            loadingInstance.close();
+                            return window.open(event.data.path);
+                        }
+
+                        // 成功 加载下一页列表
+                        return setTimeout(function () {
+                            // 隐藏正在加载
+                            loadingInstance.close();
+                            that.exportItem($page + 1, event.data.path);
+                        }, 1000);
+                    }
+                });
+            }
         },
         watch: {
             /**
@@ -719,16 +794,17 @@ var app = function () {
             }
         },
         computed: {
-        /**
-         * 获得顶部样式
-         */
-        getTopClass: function () {
-            var className = [];
-            // 如果已经滚动
-            if (this.showTopScroll) className.push('is-scroll');
+            /**
+             * 获得顶部样式
+             */
+            getTopClass: function () {
+                var className = [];
+                // 如果已经滚动
+                if (this.showTopScroll) className.push('is-scroll');
 
-                return className.join(' ');
-            }
-        },
+                    return className.join(' ');
+                }
+            },
+        }
     });
 };
