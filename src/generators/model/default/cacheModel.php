@@ -22,7 +22,9 @@ $doModel = $doModel . '.php';
 $doModelInfo = pathinfo($doModel);
 
 echo "<?php\n";
-?>
+
+use yii\helpers\Inflector;
+use yii\helpers\StringHelper; ?>
 
 namespace <?= $generator->ns ?>;
 
@@ -43,6 +45,16 @@ use Yii;
  */
 class <?= $className ?> extends <?= '\yii\redis\ActiveRecord' . "\n" ?>
 {
+
+
+    /**
+     * 表名
+     * @return string
+     */
+    public static function keyPrefix()
+    {
+        return Yii::$app->db->tablePrefix . '<?= Inflector::camel2id(StringHelper::basename($className), '_') ?>';
+    }
 
     /**
      * @return object|\yii\redis\Connection|null
