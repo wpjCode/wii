@@ -377,14 +377,14 @@ if (property_exists($schema, 'columns')) {
 
     /**
      * 禁用条目
-     * @param array $idList 数据条目|多条数组格式，如：[1,2,3]
+     * @param array $id_list 数据条目|多条数组格式，如：[1,2,3]
      * @return mixed
      */
     public function actionDisabled()
     {
 
         // 编号列表获取
-        $idList = $this->post('idList');
+        $idList = $this->post('id_list');
         // 不是数组塑造下 为了构成100%的数组
         if (!empty($idList) && !is_array($idList)) $idList = explode(',', $idList);
         // 看获取的编号列表是否合法
@@ -420,14 +420,14 @@ if (property_exists($schema, 'columns')) {
 
     /**
     * 开启条目
-    * @param array $idList 数据条目|多条数组格式，如：[1,2,3]
+    * @param array $id_list 数据条目|多条数组格式，如：[1,2,3]
     * @return mixed
     */
     public function actionOpen()
     {
 
         // 编号列表获取
-        $idList = $this->post('idList');
+        $idList = $this->post('id_list');
         // 不是数组塑造下 为了构成100%的数组
         if (!empty($idList) && !is_array($idList)) $idList = explode(',', $idList);
         // 看获取的编号列表是否合法
@@ -464,14 +464,14 @@ if (property_exists($schema, 'columns')) {
 <?php if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) { ?>
     /**
     * 排序
-    * @param array $idList 数据条目|多条数组格式，如：[1,2,3]
+    * @param array $id_list 数据条目|多条数组格式，如：[1,2,3]
     * @return mixed
     */
     public function actionSort()
     {
 
         // 编号列表获取
-        $idList = $this->post('idList');
+        $idList = $this->post('id_list');
         // 不是数组塑造下 为了构成100%的数组
         if (!empty($idList) && !is_array($idList)) $idList = explode(',', $idList);
         // 看获取的编号列表是否合法

@@ -465,7 +465,7 @@ var app = function () {
                     $w.request({
                         url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.open'),
                         type: 'POST',
-                        data: {idList: $id},
+                        data: {id_list: $id},
                         dataType: "json",
                         beforeCallback: function () {
                             that.$nextTick(function () {
@@ -531,7 +531,7 @@ var app = function () {
                     $w.request({
                         url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.disabled'),
                         type: 'POST',
-                        data: {idList: $id},
+                        data: {id_list: $id},
                         dataType: "json",
                         beforeCallback: function () {
                             that.$nextTick(function () {
@@ -620,7 +620,7 @@ var app = function () {
                     url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.sort'),
                     type: 'POST',
                     data: {
-                        idList: $row['id'],
+                        id_list: $row['id'],
                         sort: parseInt($row['newSort'])
                     },
                     dataType: "json",
