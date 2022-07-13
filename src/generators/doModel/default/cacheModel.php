@@ -646,9 +646,9 @@ echo <<<EOT
                 \$error->getTraceAsString()
             ], 'cache');
     
-            self::\$error_ = empty(\$error->errorInfo) ?
-                \$error->getMessage() :
-                implode(' | ', \$error->errorInfo);
+            // 静态错误
+            self::\$error_['db_error'] = empty(self::\$error_['db_error']) ?
+                [\$error->getMessage()] : array_merge(self::\$error_['db_error'], [\$error->getMessage()]);
     
             return false;
         }

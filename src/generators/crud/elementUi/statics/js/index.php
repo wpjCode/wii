@@ -3,7 +3,9 @@
 /* @var $generator wpjCode\wii\generators\crud\Generator */
 /* @var $model \yii\db\ActiveRecord */
 $model = new $generator->baseModelClass();
-?>
+
+use yii\helpers\Inflector;
+use yii\helpers\StringHelper; ?>
 /**
  * [<?=$generator->expName?>]列表首页[JS]
  * @returns {*}
@@ -16,6 +18,7 @@ var app = function () {
             loadOver: false,
             settingOver: false,
             setting: {
+                scenario: '<?= Inflector::camel2id(StringHelper::basename($className), '_') ?>',
                 pageType: 'index',     // 页面类型
                 smallScreenWidth: 998, // 小屏幕临界点(px)
                 isSmallScreen: false,  // 是否是小屏幕

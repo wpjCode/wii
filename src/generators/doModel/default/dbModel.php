@@ -862,9 +862,9 @@ echo <<<EOT
                 \$error->getTraceAsString()
             ], 'db');
 
-            self::\$error_ = empty(\$error->errorInfo) ?
-                \$error->getMessage() :
-                implode(' | ', \$error->errorInfo);
+            // 静态错误
+            self::\$error_['db_error'] = empty(self::\$error_['db_error']) ?
+                [\$error->getMessage()] : array_merge(self::\$error_['db_error'], [\$error->getMessage()]);
 
             return false;
         }
@@ -880,36 +880,42 @@ echo <<<EOT
 
         \$db = \Yii::\$app->db->createCommand();
 
-        foreach (\$createData as \$k => \$v) {
-
-            \$model = self::loadModel();
-            \$model->load(\$createData[\$k], '');
-            if (!\$model->saveData(false)) {
-                // 取出错误信息
-                \$error = ToolsService::getModelError(\$model->errors);
-                // 添加到静态方法上
-                self::\$error_[\$error['column']] = \$error['msg'];
-                return false;
-            }
-
-            \$createData[\$k] = \$model->getAttributes(array_keys(\$model->attributeLabels()));
-            
-            // 循环一些数据
-            foreach (\$createData[\$k] as \$kc => \$vc) {
-                // 字段类型为[JSON]类型需要转为[JSON]
-                if (is_array(\$vc)) {
-                    \$createData[\$k][\$kc] = json_encode(\$vc, JSON_UNESCAPED_UNICODE);
-                    continue;
-                }
-            }
-        }
-
         try {
+        
+            ### 先数据格式化
+            \$values = [];
+            foreach (\$createData as \$k => \$v) {
+    
+                \$model = self::loadModel();
+                \$model->load(\$createData[\$k], '');
+                if (!\$model->saveData(false)) {
+                    // 取出错误信息
+                    \$error = ToolsService::getModelError(\$model->errors);
+                    // 添加到静态方法上
+                    self::\$error_[\$error['column']] = [\$error['msg']];
+                    return false;
+                }
+        
+                \$createData[\$k] = \$model->getAttributes(array_keys(\$model->attributeLabels()));
+                
+                // 循环一些数据
+                foreach (\$createData[\$k] as \$kc => \$vc) {
+                    // 字段类型为[JSON]类型需要转为[JSON]
+                    if (is_array(\$vc)) {
+                        \$createData[\$k][\$kc] = json_encode(\$vc, JSON_UNESCAPED_UNICODE);
+                        continue;
+                    }
+                }
+                
+                // 值赋值
+                \$values[] = array_values(\$createData[\$k]);;
+            }
+            
+            ### 取出此次操作的字段列表
+            \$columns = !current(\$createData) ? [] : array_keys(current(\$createData));
 
-            // 还行写入多条
-            \$addResult = \$db->batchInsert(
-                self::tableName(), array_keys(self::loadModel()->attributeLabels()), \$createData
-            )->execute();
+            // 执行
+            \$addResult = \$db->batchInsert(self::tableName(), \$columns, \$values)->execute();
 
             return \$addResult;
         } catch (Exception \$error) {
@@ -926,6 +932,10 @@ echo <<<EOT
                 "`````````````````````````````````````````````````````````",
                 \$error->getTraceAsString()
             ], 'db');
+            
+            // 静态错误
+            self::\$error_['db_error'] = empty(self::\$error_['db_error']) ?
+                [\$error->getMessage()] : array_merge(self::\$error_['db_error'], [\$error->getMessage()]);
 
             return false;
         }
