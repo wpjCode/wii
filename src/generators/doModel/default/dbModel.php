@@ -133,7 +133,16 @@ if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) {
 EOT;
 }
 echo <<<EOT
-    
+
+    /**
+     * 导出的配置
+     * @var array
+     */
+    private static \$exportConfig = [
+        'field' => [ // 字段列表
+            
+        ]
+    ];
     
     /**
      * 基础[SQL]
@@ -745,10 +754,7 @@ echo <<<EOT
 
             ### 执行表格
             // 配置
-            \$config = [
-                'id' => '编号',
-                // ...可以在这边补充其他字段+说明，格式：字段 => 文字说明(标头)
-            ];
+            \$config = self::\$exportConfig['field'];
             // 实例化
             \$spreadsheet = new Spreadsheet();
             // 获取活动工作薄
