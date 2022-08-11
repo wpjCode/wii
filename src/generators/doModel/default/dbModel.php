@@ -46,6 +46,11 @@ use yii\db\Expression;
 use yii\db\ExpressionInterface;
 use yii\helpers\ArrayHelper;
 use yii\db\Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReadExcel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx as WriteExcel;
 
 /**
  * {$generator->expName}
