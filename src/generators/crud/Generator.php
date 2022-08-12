@@ -195,11 +195,12 @@ class Generator extends \wpjCode\wii\Generator
             'views/create.php',
             'views/index.php',
             'views/update.php',
-            'views/view.php',
+            'views/detail.php',
             'statics/css/form.php',
             'statics/css/index.php',
             'statics/js/form.php',
-            'statics/js/index.php'
+            'statics/js/index.php',
+            'statics/js/detail.php'
         ];
     }
 

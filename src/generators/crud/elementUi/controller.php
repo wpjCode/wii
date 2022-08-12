@@ -58,6 +58,7 @@ class <?= $controllerClass ?> extends BaseController
                     'index-page' => ['GET'],
                     'create-page' => ['GET'],
                     'update-page' => ['GET'],
+                    'detail-page' => ['GET'],
                     ### API接口
                     'setting' => ['GET'],
                     'list' => ['GET'],
@@ -82,6 +83,7 @@ class <?= $controllerClass ?> extends BaseController
                             'index-page',
                             'create-page',
                             'update-page',
+                            'detail-page',
                             ### API接口
                             'setting',
                             'list',
@@ -164,6 +166,35 @@ class <?= $controllerClass ?> extends BaseController
         }
 
         return $this->render('<?=$generator->getRenderViewPath('update')?>', []);
+    }
+
+    /**
+     * 详情页面
+     * @return mixed
+     */
+    public function actionDetailPage()
+    {
+
+        // 编号
+        $id = $this->get('id');
+
+        // 验证 规格编号
+        if (empty($id)) {
+            return $this->showError('请传输编号，请确认信息编号是否正确。', 404);
+        }
+
+        // 实例化类 - 并根据编号查询
+        $model = UserModel::loadModel($id);
+        // 编号非法返回
+        if (empty($model)) {
+            return $this->showError('数据条目不存在，请确认信息编号是否正确。', 404);
+        }
+
+        $detail = $model->toArray();
+        // 格式化一些内容
+        $detail = $model::formatData($detail);
+
+        return $this->render('detail', ['detail' => $detail]);
     }
 
 
