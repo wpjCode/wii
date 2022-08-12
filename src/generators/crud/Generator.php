@@ -265,6 +265,12 @@ class Generator extends \wpjCode\wii\Generator
                 [
 
                 ]
+            ),// 列表页[详情]
+            new CodeFile("{$jsPath}-detail.js",
+                $this->render(Yii::getAlias("/statics/js/detail.php")),
+                [
+
+                ]
             ),
         ]);
 
