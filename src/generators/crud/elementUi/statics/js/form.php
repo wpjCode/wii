@@ -392,6 +392,12 @@ EOT;
                         {type: 'number', message: '{$model->getAttributeLabel($v->name)}必须为数字值', trigger: 'blur'}
 EOT;
     }
+    if (property_exists($v, 'phpType') && $v->phpType == 'string' && !strstr($v->name, 'time') && !strstr($v->name, 'image') && !strstr($v->name, 'avatar')) {
+        echo <<<EOT
+        
+                        {max: $v->size, message: '{$model->getAttributeLabel($v->name)}长度最多 $v->size 个字', trigger: 'blur'},
+EOT;
+    }
     echo <<<EOT
     
                     ]

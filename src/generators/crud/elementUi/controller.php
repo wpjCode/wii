@@ -184,7 +184,7 @@ class <?= $controllerClass ?> extends BaseController
         }
 
         // 实例化类 - 并根据编号查询
-        $model = UserModel::loadModel($id);
+        $model = <?= $baseModelClass ?>::loadModel($id);
         // 编号非法返回
         if (empty($model)) {
             return $this->showError('数据条目不存在，请确认信息编号是否正确。', 404);
@@ -211,7 +211,7 @@ class <?= $controllerClass ?> extends BaseController
         // 模型
         $model = <?= $baseModelClass ?>::loadModel();
         return $this->jsonSuccess('成功', [
-<?php if ($class->hasAttribute('status') && $class->hasMethod('getStatusDefault')) { ?>
+<?php if ($class->hasAttribute('status')) { ?>
             'default_status' => !empty($type) && $type == 'index' ?
                 '' : $model::getStatusOpen(), // 默认选中状态
 <?php }
@@ -331,11 +331,7 @@ if (property_exists($schema, 'columns')) {
             '<?=$vL->name?>',
 <?php } ?>
         ]);
-
-<?php if ($class->hasAttribute('content')) { ?>
-        $detail['content'] = htmlspecialchars_decode($detail['content']);
-        $detail['content'] = ToolsService::addHtmlImgDomain($detail['content']);
-<?php } ?>
+        $detail = $model::formatData($detail);
 
         return $this->jsonSuccess('成功', $detail);
     }
@@ -544,8 +540,9 @@ if (property_exists($schema, 'columns')) {
         return $this->jsonSuccess('成功');
     }
 <?php } ?>
+
     /**
-     * 列表
+     * 导出Excel
      * @return mixed
      */
     public function actionExport()
@@ -568,21 +565,14 @@ if (property_exists($schema, 'columns')) {
         $filePath = \Yii::getAlias('@webroot') . $endPath;
         // 字段1
         $field = [
-            'id',
-            'user_name',
-            'nick_name',
-            'salt',
-            'password_hash',
-            'status',
-            'add_time',
-            'update_time',
-            'avatar',
-            'role_id',
+<?php foreach ($generator->getTableSchema()->columns as $kL => $vL) { ?>
+            '<?=$vL->name?>',
+<?php } ?>
         ];
 
         ### 查询
         // 父级别[model]
-        $model = AdminUserModel::loadModel();
+        $model = <?= $baseModelClass ?>::loadModel();
         // 数据条目
         $records = $model->loadWhere($find)->getList($page, $pageSize, $field);
         // 导出
@@ -595,11 +585,56 @@ if (property_exists($schema, 'columns')) {
         }
 
         ### 下一页是否还有数据
-        $nextPage = $model->getList($page + 1, $pageSize, $field);
+        $nextPage = $model->getList($page + 1, $pageSize, 'id');
 
         return $this->jsonSuccess('成功', [
             'path'      => $endPath,
             'next_have' => !empty($nextPage) ? 1 : 0
+        ]);
+    }
+
+    /**
+     * 导入
+     * @return mixed
+     */
+    public function actionImport()
+    {
+
+        ### 参数
+        // 显示当前第几页
+        $page = $this->post('page', 1, 'int');
+        // 每页操作多少条
+        $pageSize = 100;// \Yii::$app->params['importLimit'];
+        // 导出保存路径
+        $filePath = $this->post('file_path');
+        // 文件路径
+        $filePath = \Yii::getAlias('@webroot') . $filePath;
+
+        ### 查询
+        // 父级别[model]
+        $model = <?= $baseModelClass ?>::loadModel();
+        // 导出
+        $result = $model->importExcel($filePath, $page, $pageSize);
+        // 是否已经导出完毕
+        if (!$result && $model->importTotalPage <= $page) {
+            return $this->jsonSuccess('成功', [
+                'next_have' => $model->importTotalPage > $page ? 1 : 0,
+                'error_hint' => '暂无更多数据',
+                'total_page' => $model->importTotalPage
+            ]);
+        }
+        // 操作失败
+        if (!$result) {
+
+            $error = ToolsService::getModelError($model->getErrors());
+            return $this->jsonFail('导入失败，请联系管理员', 400, [
+                'error_hint' => $error['msg']
+            ]);
+        }
+
+        return $this->jsonSuccess('成功', [
+            'next_have' => $model->importTotalPage > $page ? 1 : 0,
+            'total_page' => $model->importTotalPage
         ]);
     }
 }

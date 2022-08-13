@@ -35,6 +35,7 @@ $times = time();
 $createDate = date('Y/m/d', $times);
 $createTime = date('H:i:s', $times);
 
+
 /* @var $model \yii\redis\ActiveRecord */
 $model = new $generator->baseModelClass();
 /* @var $dbModel \yii\db\ActiveRecord */
@@ -197,7 +198,7 @@ class {$renderModelPath['filename']} extends {$baseModelPath['filename']}
 
         ### 查询缓存
         // 查询缓存是否存在条目
-        \$model = self::loadModel(\$id, \$scenario);
+        \$model = self::loadModel(\$dbModel['{$primaryKey}'], \$scenario);
         // 缓存为空 初始化缓存 && 保存
         if (!\$model) {
             \$model     = self::loadModel(true, \$scenario);

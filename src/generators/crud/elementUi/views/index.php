@@ -37,11 +37,11 @@ EOT;
                 </el-button>
                 <?= '<?php } ?>' . "\n" ?>
                 <?= '<?php if (AdminRoleModel::checkAuth(\'export\')) { ?>'. "\n" ?>
-                <el-button class="" size="mini" type="primary" @click.native="exportConfirm()">
-                    导出
-                </el-button>
+                <!-- <el-button  class="ml-5" size="mini" type="primary" @click.native="exportConfirm()">
+                        导出
+                </el-button> -->
                 <?= '<?php } ?>' . "\n" ?>
-                <el-dropdown size="mini">
+                <el-dropdown size="mini" class="ml-15">
                     <el-button type="primary" size="mini">
                         更多操作
                         <i class="el-icon-arrow-down el-icon--right"></i>

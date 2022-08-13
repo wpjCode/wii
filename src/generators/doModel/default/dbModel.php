@@ -99,12 +99,12 @@ EOT;
             'text' => '禁用'
         ],
         [
-            'key' => 'disabled',
+            'key' => 'normal',
             'value' => 0,
             'text' => '审核'
         ],
         [
-            'key' => 'disabled',
+            'key' => 'open',
             'value' => 1,
             'text' => '开启'
         ],\r
@@ -145,7 +145,27 @@ echo <<<EOT
      */
     private static \$exportConfig = [
         'field' => [ // 字段列表
-            
+EOT;
+foreach ($generator->getTableSchema()->columns as $kL => $vL) {
+echo "\n            '" . $vL->name . "',";
+}
+echo <<<EOT
+
+        ]
+    ];
+    
+    /**
+     * 导入的配置
+     * @var array
+     */
+    private static \$importConfig = [
+        'field' => [ // 字段列表
+EOT;
+foreach ($generator->getTableSchema()->columns as $kL => $vL) {
+echo "\n            '" . $vL->name . "' => '" . $vL->comment . "',";
+}
+echo <<<EOT
+
         ]
     ];
     
@@ -830,6 +850,66 @@ echo <<<EOT
         }
     }
     
+    /**
+     * 导入Excel
+     * @param \$filePath string 文件路径
+     * @param \$page int 第几页
+     * @param \$pageSize int 分页大小
+     * @return bool
+     */
+    public function importExcel(\$filePath, \$page, \$pageSize)
+    {
+
+        try {
+
+            ### 执行表格
+            // 配置
+            \$config = self::\$importConfig['field'];
+            // 当前此次添加开始sheet数
+            \$activeSheet = IOFactory::load(\$filePath)->getActiveSheet();
+            // 总行数
+            \$total = \$activeSheet->getHighestRow();
+            // 此文件总页数赋值
+            \$importTotalPage = ToolsService::decimalUp(\$total / \$pageSize, 0);
+            \$this->setAttributes(['importTotalPage' => \$importTotalPage]);
+            // 此次操作最大行
+            \$maxLine = (\$page * \$pageSize);
+            // 此次操作的最小行
+            \$miniLine = (\$page * \$pageSize - (\$pageSize - 2));
+            if (\$miniLine > \$total) {
+                \$this->addError(404, '没有此页数据');
+                return false;
+            }
+
+            ### 添加数据
+            // 数据塑造
+            \$addData = [];
+            for (\$i = \$miniLine; \$i <= \$maxLine; \$i++) {
+                // 当前行数大于总数
+                if (\$i > \$total) break;
+                \$row     = [];
+                \$configI = 0;
+                foreach (\$config as \$k => \$v) {
+                    \$row[\$k] = \$activeSheet->getCell(chr(65 + \$configI) . \$i)->getCalculatedValue();
+                    \$configI = \$configI + 1;
+                }
+                \$addData[] = \$row;
+            }
+            // 执行添加 - 只有要添加数据不为空
+            \$result = !empty(\$addData) ? self::createData(\$addData) : false;
+            if (!\$result) {
+                \$this->addError(500, '数据提交保存失败');
+                return false;
+            }
+
+            return true;
+        } catch (\Exception \$error) {
+
+            \$this->addError(500, \$error->getMessage());
+            return false;
+        }
+    }
+
     
     /**
      * [静态方法]批量快速更新某些字段|PS：无验证，请在调用此方法前做好各字段验证
@@ -1046,16 +1126,6 @@ if (property_exists($schema, 'columns')) {
 
 
     /**
-     * 获取[状态][默认]值
-     * @return mixed
-     */
-    public static function getStatusDefault()
-    {
-    
-        \$list = array_column(self::\$statusList, null, 'key');
-        return \$list['default']['value'];
-    }
-    /**
      * 获取[状态][关闭]值
      * @return mixed
      */
@@ -1071,7 +1141,9 @@ if (property_exists($schema, 'columns')) {
      */
     public static function getStatusOpen()
     {
-        return self::\$statusList['open']['value'];
+        
+        \$list = array_column(self::\$statusList, null, 'key');
+        return \$list['open']['value'];
     }
 EOT;
 

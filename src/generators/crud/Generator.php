@@ -1032,7 +1032,10 @@ EOT;
             $route . "/detail',",
             '{space}// [' . $this->expName . ']提交更新 API',
             "{space}\$urlPre . '/" . lcfirst($baseName) . "Update.api' => \$routePre . '" .
-            $route . "/update',"
+            $route . "/update',",
+            '{space}// [' . $this->expName . ']提交导出 API',
+            "{space}\$urlPre . '/" . lcfirst($baseName) . "Export.api' => \$routePre . '" .
+            $route . "/export',"
         ]);
 
         // 有[状态]增加[状态]接口
@@ -1065,6 +1068,7 @@ EOT;
             "{space}{space}create: 'Create.api',{tab}{tab}// [提交创建]API",
             "{space}{space}update: 'Update.api',{tab}{tab}// [提交更新]API",
             "{space}{space}detail: 'Detail.api',{tab}{tab}// [获取详情]API",
+            "{space}{space}detail: 'Export.api',{tab}{tab}// [导出详情]API",
         ]);
         // 有[状态]增加[状态]接口
         if (in_array('status', $this->getColumnNames())) {

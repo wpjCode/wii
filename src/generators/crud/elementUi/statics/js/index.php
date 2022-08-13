@@ -27,16 +27,16 @@ var app = function () {
             searchForm: {
                 group: [ // 组合查询
                     {name: 'id', text: '编号'},
-                    <?php if ($model->hasAttribute('title')) { ?>
+<?php if ($model->hasAttribute('title')) { ?>
                     {name: 'title', text: '标题'},
-                    <?php } if ($model->hasAttribute('name')) { ?>
-                    {name: 'title', text: '名称'},
-                    <?php } ?>
+<?php } if ($model->hasAttribute('name')) { ?>
+                    {name: 'name', text: '名称'},
+<?php } ?>
                 ],
                 groupOther: [
-                    <?php if ($model->hasAttribute('status')) { ?>
+<?php if ($model->hasAttribute('status')) { ?>
                     {name: 'status', type: 'radio', text: '状态'},
-                    <?php } ?>
+<?php } ?>
                 ],  // 组合查询 右侧
                 base: [],  // 基础
                 more: [],  // 更多
@@ -239,8 +239,6 @@ var app = function () {
 
                         // 最终清空性初始化查询
                         that.initSearchForm();
-                        // 最终清空性初始化更多查询
-                        that.initSearchFormAll();
 
                         // 监测屏幕大小变化
                         return $(window).resize(function() {
@@ -805,10 +803,8 @@ var app = function () {
                 var className = [];
                 // 如果已经滚动
                 if (this.showTopScroll) className.push('is-scroll');
-
-                    return className.join(' ');
-                }
-            },
-        }
+                return className.join(' ');
+            }
+        },
     });
 };
