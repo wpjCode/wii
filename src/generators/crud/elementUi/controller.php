@@ -69,8 +69,10 @@ class <?= $controllerClass ?> extends BaseController
                     'disabled' => ['POST'],
                     'open' => ['POST'],
 <?php } if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) {?>
-                    'sort' => ['POST']
+                    'sort' => ['POST'],
 <?php } ?>
+                    'export' => ['POST'],
+                    'import' => ['POST']
                 ],
             ],
             'access' => [ // 是否游客可以访问
@@ -94,8 +96,10 @@ class <?= $controllerClass ?> extends BaseController
                             'disabled',
                             'open',
 <?php } if ($class->hasAttribute('sort') || $class->hasAttribute('list_order')) {?>
-                            'sort'
+                            'sort',
 <?php } ?>
+                            'export',
+                            'import'
                         ],
                         'allow' => true,
                         'roles' => ['@'],

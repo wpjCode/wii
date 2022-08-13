@@ -191,6 +191,12 @@ echo <<<EOT
     private static \$error_;
 
     /**
+     * 导入总页数
+     * @var string
+     */
+    public \$importTotalPage = 0;
+    
+    /**
      * 规则验证
      * @return array
      */
@@ -273,7 +279,8 @@ EOT;
 // ******** 特殊 - [排序]渲染[rules] 结束 ********
 
 echo <<<EOT
-
+            
+            [['importTotalPage'], 'safe'],
         ]);
     }
 
@@ -300,7 +307,8 @@ EOT;
 }
 // ******** 字段[label]添加 结束 ********
 echo <<<EOT
-
+            
+            'importTotalPage' => '导入分页总页数'
         ]);
     }
 
