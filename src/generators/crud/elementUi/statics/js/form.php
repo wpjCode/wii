@@ -369,24 +369,28 @@ EOT;
 <?php foreach ($safeAttributes as $k => $v) {
     // 键略过
     if ($v->isPrimaryKey) continue;
-    // 允许空略过
-    if ($v->allowNull) continue;
-    // 排序字段
-    if ($v->name == 'sort' || $v->name == 'list_order') echo <<<EOT
-
+    // 头
+    echo <<<EOT
                     {$v->name}: [
+EOT;
+    // 允许空略过
+    if (!$v->allowNull) {
+        echo <<<EOT
+        
                         {required: true, message: '请完善排序', trigger: 'blur'},
+EOT;
+    }
+    // 排序字段
+if ($v->name == 'sort' || $v->name == 'list_order') {
+    echo <<<EOT
+    
                         {
                             validator: \$w.validateNumRange, message: false, trigger: 'blur',
                             max: this.setting.max_sort, min: this.setting.min_sort
                         },
 EOT;
-
-    else echo <<<EOT
-                    {$v->name}: [
-                        {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'},
-EOT;
-    if (property_exists($v, 'phpType') && $v->phpType == 'integer' && $v->size > 2) {
+}
+if (property_exists($v, 'phpType') && $v->phpType == 'integer' && $v->size > 2) {
         echo <<<EOT
         
                         {type: 'number', message: '{$model->getAttributeLabel($v->name)}必须为数字值', trigger: 'blur'}
