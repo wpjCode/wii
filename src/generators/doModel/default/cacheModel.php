@@ -545,7 +545,7 @@ echo <<<EOT
             \$dbTran->commit();
             return true;
 
-        } catch (Exception \$error) {
+        } catch (\Exception \$error) {
 
             \$dbTran->rollBack();
             // 记录下错误日志

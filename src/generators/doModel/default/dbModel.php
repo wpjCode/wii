@@ -403,9 +403,10 @@ echo <<<EOT
      * @param integer \$page 当前页
      * @param integer \$limit 获取几条
      * @param null \$field 获取字段
+     * @param null \$opt 其他设置
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function getList(\$page, \$limit, \$field = null)
+    public function getList(\$page, \$limit, \$field = null, \$opt = [])
     {
 
         // 当前页面计算
@@ -421,16 +422,20 @@ echo <<<EOT
         \$list = \$this->getSqlBase()->offset(\$page * \$limit)
             ->limit(\$limit)
             ->asArray()->all();
+            
+        ### 某些参数初始化
+        
 
-        return \$this::formatData(\$list);
+        return \$this::formatData(\$list, \$opt);
     }
     
     /**
      * 格式化列表活详情数据
      * @param array \$list 列表
+     * @param array \$opt 其他设置
      * @return mixed
      */
-    public static function formatData(\$list) {
+    public static function formatData(\$list, \$opt = []) {
 
         // 为空直接返回
         if (empty(\$list)) return \$list;
@@ -946,7 +951,7 @@ echo <<<EOT
 
             // 否则成功
             return true;
-        } catch (Exception \$error) {
+        } catch (\Exception \$error) {
 
             // 记录下错误日志
             \Yii::error([
@@ -995,7 +1000,7 @@ echo <<<EOT
                     return false;
                 }
         
-                \$createData[\$k] = \$model->getAttributes(array_keys(\$model->attributeLabels()));
+                \$createData[\$k] = \$model->getAttributes(\$model::getTableSchema()->getColumnNames());
                 
                 // 循环一些数据
                 foreach (\$createData[\$k] as \$kc => \$vc) {
@@ -1017,7 +1022,7 @@ echo <<<EOT
             \$addResult = \$db->batchInsert(self::tableName(), \$columns, \$values)->execute();
 
             return \$addResult;
-        } catch (Exception \$error) {
+        } catch (\Exception \$error) {
 
             // 记录下错误日志
             \Yii::error([

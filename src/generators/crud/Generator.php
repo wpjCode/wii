@@ -386,7 +386,7 @@ class Generator extends \wpjCode\wii\Generator
         if (empty($page)) {
             try {
                 throw new Exception('获取页面上[CSS]路径出错', 500);
-            } catch (Exception $error) {
+            } catch (\Exception $error) {
                 \Yii::error([
                     '````````````````````````````````````````````````````````',
                     '``                    WPJ WII 错误                     ``',
@@ -442,7 +442,7 @@ class Generator extends \wpjCode\wii\Generator
         if (empty($page)) {
             try {
                 throw new Exception('获取页面上[JS]路径出错', 500);
-            } catch (Exception $error) {
+            } catch (\Exception $error) {
                 \Yii::error([
                     '````````````````````````````````````````````````````````',
                     '``                    WPJ WII 错误                     ``',
