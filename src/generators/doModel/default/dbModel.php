@@ -1012,7 +1012,7 @@ echo <<<EOT
                 }
                 
                 // 值赋值
-                \$values[] = array_values(\$createData[\$k]);;
+                \$values[] = array_values(\$createData[\$k]);
             }
             
             ### 取出此次操作的字段列表
