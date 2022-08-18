@@ -5,6 +5,9 @@
 $model = new $generator->baseModelClass();
 $safeAttributes = $generator->getTableSchema()->columns;
 
+/**
+ * [update]、[add]方法为何分开？有些臃肿判断和格式化需要写两分。如果有需求再单独分开吧
+ */
 ?>
 /**
  * [<?=$generator->expName?>]表单[JS]
@@ -233,9 +236,9 @@ EOT;
                 $(parent.document).find('#tab-' + key).click();
             },
             /**
-             * 添加
+             * 添加|更新
              */
-            submitCreate: function () {
+            submit: function () {
 
                 // 强制关闭下全部弹出层
                 this.$message.closeAll();
@@ -253,14 +256,20 @@ EOT;
                         return $w.scrollToFormItem(false, first);
                     }
 
+
+                    // 连接
+                    var url = that.setting.isCreate ?
+                        $w.getApiUrl('<?=$generator->getControllerID(1)?>.create') :
+                        $w.getApiUrl('<?=$generator->getControllerID(1)?>.update');
+
                     // 正在加载。。
                     var loadingInstance = ELEMENT.Loading.service({
                         fullscreen: false,
-                        text: '添加中...'
+                        text: '正在提交...'
                     });
 
                     $w.request({
-                        url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.create'),
+                        url: url,
                         type: 'POST',
                         data: that.form,
                         dataType: "json",
@@ -286,68 +295,6 @@ EOT;
                                     type: 'error',
                                     showClose: true,
                                     message: event.msg
-                                });
-                            }
-
-                            // 返回上一页
-                            that.cancel(true);
-                        }
-                    });
-                });
-            },
-            /**
-             * 修改操作
-             */
-            submitUpdate: function () {
-
-                // 强制关闭下全部弹出层
-                this.$message.closeAll();
-                // 清空错误信息
-                this.$refs['ruleForm'].clearValidate();
-
-                var that = this;
-                // 清空错误信息
-                this.$set(that, 'customErrMsg', {});
-                this.$refs['ruleForm'].validate(function (valid, msg) {
-
-                    // 验证不过 - 滚动到错误字段
-                    if (!valid) {
-                        var first = $w.array_first_key(msg);
-                        return $w.scrollToFormItem(false, first);
-                    }
-
-                    // 正在加载。。
-                    var loadingInstance = ELEMENT.Loading.service({
-                        fullscreen: false,
-                        text: '更新中...'
-                    });
-
-                    $w.request({
-                        url: $w.getApiUrl('<?=$generator->getControllerID(1)?>.update'),
-                        type: 'POST',
-                        data: that.form,
-                        dataType: "json",
-                        beforeCallback: function () {
-                            that.$nextTick(function () {
-                                // 隐藏正在加载
-                                loadingInstance.close();
-                            });
-                        },
-                        callback: function (event) {
-
-                            // 失败的返回|提示
-                            if (parseInt(event.no) !== 200) {
-                                for (var i in event.data.column_error) {
-                                    if (!event.data.column_error.hasOwnProperty(i))
-                                        continue;
-                                    that.$set(that.customErrMsg, i, event.data.column_error[i]);
-                                }
-                                // 滚动到错误字段
-                                $w.scrollToFormItem();
-                                return that.$message({
-                                    showClose: true,
-                                    type: 'error',
-                                    message: event.msg ? event.msg : '操作失败，请稍后尝试'
                                 });
                             }
 

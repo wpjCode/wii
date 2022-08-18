@@ -679,41 +679,54 @@ echo <<<EOT
     public function saveData(\$doSave = true)
     {
 
-EOT;
-if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->phpType == 'string') {
-    echo <<<EOT
-        // 添加的话要赋值一些初始数据
-        if (empty(\$this->{$pk})) {
-        
-            // 可以是走[mongoId]
-            \$this->{$pk} = ToolsService::newMongoId();
+        ### 批量操作[缓存保存前一些格式化]
+        foreach (\$this->getAttributes() as \$k => \$v) {
+            // 字段类型为[JSON]类型需要转为数组 - 保存自动转为[JSON]
+            if (is_string(\$v) && ToolsService::isJson(\$v)) {
+                \$this->setAttribute(\$k, json_decode(\$v, true));
+                continue;
+            }
         }
 EOT;
-}
 echo <<<EOT
+
+
 
         ### 单个操作[缓存保存前一些格式化]
         \$nowTime = time();
+        \$this->setAttributes([
+            'avatar' => ToolsService::delImgDomain(
+                \$this->getAttribute('avatar')
+            ),
 EOT;
-if ($model->hasAttribute('add_time')) {
+if ($model->hasAttribute('update_time')) {
     echo <<<EOT
-    
-        // 添加时间
-        if (empty(\$this->add_time)) \$this->add_time = \$nowTime;
-EOT;
-}
-if ($model->hasAttribute('add_time')) {
-    echo <<<EOT
-    
-        // 更新时间
-        \$this->update_time = \$nowTime;
+        
+            'update_time' => \$nowTime, // 更新时间
 EOT;
 }
 if ($model->hasAttribute('action_uid')) {
     echo <<<EOT
+       
+            'action_uid' => \Yii::\$app->getUser()->id, // 操作者
+EOT;
+}
+echo <<<EOT
+       
+        ];
+EOT;
+if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->phpType == 'string') {
+    echo <<<EOT
     
-        // 操作者
-        \$this->action_uid = \Yii::\$app->getUser()->id;
+        // 编号
+        if (\$this->getIsNewRecord()) \$this->setAttribute('id', ToolsService::newMongoId());
+EOT;
+}
+if ($model->hasAttribute('add_time')) {
+    echo <<<EOT
+        
+        // 添加时间
+        if (\$this->getIsNewRecord()) \$this->setAttribute('add_time', \$nowTime);
 EOT;
 }
 if ($model->hasAttribute('content')) {
@@ -729,15 +742,6 @@ EOT;
 }
 echo <<<EOT
 
-
-        ### 批量操作[缓存保存前一些格式化]
-        foreach (\$this->getAttributes() as \$k => \$v) {
-            // 字段类型为[JSON]类型需要转为数组 - 保存自动转为[JSON]
-            if (is_string(\$v) && ToolsService::isJson(\$v)) {
-                \$this->setAttribute(\$k, json_decode(\$v, true));
-                continue;
-            }
-        }
         
         // 检测
         if (\$this->hasErrors() || !\$this->validate()) {

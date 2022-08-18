@@ -7,7 +7,18 @@ use \app\assets\BackendAsset as Asset;
 
 $model = new $generator->baseModelClass();
 $safeAttributes = $generator->getTableSchema()->columns;
+
+echo <<<EOT
+<?php
+
+/* @var \$detail array */
+
+use app\assets\BackendAsset as Asset;
+
 ?>
+EOT;
+?>
+
 <el-container class="wp-form-container">
     <el-header class="top-wrapper no-pb bg-white" height="auto">
         <el-row :inline="true" class="button-container">
@@ -45,8 +56,15 @@ $safeAttributes = $generator->getTableSchema()->columns;
     </el-main>
 </el-container>
 <?php
-// Asset::addCss($this, "{$generator->getPageCssPath('detail')}");
-Asset::addScript($this, "{$generator->getPageJsPath('detail')}");
 
-$this->registerJs('instance = new app();');
+echo <<<EOT
+<?php
+
+// Asset::addCss(\$this, "{$generator->getPageCssPath('detail')}");
+Asset::addScript(\$this, "{$generator->getPageJsPath('detail')}");
+
+\$this->registerJs('instance = new app();');
+
+?>
+EOT;
 ?>

@@ -50,12 +50,12 @@ if (in_array($attribute->name, $safeAttributes)) {
         取消
     </el-button>
     <?= '<?php if (AdminRoleModel::checkAuth(\'create\')) { ?>' . "\n" ?>
-    <el-button size="mini" type="success" @click="submitCreate" v-if="setting.isCreate === true">
+    <el-button size="mini" type="success" @click="submit" v-if="setting.isCreate === true">
         创建
     </el-button>
     <?= '<?php } ?>' . "\n" ?>
     <?= '<?php if (AdminRoleModel::checkAuth(\'update\')) { ?>' . "\n" ?>
-    <el-button size="mini" type="primary" @click="submitUpdate" v-if="setting.isCreate === false">
+    <el-button size="mini" type="primary" @click="submit" v-if="setting.isCreate === false">
         保存
     </el-button>
     <?= '<?php } ?>' . "\n" ?>

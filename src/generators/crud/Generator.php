@@ -626,7 +626,7 @@ class Generator extends \wpjCode\wii\Generator
                         placeholder="请输入{$label}" type="{$type}">
                 </el-input>
                 
-                <div class="form-element-append-inline" style="display: none;">
+                <div class="form-element-append-inline ml-20" style="display: none;">
                     <el-tooltip class="item" effect="light"
                                 placement="top-start">
                         <div slot="content">
@@ -634,14 +634,14 @@ class Generator extends \wpjCode\wii\Generator
                         </div>
                         <div>
                             <i class="el-icon-question font-second pointer"></i>
-                            <span class="font-third">
+                            <span class="font-third pointer">
                                 什么是行内说明？
                             </span>
                         </div>
                     </el-tooltip>
                 </div>
                 <div class="form-element-append lh-normal mt-5" style="display: none;">
-                    <i class="el-icon-question font-second"></i>
+                    <i class="el-icon-question font-third"></i>
                     <span class="font-third">
                         非行内说明文本
                     </span>
@@ -674,7 +674,7 @@ EOT;
             
                 </el-radio-group>
                 
-                <div class="form-element-append-inline" style="display: none;">
+                <div class="form-element-append-inline ml-20" style="display: none;">
                     <el-tooltip class="item" effect="light"
                                 placement="top-start">
                         <div slot="content">
@@ -682,14 +682,14 @@ EOT;
                         </div>
                         <div>
                             <i class="el-icon-question font-second pointer"></i>
-                            <span class="font-third">
+                            <span class="font-third pointer">
                                 什么是行内说明？
                             </span>
                         </div>
                     </el-tooltip>
                 </div>
                 <div class="form-element-append lh-normal mt-5" style="display: none;">
-                    <i class="el-icon-question font-second"></i>
+                    <i class="el-icon-question font-third"></i>
                     <span class="font-third">
                         非行内说明文本
                     </span>
@@ -723,7 +723,7 @@ EOT;
                     :autosize="{ minRows: 6}">
                 </el-input>
             
-                <div class="form-element-append-inline" style="display: none;">
+                <div class="form-element-append-inline ml-20" style="display: none;">
                     <el-tooltip class="item" effect="light"
                                 placement="top-start">
                         <div slot="content">
@@ -731,14 +731,14 @@ EOT;
                         </div>
                         <div>
                             <i class="el-icon-question font-second pointer"></i>
-                            <span class="font-third">
+                            <span class="font-third pointer">
                                 什么是行内说明？
                             </span>
                         </div>
                     </el-tooltip>
                 </div>
                 <div class="form-element-append lh-normal mt-5" style="display: none;">
-                    <i class="el-icon-question font-second"></i>
+                    <i class="el-icon-question font-third"></i>
                     <span class="font-third">
                         非行内说明文本
                     </span>

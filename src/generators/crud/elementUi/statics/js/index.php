@@ -658,7 +658,8 @@ var app = function () {
             goToCreate: function () {
 
                 this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerID(1)?>.create', {
-                    randStr: Math.random()
+                    is_iframe: 1,
+                    rand_str: Math.random()
                 });
                 this.pageDialog.loading = true; // 页面弹出层加载中
                 this.pageDialog.show = true;    // 展示页面弹出层
@@ -675,7 +676,8 @@ var app = function () {
 
                 this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerID(1)?>.update', {
                     id: $id,
-                    randStr: Math.random()
+                    is_iframe: 1,
+                    rand_str: Math.random()
                 });
                 this.pageDialog.loading = true; // 页面弹出层加载中
                 this.pageDialog.show = true;    // 展示页面弹出层

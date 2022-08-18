@@ -220,7 +220,7 @@ EOT;
             </el-table-column>
         <?php } ?>
 
-            <el-table-column fixed="right" label="操作" width="180">
+            <el-table-column fixed="right" label="操作" width="180" class-name="operate-column">
                 <template slot-scope="scope">
                     <?= '<?php if (AdminRoleModel::checkAuth(\'edit\')) { ?>' . "\n" ?>
                     <el-button type="text" size="small"
