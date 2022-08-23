@@ -695,9 +695,7 @@ echo <<<EOT
         ### 单个操作[缓存保存前一些格式化]
         \$nowTime = time();
         \$this->setAttributes([
-            'avatar' => ToolsService::delImgDomain(
-                \$this->getAttribute('avatar')
-            ),
+        
 EOT;
 if ($model->hasAttribute('update_time')) {
     echo <<<EOT
@@ -705,6 +703,7 @@ if ($model->hasAttribute('update_time')) {
             'update_time' => \$nowTime, // 更新时间
 EOT;
 }
+
 if ($model->hasAttribute('action_uid')) {
     echo <<<EOT
        
@@ -713,7 +712,7 @@ EOT;
 }
 echo <<<EOT
        
-        ];
+        ]);
 EOT;
 if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->phpType == 'string') {
     echo <<<EOT

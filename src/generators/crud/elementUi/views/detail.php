@@ -11,8 +11,6 @@ $safeAttributes = $generator->getTableSchema()->columns;
 echo <<<EOT
 <?php
 
-/* @var \$detail array */
-
 use app\assets\BackendAsset as Asset;
 
 ?>
@@ -41,12 +39,21 @@ EOT;
         <div class="mt-20"></div>
         <el-descriptions title="">
 <?php foreach ($safeAttributes as $k => $v) {
-                echo "             ";
                 // tinyint 走文本
                 if ($v->type == 'tinyint') {
-                    echo "<el-descriptions-item label='{$v->comment}'><?=\$detail['{$v->name}_text']?></el-descriptions-item>\n";
+            echo "            <el-descriptions-item label='{$v->comment}'>
+                <span v-text=\"detail.{$v->name}_text\"></span>
+            </el-descriptions-item>\n";
+                } else if (strstr($v->name, 'image')) {
+            echo "            <el-descriptions-item label='{$v->comment}'>
+                <el-image class=\"thumb\" :preview-src-list=\"[detail.{$v->name}]\" fit=\"cover\"
+                    :src=\"detail.{$v->name}\" v-if=\"detail.{$v->name}\">
+                </el-image>
+            </el-descriptions-item>\n";
                 } else {
-                    echo "<el-descriptions-item label='{$v->comment}'><?=\$detail['{$v->name}']?></el-descriptions-item>\n";
+            echo "            <el-descriptions-item label='{$v->comment}'>
+                <span v-text=\"detail.{$v->name}\"></span>
+            </el-descriptions-item>\n";
                 }
 }?>
         </el-descriptions>
@@ -54,6 +61,11 @@ EOT;
     <el-main class="content-wrapper transits bg-white" v-else>
         <el-empty v-if="isError" :description="errorMsg" class="mt-200"></el-empty>
     </el-main>
+    <el-footer class="bottom-button" :height="50">
+        <el-button size="mini" type="danger" @click="cancel">
+            返回
+        </el-button>
+    </el-footer>
 </el-container>
 <?php
 

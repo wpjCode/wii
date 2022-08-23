@@ -24,14 +24,10 @@ var app = function () {
                 bodyWidth: document.documentElement.clientWidth, // body宽度
             },
             id: $w.getParams('id'), // 编号
+            detail: {},             // 详情
             isError: false,         // 是否展示错误
             errorMsg: '',           // 错误内容
-            dataList: [],           // 父级数据列表
-            handleSelectList: [],   // 当前多选项
             showTopScroll: false,   // 是否已滚动，默认否
-            page: 1,
-            pageSize: 20,
-            dataTotal: 0,
             pageDialog: {
                 show: false,    // 页面 - 是否展示弹出层
                 url: '',        // 页面 - 弹出层连接
@@ -120,7 +116,7 @@ var app = function () {
                             // 隐藏正在加载
                             loadingInstance.close();
                             // 获取下列表
-                            // that.getDetail();
+                            that.getDetail();
                         });
                     },
                     callback: function (event) {
@@ -197,8 +193,8 @@ var app = function () {
                             });
                         }
 
-                        // 总条目
-                        that.detail = parseInt(event.data);
+                        // 详情
+                        that.detail = event.data;
                     }
                 });
             },
@@ -226,7 +222,7 @@ var app = function () {
             cancel: function ($reloadList) {
 
                 // 需要重新加载下列表
-                if ($reloadList && this.pageDialog.isIframe) {
+                if ($reloadList && this.pageDialog.isIframe && window.parent.instance.getList) {
                     window.parent.instance.getList();
                 }
 

@@ -194,11 +194,7 @@ class <?= $controllerClass ?> extends BaseController
             return $this->showError('数据条目不存在，请确认信息编号是否正确。', 404);
         }
 
-        $detail = $model->toArray();
-        // 格式化一些内容
-        $detail = $model::formatData($detail);
-
-        return $this->render('detail', ['detail' => $detail]);
+        return $this->render('detail');
     }
 
 

@@ -614,21 +614,22 @@ class Generator extends \wpjCode\wii\Generator
         $label = $this->getColumnLabel($attribute);
 
         $type = 'string';
+        $modelType = '';
         if (property_exists($column, 'phpType') && $column->phpType == 'integer') {
             $type = 'number';
+            $modelType = '.number';
         }
 
         return <<<EOT
             <el-form-item label="{$label}" prop="{$attribute}" class="form-item" :inline-message="true"
                     :error="customErrMsg.{$attribute}" ref="formItem_{$attribute}">
                   
-                <el-input v-model="form.{$attribute}" size="small" class="form-element"
+                <el-input v-model{$modelType}="form.{$attribute}" size="small" class="form-element"
                         placeholder="请输入{$label}" type="{$type}">
                 </el-input>
                 
                 <div class="form-element-append-inline ml-20" style="display: none;">
-                    <el-tooltip class="item" effect="light"
-                                placement="top-start">
+                    <el-tooltip class="item" effect="light" placement="top-start">
                         <div slot="content">
                             行内说明内容
                         </div>
@@ -675,8 +676,7 @@ EOT;
                 </el-radio-group>
                 
                 <div class="form-element-append-inline ml-20" style="display: none;">
-                    <el-tooltip class="item" effect="light"
-                                placement="top-start">
+                    <el-tooltip class="item" effect="light" placement="top-start">
                         <div slot="content">
                             行内说明内容
                         </div>
@@ -724,8 +724,7 @@ EOT;
                 </el-input>
             
                 <div class="form-element-append-inline ml-20" style="display: none;">
-                    <el-tooltip class="item" effect="light"
-                                placement="top-start">
+                    <el-tooltip class="item" effect="light" placement="top-start">
                         <div slot="content">
                             行内说明内容
                         </div>

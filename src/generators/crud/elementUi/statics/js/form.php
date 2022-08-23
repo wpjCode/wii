@@ -201,7 +201,7 @@ EOT;
             cancel: function ($reloadList) {
 
                 // 需要重新加载下列表
-                if ($reloadList && this.pageDialog.isIframe) {
+                if ($reloadList && this.pageDialog.isIframe && window.parent.instance.getList) {
                     window.parent.instance.getList();
                 }
 
@@ -320,36 +320,43 @@ EOT;
     echo <<<EOT
                     {$v->name}: [
 EOT;
-    // 允许空略过
-    if (!$v->allowNull) {
-        echo <<<EOT
+// 允许空略过
+if (!$v->allowNull) {
+    echo <<<EOT
         
                         {required: true, message: '请完善排序', trigger: 'blur'},
 EOT;
-    }
-    // 排序字段
+}
+// 排序字段
 if ($v->name == 'sort' || $v->name == 'list_order') {
     echo <<<EOT
     
+                        {type: 'number', message: '{$model->getAttributeLabel($v->name)}必须为数字值', trigger: 'blur'},
                         {
                             validator: \$w.validateNumRange, message: false, trigger: 'blur',
                             max: this.setting.max_sort, min: this.setting.min_sort
                         },
 EOT;
 }
-if (property_exists($v, 'phpType') && $v->phpType == 'integer' && $v->size > 2) {
+elseif (property_exists($v, 'phpType') && $v->phpType == 'integer' && $v->size > 2) {
+        $maxStr = str_repeat('9', $v->size);
         echo <<<EOT
         
-                        {type: 'number', message: '{$model->getAttributeLabel($v->name)}必须为数字值', trigger: 'blur'}
+                        {type: 'number', message: '{$model->getAttributeLabel($v->name)}必须为数字值', trigger: 'blur'},
+                        {
+                            validator: \$w.validateNumRange, message: '{$model->getAttributeLabel($v->name)}不能超过$maxStr',
+                            trigger: 'blur', max: $maxStr, min: 0
+                        },
 EOT;
-    }
-    if (property_exists($v, 'phpType') && $v->phpType == 'string' && !strstr($v->name, 'time') && !strstr($v->name, 'image') && !strstr($v->name, 'avatar')) {
+}
+elseif (property_exists($v, 'phpType') && $v->phpType == 'string' && !strstr($v->name, 'time') && !strstr($v->name, 'image') && !strstr($v->name, 'avatar')) {
+        $size = empty($v->size) ? 0 : $v->size;
         echo <<<EOT
         
-                        {max: $v->size, message: '{$model->getAttributeLabel($v->name)}长度最多 $v->size 个字', trigger: 'blur'},
+                        {max: $size, message: '{$model->getAttributeLabel($v->name)}长度最多 $v->size 个字', trigger: 'blur'},
 EOT;
-    }
-    echo <<<EOT
+}
+echo <<<EOT
     
                     ]
 EOT;
