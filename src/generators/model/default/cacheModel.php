@@ -62,7 +62,7 @@ class <?= $className ?> extends <?= '\yii\redis\ActiveRecord' . "\n" ?>
      */
     public static function getDb()
     {
-        return Yii::$app->get('redis');
+        return Yii::$app->get('redisDb');
     }
 
     /**
