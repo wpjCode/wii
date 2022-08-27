@@ -192,8 +192,7 @@ EOT;
                                 <el-footer height="40">
                                     <el-row>
                                         <el-col :span="8" offset="5">
-                                            <el-button type="text" class="text-danger"
-                                                       size="mini"
+                                            <el-button type="text" class="text-danger" size="mini"
                                                        @click="scope.row.sortEdit = false">
                                                 取消
                                             </el-button>
@@ -229,14 +228,14 @@ EOT;
                     <?= '<?php } ?>' . "\n" ?>
 <?php if ($model->hasAttribute('status')) { ?>
                     <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\')) { ?>' . "\n" ?>
-                    <el-button type="text text-danger" size="small"
+                    <el-button type="text" size="small" class="text-danger"
                                v-if="scope.row.status != setting.status_list.disabled.value"
                                @click.native="disabledItem(scope.row.id)">
                         {{setting.status_list['disabled'].text}}
                     </el-button>
                     <?= '<?php } ?>' . "\n" ?>
                     <?= '<?php if (AdminRoleModel::checkAuth(\'open\')) { ?>' . "\n" ?>
-                    <el-button type="text text-success" size="small"
+                    <el-button type="text" size="small" class="text-success"
                                v-else @click.native="openItem(scope.row.id)">
                         {{setting.status_list['open'].text}}
                     </el-button>
