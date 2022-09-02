@@ -556,7 +556,8 @@ if (property_exists($schema, 'columns')) {
         // 每页操作多少条
         $pageSize = \Yii::$app->params['exportLimit'];
         // 文件路径
-        $endPath = '/export/<?=$generator->getControllerID(2)?>/{DATE}/{RANDOM}.xlsx';
+        $endPath = $this->post('file_path');
+        if (empty($endPath)) $endPath = '/export/<?=$generator->getControllerID(2)?>/{DATE}/{RANDOM}.xlsx';
         $savePath = ToolsService::generatePath(
             '@uploadPath' . $endPath
         );
