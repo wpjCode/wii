@@ -556,8 +556,9 @@ if (property_exists($schema, 'columns')) {
         // 每页操作多少条
         $pageSize = \Yii::$app->params['exportLimit'];
         // 文件路径
-        $filePath = ToolsService::generatePath(
-            '@uploadPath/export/<?=$generator->getControllerID(2)?>/{DATE}/{RANDOM}.xlsx'
+        $endPath = '/export/<?=$generator->getControllerID(2)?>/{DATE}/{RANDOM}.xlsx';
+        $savePath = ToolsService::generatePath(
+            '@uploadPath' . $endPath
         );
         // 字段1
         $field = [
@@ -572,7 +573,7 @@ if (property_exists($schema, 'columns')) {
         // 数据条目
         $records = $model->loadWhere($find)->getList($page, $pageSize, $field);
         // 导出
-        if (!$model->exportExcel($filePath, $records)) {
+        if (!$model->exportExcel($savePath, $records)) {
 
             $error = $model->getFirstErrors();
             return $this->jsonFail('导出失败，请联系管理员', 400, [
