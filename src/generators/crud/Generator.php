@@ -997,13 +997,12 @@ EOT;
         $row = [
             '下面是【后台】页面展示连接：',
             '{space}// [' . $this->expName . ']列表 页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . ".html' => \$routePre . '" .
             $route . "/index-page',",
             '{space}// [' . $this->expName . ']添加 页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "Create.html' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Create.html' => \$routePre . '" .
             $route . "/create-page',",
             '{space}// [' . $this->expName . ']修改 页面',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "Update.html' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Update.html' => \$routePre . '" .
             $route . "/update-page',",
             '下面是【前台】页面展示连接：',
             '{space}// ' . $this->expName,
@@ -1018,35 +1017,35 @@ EOT;
         $row = array_merge($row, [
             '下面是【后台】API操作连接：',
             '{space}// [' . $this->expName . ']获取设置 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "Setting.api' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Setting.api' => \$routePre . '" .
             $route . "/setting',",
             '{space}// [' . $this->expName . ']获取列表 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "List.api' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "List.api' => \$routePre . '" .
             $route . "/list',",
             '{space}// [' . $this->expName . ']提交添加 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "Create.api' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Create.api' => \$routePre . '" .
             $route . "/create',",
             '{space}// [' . $this->expName . ']获取详情 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "Detail.api' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Detail.api' => \$routePre . '" .
             $route . "/detail',",
             '{space}// [' . $this->expName . ']提交更新 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "Update.api' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Update.api' => \$routePre . '" .
             $route . "/update',",
             '{space}// [' . $this->expName . ']提交导出 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "Export.api' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Export.api' => \$routePre . '" .
             $route . "/export',",
             '{space}// [' . $this->expName . ']提交导入 API',
-            "{space}\$urlPre . '/" . lcfirst($baseName) . "Import.api' => \$routePre . '" .
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Import.api' => \$routePre . '" .
             $route . "/import',"
         ]);
 
         // 有[状态]增加[状态]接口
         if (in_array('status', $this->getColumnNames())) {
             $row[] = '{space}// [' . $this->expName . ']禁用 API';
-            $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
+            $row[] = "{space}\$urlPre . '" . lcfirst($baseName) .
                 "Disabled.api' => \$routePre . '" . $route . "/disabled',";
             $row[] = '{space}// [' . $this->expName . ']开启 API';
-            $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
+            $row[] = "{space}\$urlPre . '" . lcfirst($baseName) .
                 "Open.api' => \$routePre . '" . $route . "/open',";
         }
         // 有排序增加排序接口
@@ -1055,7 +1054,7 @@ EOT;
             in_array('list_order', $this->getColumnNames())
         ) {
             $row[] = '{space}// [' . $this->expName . ']修改排序 API';
-            $row[] = "{space}\$urlPre . '/" . lcfirst($baseName) .
+            $row[] = "{space}\$urlPre . '" . lcfirst($baseName) .
                 "Sort.api' => \$routePre . '" . $route . "/sort',";
         }
 
