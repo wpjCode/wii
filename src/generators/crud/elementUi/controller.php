@@ -555,14 +555,10 @@ if (property_exists($schema, 'columns')) {
         $page = $this->post('page', 0, 'int');
         // 每页操作多少条
         $pageSize = \Yii::$app->params['exportLimit'];
-        // 导出保存路径
-        $endPath = $this->post('file_path');
-        // 导出路径默认生成
-        if (!$endPath) $endPath = ToolsService::generatePath(
-            '/export/<?=$generator->getControllerID(2)?>/{DATE}/{RANDOM}.xlsx'
-        );
         // 文件路径
-        $filePath = \Yii::getAlias('@webroot') . $endPath;
+        $filePath = ToolsService::generatePath(
+            '@uploadPath/export/<?=$generator->getControllerID(2)?>/{DATE}/{RANDOM}.xlsx'
+        );
         // 字段1
         $field = [
 <?php foreach ($generator->getTableSchema()->columns as $kL => $vL) { ?>
@@ -594,7 +590,7 @@ if (property_exists($schema, 'columns')) {
     }
 
     /**
-     * 导入
+     * 导入Excel
      * @return mixed
      */
     public function actionImport()
