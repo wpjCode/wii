@@ -253,19 +253,12 @@ if (property_exists($schema, 'columns')) {
 
         // 查询内容
         $search = $this->get('search');
-
         // 显示当前第几页
         $page = $this->get('page', 0, 'int');
-
         // 每页显示多少条
-        $pageSize = $this->get('page_size', \Yii::$app->params['dataLimit'], 'int');
-
+        $pageSize = $this->getPageSize();
         // 排序字段
-        $sortField = $this->get('sort_field', '', 'str');
-        $sort = [
-            $sortField . ' ' . $this->get('sort_type', '', 'str'),
-            'id ' . $this->get('sort_type', '', 'str'),
-        ];
+        $sort = $this->getSort();
 
         // 设置
         $opt = [];
