@@ -324,7 +324,7 @@ EOT;
 if (!$v->allowNull) {
     echo <<<EOT
         
-                        {required: true, message: '请完善排序', trigger: 'blur'},
+                        {required: true, message: '请完善{$model->getAttributeLabel($v->name)}', trigger: 'blur'},
 EOT;
 }
 // 排序字段
