@@ -695,7 +695,6 @@ echo <<<EOT
         ### 单个操作[缓存保存前一些格式化]
         \$nowTime = time();
         \$this->setAttributes([
-        
 EOT;
 if ($model->hasAttribute('update_time')) {
     echo <<<EOT
@@ -713,6 +712,24 @@ EOT;
 echo <<<EOT
        
         ]);
+        // 新建单独逻辑
+        if (\$this->getIsNewRecord()) {
+EOT;
+if ($model->hasAttribute('add_time')) {
+    echo <<<EOT
+       
+            'add_time' => \$nowTime, // 添加时间
+EOT;
+}
+if ($model->hasAttribute('create_time')) {
+    echo <<<EOT
+       
+            'create_time' => \$nowTime, // 添加时间
+EOT;
+}
+echo <<<EOT
+
+        }
 EOT;
 if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->phpType == 'string') {
     echo <<<EOT
