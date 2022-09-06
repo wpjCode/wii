@@ -997,7 +997,7 @@ EOT;
         $row = [
             '下面是【后台】页面展示连接：',
             '{space}// [' . $this->expName . ']列表 页面',
-            $route . "/index-page',",
+            "{space}\$urlPre . '" . $route . "/index-page',",
             '{space}// [' . $this->expName . ']添加 页面',
             "{space}\$urlPre . '" . lcfirst($baseName) . "Create.html' => \$routePre . '" .
             $route . "/create-page',",
