@@ -147,7 +147,7 @@ echo <<<EOT
         'field' => [ // 字段列表
 EOT;
 foreach ($generator->getTableSchema()->columns as $kL => $vL) {
-echo "\n            '" . $vL->name . "',";
+    echo "\n            '" . $vL->name . "',";
 }
 echo <<<EOT
 
@@ -162,7 +162,7 @@ echo <<<EOT
         'field' => [ // 字段列表
 EOT;
 foreach ($generator->getTableSchema()->columns as $kL => $vL) {
-echo "\n            '" . $vL->name . "' => '" . $vL->comment . "',";
+    echo "\n            '" . $vL->name . "' => '" . $vL->comment . "',";
 }
 echo <<<EOT
 
@@ -719,7 +719,11 @@ EOT;
 }
 echo <<<EOT
 
+<<<<<<< HEAD
             ]);
+=======
+            )];
+>>>>>>> 2e8b2a0adc562a151e2e6b34d268392c5ece6d0a
         }
         // 其他单个操作
         \$this->setAttributes([
