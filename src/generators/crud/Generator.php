@@ -1005,6 +1005,9 @@ EOT;
             '{space}// [' . $this->expName . ']修改 页面',
             "{space}\$urlPre . '" . lcfirst($baseName) . "Update.html' => \$routePre . '" .
             $route . "/update-page',",
+            '{space}// [' . $this->expName . ']详情 页面',
+            "{space}\$urlPre . '" . lcfirst($baseName) . "Detail.html' => \$routePre . '" .
+            $route . "/detail-page',",
             '下面是【前台】页面展示连接：',
             '{space}// ' . $this->expName,
             '{space}' . lcfirst($baseName) . ': {',
