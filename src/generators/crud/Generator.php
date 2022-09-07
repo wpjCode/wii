@@ -1012,6 +1012,7 @@ EOT;
             "{space}{space}index: '.html',{tab}{tab}{space}// [列表]页面",
             "{space}{space}create: 'Create.html',{tab}// [添加]页面",
             "{space}{space}update: 'Update.html',{tab}// [修改]页面",
+            "{space}{space}detail: 'Detail.html',{tab}// [详情]页面",
             '{space}}'
         ];
 
