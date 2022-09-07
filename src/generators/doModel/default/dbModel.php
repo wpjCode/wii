@@ -694,8 +694,35 @@ echo <<<EOT
 
         ### 单个操作[缓存保存前一些格式化]
         \$nowTime = time();
+        // 创建操作
+        if (\$this->getIsNewRecord()) {
+            \$this->setAttributes([
+EOT;
+if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->phpType == 'string') {
+    echo <<<EOT
+    
+                'id' => ToolsService::newMongoId(),
+                
+EOT;
+}
+if ($model->hasAttribute('add_time')) {
+    echo <<<EOT
+    
+                'add_time' => \$nowTime,
+EOT;
+}
+if ($model->hasAttribute('create_time')) {
+    echo <<<EOT
+    
+                'create_time' => \$nowTime,
+EOT;
+}
+echo <<<EOT
+
+            )];
+        }
+        // 其他单个操作
         \$this->setAttributes([
-        
 EOT;
 if ($model->hasAttribute('update_time')) {
     echo <<<EOT
@@ -714,23 +741,11 @@ echo <<<EOT
        
         ]);
 EOT;
-if (property_exists($schema, 'columns') && !empty($schema->columns[$pk]) && $schema->columns[$pk]->phpType == 'string') {
-    echo <<<EOT
-    
-        // 编号
-        if (\$this->getIsNewRecord()) \$this->setAttribute('id', ToolsService::newMongoId());
-EOT;
-}
-if ($model->hasAttribute('add_time')) {
-    echo <<<EOT
-        
-        // 添加时间
-        if (\$this->getIsNewRecord()) \$this->setAttribute('add_time', \$nowTime);
-EOT;
-}
 if ($model->hasAttribute('content')) {
     echo <<<EOT
     
+            ]);
+        }
         // 内容解密下 - 防止加密多次
         \$this->content = htmlspecialchars_decode(\$this->content);
         // 内容取出图片域名
