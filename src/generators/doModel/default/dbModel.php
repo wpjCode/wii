@@ -719,7 +719,7 @@ EOT;
 }
 echo <<<EOT
 
-            )];
+            ]);
         }
         // 其他单个操作
         \$this->setAttributes([
