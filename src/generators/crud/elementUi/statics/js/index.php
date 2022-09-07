@@ -690,6 +690,26 @@ var app = function () {
                 });
             },
             /**
+             * 跳转到详情
+             */
+            goToDetail: function ($id) {
+
+                this.pageDialog.url = $w.getPageUrl('<?=$generator->getControllerID(1)?>.detail', {
+                    id: $id,
+                    is_iframe: 1,
+                    rand_str: Math.random()
+                });
+                this.pageDialog.loading = true; // 页面弹出层加载中
+                this.pageDialog.show = true;    // 展示页面弹出层
+                // [IFRAME]加载完毕
+                var that = this;
+                this.$nextTick(function () {
+                    $("#pageIframe").load(function () {
+                        that.pageDialog.loading = false; // 页面加载中 否
+                    });
+                });
+            },
+            /**
              * 去首页
              */
             goToIndex: function () {

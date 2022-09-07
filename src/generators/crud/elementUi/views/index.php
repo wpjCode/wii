@@ -30,13 +30,13 @@ EOT;
                 </el-breadcrumb>
             </el-col>
             <el-col :xs="12" :sm="12" :md="12" :lg="19" class="text-right">
-                <?= '<?php if (AdminRoleModel::checkAuth(\'create\')) { ?>'. "\n" ?>
+                <?= '<?php if (AdminRoleModel::checkAuth(\'create\')) { ?>' . "\n" ?>
                 <el-button class="" size="mini" type="success"
                            @click.native="goToCreate()">
                     新建
                 </el-button>
                 <?= '<?php } ?>' . "\n" ?>
-                <?= '<?php if (AdminRoleModel::checkAuth(\'export\')) { ?>'. "\n" ?>
+                <?= '<?php if (AdminRoleModel::checkAuth(\'export\')) { ?>' . "\n" ?>
                 <!-- <el-button  class="ml-5" size="mini" type="primary" @click.native="exportConfirm()">
                         导出
                 </el-button> -->
@@ -88,12 +88,12 @@ EOT;
         </div>
         <!-- 查询 START -->
         <?= '<?=' ?>$this->render('../common/search.php', [
-            'groupFields'      => 'searchForm.group',
-            'groupOtherFields' => 'searchForm.groupOther',
-            'baseFields'       => 'searchForm.base',
-            'moreFields'       => 'searchForm.more',
-            'export'           => 'searchForm.value',
-            'submit'           => 'handleCurrentChange'
+        'groupFields' => 'searchForm.group',
+        'groupOtherFields' => 'searchForm.groupOther',
+        'baseFields' => 'searchForm.base',
+        'moreFields' => 'searchForm.more',
+        'export' => 'searchForm.value',
+        'submit' => 'handleCurrentChange'
         ]); <?= '?>' ?>
 
         <!-- 查询 START -->
@@ -113,134 +113,147 @@ EOT;
                     </el-tooltip>
                 </template>
             </el-table-column>
-        <?php if ($model->hasAttribute('name')) { ?>
+            <?php if ($model->hasAttribute('name')) { ?>
 
-            <el-table-column prop="name" label="名称">
-                <template slot-scope="scope">
-                    <el-tooltip class="item" effect="light"
-                                :content="scope.row.name" placement="top-start">
-                        <div class="text-more-ellipsis">
+                <el-table-column prop="name" label="名称">
+                    <template slot-scope="scope">
+                        <el-tooltip class="item" effect="light"
+                                    :content="scope.row.name" placement="top-start">
+                            <div class="text-more-ellipsis">
                             <span v-text="scope.row.name"
                                   class="pointer text-over-flow"></span>
-                        </div>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-        <?php } ?>
-        <?php if ($model->hasAttribute('title')) { ?>
+                            </div>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+            <?php } ?>
+            <?php if ($model->hasAttribute('title')) { ?>
 
-            <el-table-column prop="title" label="标题">
-                <template slot-scope="scope">
-                    <el-tooltip class="item" effect="light"
-                                :content="scope.row.title" placement="top-start">
-                        <div class="text-more-ellipsis">
+                <el-table-column prop="title" label="标题">
+                    <template slot-scope="scope">
+                        <el-tooltip class="item" effect="light"
+                                    :content="scope.row.title" placement="top-start">
+                            <div class="text-more-ellipsis">
                             <span v-text="scope.row.title"
                                   class="pointer text-over-flow"></span>
-                        </div>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-        <?php } ?>
-        <?php if ($model->hasAttribute('update_time')) { ?>
+                            </div>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+            <?php } ?>
+            <?php if ($model->hasAttribute('update_time')) { ?>
 
-            <el-table-column prop="update_time" label="修改时间" width="120" sortable="custom">
-                <template slot-scope="scope">
-                    <el-tooltip class="item" effect="light"
-                                :content="scope.row.update_time_text"
-                                placement="top-start">
-                        <div class="text-more-ellipsis">
+                <el-table-column prop="update_time" label="修改时间" width="120" sortable="custom">
+                    <template slot-scope="scope">
+                        <el-tooltip class="item" effect="light"
+                                    :content="scope.row.update_time_text"
+                                    placement="top-start">
+                            <div class="text-more-ellipsis">
                             <span v-text="scope.row.update_time_text_s"
                                   class="pointer"></span>
-                        </div>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-        <?php } ?>
-        <?php if ($model->hasAttribute('status')) { ?>
+                            </div>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+            <?php } ?>
+            <?php if ($model->hasAttribute('status')) { ?>
 
-            <el-table-column prop="status_text" label="状态" width="80">
-                <template slot-scope="scope">
-                    <div class="text-more-ellipsis" v-if="setting.status_list">
+                <el-table-column prop="status_text" label="状态" width="80">
+                    <template slot-scope="scope">
+                        <div class="text-more-ellipsis" v-if="setting.status_list">
                         <span v-if="scope.row.status == setting.status_list.disabled.value"
                               v-text="'已' + scope.row.status_text"
                               class="pointer text-danger"></span>
-                        <span v-else-if="scope.row.status == setting.status_list.open.value"
-                              v-text="'已' + scope.row.status_text"
-                              class="pointer text-success"></span>
-                        <span v-else v-text="'已' + scope.row.status_text"
-                              class="pointer"></span>
-                    </div>
-                </template>
-            </el-table-column>
-        <?php } ?>
-        <?php if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) { ?>
+                            <span v-else-if="scope.row.status == setting.status_list.open.value"
+                                  v-text="'已' + scope.row.status_text"
+                                  class="pointer text-success"></span>
+                            <span v-else v-text="'已' + scope.row.status_text"
+                                  class="pointer"></span>
+                        </div>
+                    </template>
+                </el-table-column>
+            <?php } ?>
+            <?php if ($model->hasAttribute('sort') || $model->hasAttribute('list_order')) { ?>
 
-            <el-table-column prop="sort" label="排序" width="85" title="双击修改排序" sortable="custom">
-                <template slot-scope="scope">
-                    <?= '<?php if (AdminRoleModel::checkAuth(\'sort\')) { ?>' . "\n" ?>
-                    <div class="column-border-dashed pointer" title="双击修改排序"
-                         @dblclick="showEditSort(scope.row)">
-                        <el-popover placement="top" width="160"
-                                    v-model="scope.row.sortEdit">
-                            <el-container>
-                                <el-header height="20">请输入新的排序</el-header>
-                                <el-main height="40">
-                                    <el-input placeholder="请输入新排序"
-                                              v-model="scope.row.newSort"
-                                              size="mini"></el-input>
-                                </el-main>
-                                <el-footer height="40">
-                                    <el-row>
-                                        <el-col :span="8" offset="5">
-                                            <el-button type="text" class="text-danger" size="mini"
-                                                       @click="scope.row.sortEdit = false">
-                                                取消
-                                            </el-button>
-                                        </el-col>
-                                        <el-col :span="8">
-                                            <el-button type="text" size="mini"
-                                                       @click="sort(scope.row)">
-                                                确定
-                                            </el-button>
-                                        </el-col>
-                                    </el-row>
-                                </el-footer>
-                            </el-container>
-                            <span v-text="scope.row.sort" title="双击编辑"
-                                  class="pointer text-more-ellipsis"
-                                  slot="reference">
+                <el-table-column prop="sort" label="排序" width="85" title="双击修改排序" sortable="custom">
+                    <template slot-scope="scope">
+                        <?= '<?php if (AdminRoleModel::checkAuth(\'sort\')) { ?>' . "\n" ?>
+                        <div class="column-border-dashed pointer" title="双击修改排序"
+                             @dblclick="showEditSort(scope.row)">
+                            <el-popover placement="top" width="160"
+                                        v-model="scope.row.sortEdit">
+                                <el-container>
+                                    <el-header height="20">请输入新的排序</el-header>
+                                    <el-main height="40">
+                                        <el-input placeholder="请输入新排序"
+                                                  v-model="scope.row.newSort"
+                                                  size="mini"></el-input>
+                                    </el-main>
+                                    <el-footer height="40">
+                                        <el-row>
+                                            <el-col :span="8" offset="5">
+                                                <el-button type="text" class="text-danger" size="mini"
+                                                           @click="scope.row.sortEdit = false">
+                                                    取消
+                                                </el-button>
+                                            </el-col>
+                                            <el-col :span="8">
+                                                <el-button type="text" size="mini"
+                                                           @click="sort(scope.row)">
+                                                    确定
+                                                </el-button>
+                                            </el-col>
+                                        </el-row>
+                                    </el-footer>
+                                </el-container>
+                                <span v-text="scope.row.sort" title="双击编辑"
+                                      class="pointer text-more-ellipsis"
+                                      slot="reference">
                             </span>
-                        </el-popover>
-                    </div>
-                    <?= '<?php } else { ?>' . "\n" ?>
-                    <span v-text="scope.row.sort"></span>
-                    <?= '<?php } ?>' . "\n" ?>
-                </template>
-            </el-table-column>
-        <?php } ?>
+                            </el-popover>
+                        </div>
+                        <?= '<?php } else { ?>' . "\n" ?>
+                        <span v-text="scope.row.sort"></span>
+                        <?= '<?php } ?>' . "\n" ?>
+                    </template>
+                </el-table-column>
+            <?php } ?>
 
             <el-table-column fixed="right" label="操作" width="180" class-name="operate-column">
                 <template slot-scope="scope">
                     <?= '<?php if (AdminRoleModel::checkAuth(\'edit\')) { ?>' . "\n" ?>
                     <el-button type="text" size="small"
-                               @click.native="goToUpdate(scope.row.id)">编辑
+                               @click.native="goToUpdate(scope.row.id)">查看
                     </el-button>
                     <?= '<?php } ?>' . "\n" ?>
-<?php if ($model->hasAttribute('status')) { ?>
-                    <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\')) { ?>' . "\n" ?>
-                    <el-button type="text" size="small" class="text-danger"
-                               v-if="scope.row.status != setting.status_list.disabled.value"
-                               @click.native="disabledItem(scope.row.id)">
-                        {{setting.status_list['disabled'].text}}
+                    <?= '<?php if (AdminRoleModel::checkAuth(\'edit\')) { ?>' . "\n" ?>
+                    <el-button type="text" size="small"
+                               @click.native="goToDetail(scope.row.id)">编辑
                     </el-button>
                     <?= '<?php } ?>' . "\n" ?>
-                    <?= '<?php if (AdminRoleModel::checkAuth(\'open\')) { ?>' . "\n" ?>
-                    <el-button type="text" size="small" class="text-success"
-                               v-else @click.native="openItem(scope.row.id)">
-                        {{setting.status_list['open'].text}}
-                    </el-button>
-                    <?= '<?php } ?>' . "\n" ?>
-<?php } ?>
+
+                    <el-dropdown>
+                        <el-button type="text" size="small">
+                            更多&nbsp;<i class="el-icon-arrow-down"></i>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <div>
+                            <?php if ($model->hasAttribute('status')) { ?>
+                                <?= '<?php if (AdminRoleModel::checkAuth(\'disabled\')) { ?>' . "\n" ?>
+                                <el-dropdown-item size="small" @click.native="disabledItem(scope.row.id)"
+                                                  v-if="scope.row.status != setting.status_list.disabled.value">
+                                    {{setting.status_list['disabled'].text}}
+                                </el-dropdown-item>
+                                <?= '<?php } ?>' . "\n" ?>
+                                <?= '<?php if (AdminRoleModel::checkAuth(\'open\')) { ?>' . "\n" ?>
+                                <el-dropdown-item size="small" @click.native="openItem(scope.row.id)" v-else>
+                                    {{setting.status_list['open'].text}}
+                                </el-dropdown-item>
+                                <?= '<?php } ?>' . "\n" ?>
+                            <?php } ?>
+                            </div>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </template>
             </el-table-column>
         </el-table>
